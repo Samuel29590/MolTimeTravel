@@ -105,20 +105,6 @@ MASimulationManager class >> stopSimulation [
 	
 ]
 
-{ #category : #'as yet unclassified' }
-MASimulationManager >> ant: anAnt killAt: aPoint [
-
-	| insect |
-	"Removing the insect in the dictionary."
-	(insectsPos includesKey: aPoint) ifTrue: [ 
-		insect := (insectsPos at: aPoint) removeFirst.
-		(insectsPos at: aPoint) isEmpty ifTrue: [ 
-			insectsPos removeKey: aPoint ] ].
-
-	"Stoping the insect's component instance."
-	MAInsect stop: insect componentName
-]
-
 { #category : #'component life cycle' }
 MASimulationManager >> componentActivate [
 
@@ -243,14 +229,6 @@ MASimulationManager >> getInsectsPos [
 	^ insectsPos
 ]
 
-{ #category : #'as yet unclassified' }
-MASimulationManager >> getNbDelivered [
-
-	"Returning the number of insects delivered to the ant hill."
-
-	^ nbDelivered
-]
-
 { #category : #services }
 MASimulationManager >> getStep [
 
@@ -298,14 +276,6 @@ MASimulationManager >> getTMAStageEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMAStageEvents named: eventsSymbol ]. 
 	^eventsSubscriber
-]
-
-{ #category : #'as yet unclassified' }
-MASimulationManager >> insectDelivered [
-
-	"Counting the number of insects delivered to the ant hill."
-
-	nbDelivered := nbDelivered + 1
 ]
 
 { #category : #accessing }
