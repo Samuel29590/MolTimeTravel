@@ -29,11 +29,8 @@ Class {
 		'refreshing',
 		'stepView',
 		'nbInsectsView',
-		'nbDeliveredView',
-		'nbPheromonesView',
 		'nbEggsView',
-		'nbAntsView',
-		'nbFeedingPointView'
+		'nbAntsView'
 	],
 	#category : #MolAnts
 }
@@ -238,46 +235,6 @@ MAGround >> createInfoPanel [
 		                 text: '000' asRopedText.
 	infoPanel addChild: nbInsectsView.
 
-	"Ajout du nombre de proies ramenées à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 @ 180;
-			  background: Color transparent) text:
-			 'Number of insects delivered :' asRopedText).
-	nbDeliveredView := BlTextElement new
-		                   relocate:
-			                   MASimulationManager simulationWidth / 10 @ 200;
-		                   background: Color transparent;
-		                   text: '000' asRopedText.
-	infoPanel addChild: nbDeliveredView.
-
-	"Ajout du nombre de pheromones à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 130;
-			  background: Color transparent) text:
-			 'Number of pheromones :' asRopedText).
-	nbPheromonesView := BlTextElement new
-		                    relocate:
-			                    MASimulationManager simulationWidth / 10 * 5
-			                    @ 150;
-		                    background: Color transparent;
-		                    text: '000' asRopedText.
-	infoPanel addChild: nbPheromonesView.
-
-
-	"Ajout du nombre de feedingPoints à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 180;
-			  background: Color transparent) text:
-			 'Number of feeding points :' asRopedText).
-	nbFeedingPointView := BlTextElement new
-		                      relocate:
-			                      MASimulationManager simulationWidth / 10 * 5
-			                      @ 200;
-		                      background: Color transparent;
-		                      text: '000' asRopedText.
-	infoPanel addChild: nbFeedingPointView.
-
-
 	"Ajout du nombre de fourmis à l'interface."
 	infoPanel addChild: ((BlTextElement new
 			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 80;
@@ -332,41 +289,11 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 		background: Color white;
 		draw.
 
-	self getTMAPheromoneServicesProvider getPheromonesDict ifNotNil: [ 
-		self getTMAPheromoneServicesProvider getPheromonesDict 
-			keysAndValuesDo: [ :k :v | 
-				aCanvas figure
-					path: (aCanvas shape circleAt: k radius: 2);
-					background: Color blue;
-					backgroundAlpha:
-						v value / self getTMAPheromoneServicesProvider getMaxIntensity;
-					draw ] ].
-
-	self getTMAPheromoneServicesProvider getPheromonesReturnDict 
-		ifNotNil: [ 
-			self getTMAPheromoneServicesProvider getPheromonesReturnDict 
-				keysAndValuesDo: [ :k :v | 
-					aCanvas figure
-						path: (aCanvas shape circleAt: k radius: 2);
-						background: Color cyan;
-						backgroundAlpha:
-							v / self getTMAPheromoneServicesProvider getMaxIntensity;
-						draw ] ].
-
 	self getInsects ifNotNil: [ 
 		self getInsects keysAndValuesDo: [ :k :v | 
 			aCanvas figure
 				path: (aCanvas shape circleAt: k radius: 2);
 				background: Color black;
-				backgroundAlpha: 1;
-				draw ] ].
-		
-		
-	self getFeedingPoints ifNotNil: [ 
-		self getFeedingPoints keysAndValuesDo: [ :k :v | 
-			aCanvas figure
-				path: (aCanvas shape circleAt: k radius: 10);
-				background: Color purple;
 				backgroundAlpha: 1;
 				draw ] ].
 
@@ -408,31 +335,11 @@ MAGround >> getAnts [
 ]
 
 { #category : #services }
-MAGround >> getFeedingPoints [
-
-	"Get all the MAFeedingPoint instances, in order to draw them on the canvas."
-
-	^ self getTMASimulationServicesProvider getFeedingPointsPos
-]
-
-{ #category : #services }
 MAGround >> getInsects [
 
 	"Get all the MAInesct instances, in order to draw them on the canvas."
 
 	^ self getTMASimulationServicesProvider getInsectsPos
-]
-
-{ #category : #'component accessing' }
-MAGround >> getTMAPheromoneServicesProvider [
-	| servicesSymbol servicesProvider itf |
-	itf := TMAPheromoneServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol]. 
-	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -492,16 +399,6 @@ MAGround >> updateInfoPanel [
 	stepView text:
 		self getTMASimulationServicesProvider getStep asRopedText.
 	nbInsectsView text: self getInsects size asRopedText.
-	nbDeliveredView text:
-		self getTMASimulationServicesProvider getNbDelivered asRopedText.
-	nbPheromonesView text:
-		(self getTMAPheromoneServicesProvider getPheromonesDict size
-		 + self getTMAPheromoneServicesProvider getPheromonesReturnDict size)
-			asRopedText.
-
-	nbFeedingPointView text:
-		self getFeedingPoints size
-			asRopedText.
 
 	eggs := 0.
 	self getAnts do: [ :ant | 

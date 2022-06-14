@@ -4,6 +4,9 @@ I'm the actual implementation of the queen role.
 Class {
 	#name : #MAQueen,
 	#superclass : #MARole,
+	#instVars : [
+		'compt'
+	],
 	#category : #MolAnts
 }
 
@@ -12,15 +15,15 @@ MAQueen >> componentInitialize [
 
 	"Initialization of the MAQueen component."
 
-	roleName := #queen
+	roleName := #queen.
+	compt := 2.
 ]
 
 { #category : #role }
 MAQueen >> doSimulationStepFor: anAnt [
 
-	"A queen as 25% of chance to laid at each step."
-
-	(Random new nextIntegerBetween: 1 and: 4) = 1 ifTrue: [ 
+	compt > 0 ifTrue: [ 
+		compt := compt - 1.
 		self getTMARoleEventsNotifier queenLaid ]
 ]
 

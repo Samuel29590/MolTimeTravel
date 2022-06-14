@@ -37,8 +37,7 @@ Class {
 		'ants',
 		'nbAnts',
 		'insectsPos',
-		'nbDelivered',
-		'feedingPointsPos'
+		'nbDelivered'
 	],
 	#category : #MolAnts
 }
@@ -78,7 +77,7 @@ MASimulationManager class >> simulationHeight [
 { #category : #properties }
 MASimulationManager class >> simulationStepDurationInMs [
 
-	^ 30
+	^ 100
 ]
 
 { #category : #properties }
@@ -106,7 +105,7 @@ MASimulationManager class >> stopSimulation [
 	
 ]
 
-{ #category : #events }
+{ #category : #'as yet unclassified' }
 MASimulationManager >> ant: anAnt killAt: aPoint [
 
 	| insect |
@@ -137,7 +136,6 @@ MASimulationManager >> componentInitialize [
 
 	"Initialization of the MASimulationManager component."
 
-	| ground pheromones |
 	super componentInitialize.
 	simulationThread := nil.
 	step := 0.
@@ -146,15 +144,7 @@ MASimulationManager >> componentInitialize [
 	nbAnts := 0.
 	nbDelivered := 0.
 	insectsPos := Dictionary new.
-	feedingPointsPos := Dictionary new.
-	pheromones := MAPheromones start: 'Pheromones'.
-	self
-		forServices: TMAPheromoneServices
-		useProvider: pheromones componentName asSymbol.
-	ground := MAGround start: 'Ground'.
-	ground
-		forServices: TMAPheromoneServices
-		useProvider: pheromones componentName asSymbol.
+	MAGround start: 'Ground'.
 	self start
 ]
 
@@ -209,32 +199,11 @@ MASimulationManager >> createAntHill [
 ]
 
 { #category : #private }
-MASimulationManager >> createFeedingPoints [
-
-	"Creation of the 5 first feeding points"
-
-	1 to: 5 do: [ :e | 
-		| feed name newPos |
-		name := ('Feed' , e printString) asSymbol.
-		feed := MAFeedingPoint start: name.
-		newPos := feed position.
-
-		"Add the insect to the dictionary of insects positions."
-		(feedingPointsPos includesKey: newPos)
-			ifFalse: [ 
-				| collection |
-				collection := OrderedCollection new.
-				collection add: feed.
-				feedingPointsPos add: newPos -> collection ]
-			ifTrue: [ (feedingPointsPos at: newPos) addLast: feed ] ]
-]
-
-{ #category : #private }
 MASimulationManager >> createInsects [
 
 	"Creation of the 50 firt insects"
 
-	1 to: 50 do: [ :e | 
+	1 to: 2 do: [ :e | 
 		| insect name newPos |
 		name := ('Insect' , e printString) asSymbol.
 		insect := MAInsect start: name.
@@ -267,14 +236,6 @@ MASimulationManager >> getAnts [
 ]
 
 { #category : #services }
-MASimulationManager >> getFeedingPointsPos [
-
-	"Returning a Dictionary of the feeding point positions (key: a Point / value: an OrderedCollection of MAFeedingPoint instances"
-
-	^ feedingPointsPos
-]
-
-{ #category : #services }
 MASimulationManager >> getInsectsPos [
 
 	"Returning a Dictionary of the insects positions (key: a Point / value: an OrderedCollection of MAInsect instances"
@@ -282,7 +243,7 @@ MASimulationManager >> getInsectsPos [
 	^ insectsPos
 ]
 
-{ #category : #services }
+{ #category : #'as yet unclassified' }
 MASimulationManager >> getNbDelivered [
 
 	"Returning the number of insects delivered to the ant hill."
@@ -291,39 +252,11 @@ MASimulationManager >> getNbDelivered [
 ]
 
 { #category : #services }
-MASimulationManager >> getPheromonesDict [
-
-	"Returning a Dictionary of all pheromone of exploration in the system (key: position / value: (the ant that create it -> intensity))"
-
-	^ self getTMAPheromoneServicesProvider getPheromonesDict
-]
-
-{ #category : #services }
-MASimulationManager >> getPheromonesReturnDict [
-
-	"Returning a Dictionary of all pheromone of return in the system (key: position / value: (the ant that create it -> intensity))"
-
-	^ self getTMAPheromoneServicesProvider getPheromonesReturnDict
-]
-
-{ #category : #services }
 MASimulationManager >> getStep [
 
 	"Returning the current step."
 
 	^ step
-]
-
-{ #category : #'component accessing' }
-MASimulationManager >> getTMAFeedingPointServicesProvider [
-	| servicesSymbol servicesProvider itf |
-	itf := TMAFeedingPointServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAFeedingPointServices named: servicesSymbol]. 
-	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -336,18 +269,6 @@ MASimulationManager >> getTMAInsectEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMAInsectEvents named: eventsSymbol ]. 
 	^eventsSubscriber
-]
-
-{ #category : #'component accessing' }
-MASimulationManager >> getTMAPheromoneServicesProvider [
-	| servicesSymbol servicesProvider itf |
-	itf := TMAPheromoneServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol]. 
-	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -379,7 +300,7 @@ MASimulationManager >> getTMAStageEventsSubscriber [
 	^eventsSubscriber
 ]
 
-{ #category : #events }
+{ #category : #'as yet unclassified' }
 MASimulationManager >> insectDelivered [
 
 	"Counting the number of insects delivered to the ant hill."
@@ -441,19 +362,6 @@ MASimulationManager >> removeAntHill [
 ]
 
 { #category : #private }
-MASimulationManager >> removeFeedingPoints [
-
-	"Delete feeding points"
-
-	feedingPointsPos do: [ :each | 
-		| name |
-		each do: [ :feedingPoint | "Delete a feeding point"
-			name := feedingPoint componentName.
-			MAFeedingPoint stop: name ] ].
-	feedingPointsPos := nil
-]
-
-{ #category : #private }
 MASimulationManager >> removeInsects [
 
 	"Delete insects"
@@ -464,14 +372,6 @@ MASimulationManager >> removeInsects [
 			name := insect componentName.
 			MAInsect stop: name ] ].
 	insectsPos := nil.
-]
-
-{ #category : #private }
-MASimulationManager >> removePheromones [
-
-	"delete all pheromones of the system."
-
-	MAPheromones stop: 'Pheromones'
 ]
 
 { #category : #events }
@@ -488,7 +388,6 @@ MASimulationManager >> start [
 	self isRunning ifTrue: [ ^ self ].
 	self isAntHillCreated ifFalse: [ self createAntHill ].
 	self createInsects.
-	self createFeedingPoints.
 	self startSimulationLoop.
 	isRunning := true.
 	self getTMASimulationToGlobalEventsNotifier started
@@ -519,8 +418,6 @@ MASimulationManager >> stop [
 	MAGround stop: 'Ground'.
 	self isAntHillCreated ifTrue: [ self removeAntHill ].
 	self removeInsects.
-	self removeFeedingPoints.
-	self removePheromones.
 	isRunning := false.
 	self getTMASimulationToGlobalEventsNotifier stopped
 ]
@@ -531,38 +428,4 @@ MASimulationManager >> stopSimulationLoop [
 	simulationThread ifNil: [ ^ self ].
 	simulationThread terminate.
 	simulationThread := nil
-]
-
-{ #category : #events }
-MASimulationManager >> worker: anAnt eatAt: aPoint [
-
-	"Deacreasing the capacity of the feedingPoint."
-
-	(feedingPointsPos includesKey: aPoint) ifTrue: [ 
-		(feedingPointsPos at: aPoint)first eated = 0 ifTrue: [ 
-			| feedingPoint |
-			feedingPoint := (feedingPointsPos at: aPoint) removeFirst.
-			(feedingPointsPos at: aPoint) isEmpty ifTrue: [ 
-				feedingPointsPos removeKey: aPoint ].
-			MAFeedingPoint stop: feedingPoint componentName ] ]
-]
-
-{ #category : #events }
-MASimulationManager >> workerExploringPositionChanged: aPoint for: anAnt [
-
-	"Creation or update of a new pheromone of exploration."
-
-	self getTMASimulationToGlobalEventsNotifier
-		pheromoneNew: aPoint
-		for: anAnt
-]
-
-{ #category : #events }
-MASimulationManager >> workerReturningPositionChanged: aPoint for: anAnt [
-
-	"Creation or update of a new pheromone of return."
-
-	self getTMASimulationToGlobalEventsNotifier
-		pheromoneReturnNew: aPoint
-		for: anAnt
 ]

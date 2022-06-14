@@ -48,11 +48,11 @@ MAInsect >> doSimulationStep [
 
 	"At each step an insect just move randomly, waiting to be eaten ..."
 
-		ageInMs := ageInMs + MASimulationManager simulationStepDurationInMs.
-		self position: position
-			+
-			((Random new next * 2 - 1) rounded
-			 @ (Random new next * 2 - 1) rounded) 
+	ageInMs := ageInMs + MASimulationManager simulationStepDurationInMs.
+	self position: position
+		+
+		((Random new next * 6 - 3) rounded
+		 @ (Random new next * 6 - 3) rounded)
 ]
 
 { #category : #'component accessing' }
