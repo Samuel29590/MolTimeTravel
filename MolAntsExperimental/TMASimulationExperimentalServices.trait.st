@@ -41,6 +41,12 @@ TMASimulationExperimentalServices >> isRunning [
 ]
 
 { #category : #services }
+TMASimulationExperimentalServices >> restoreOneStepAfter [
+
+	
+]
+
+{ #category : #services }
 TMASimulationExperimentalServices >> restoreOneStepBefore [
 ]
 
