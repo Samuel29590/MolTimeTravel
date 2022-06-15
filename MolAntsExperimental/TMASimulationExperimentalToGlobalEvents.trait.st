@@ -6,7 +6,9 @@ Trait {
 }
 
 { #category : #'events - lifecycle' }
-TMASimulationExperimentalToGlobalEvents >> simulationStepSent [
+TMASimulationExperimentalToGlobalEvents >> simulationStepSent: aStep [
+
+	
 ]
 
 { #category : #'events - lifecycle' }
@@ -17,6 +19,12 @@ TMASimulationExperimentalToGlobalEvents >> started [
 
 { #category : #'events - lifecycle' }
 TMASimulationExperimentalToGlobalEvents >> stopped [
+
+	
+]
+
+{ #category : #'events - lifecycle' }
+TMASimulationExperimentalToGlobalEvents >> updateView [
 
 	
 ]

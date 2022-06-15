@@ -6,6 +6,13 @@ Trait {
 }
 
 { #category : #'accessing - events' }
+TMASimulationManagerExperimentalType classSide >> consumedComponentEvents [
+
+	<componentContract>
+	^ { TMATimeTravelExperimentalEvents }
+]
+
+{ #category : #'accessing - events' }
 TMASimulationManagerExperimentalType classSide >> producedComponentEvents [
 
 	<componentContract>
@@ -17,4 +24,11 @@ TMASimulationManagerExperimentalType classSide >> providedComponentServices [
 
 	<componentContract>
 	^ { TMASimulationExperimentalServices }
+]
+
+{ #category : #'accessing - services' }
+TMASimulationManagerExperimentalType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { TMATimeTravelExperimentalServices }
 ]

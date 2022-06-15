@@ -1,14 +1,15 @@
 Class {
 	#name : #MAGroundExperimental,
 	#superclass : #BlElement,
-	#traits : 'MolComponentImpl + TMAGroundExperimentalType + TMASimulationExperimentalToGlobalEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAGroundExperimentalType classTrait + TMASimulationExperimentalToGlobalEvents classTrait',
+	#traits : 'MolComponentImpl + TMAGroundExperimentalType + TMASimulationExperimentalToGlobalEvents + TMATimeTravelExperimentalEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAGroundExperimentalType classTrait + TMASimulationExperimentalToGlobalEvents classTrait + TMATimeTravelExperimentalEvents classTrait',
 	#instVars : [
 		'mySpace',
 		'refreshing',
 		'stepView',
 		'nbAntsView',
-		'nbInsectsView'
+		'nbInsectsView',
+		'returningStepView'
 	],
 	#category : #MolAntsExperimental
 }
@@ -18,7 +19,11 @@ MAGroundExperimental >> componentActivate [
 
 	"Activation of the MAGround component."
 
-	self getTMASimulationExperimentalToGlobalEventsSubscriber  subscribe: self
+	self getTMASimulationExperimentalToGlobalEventsSubscriber subscribe:
+		self.
+		
+		self getTMATimeTravelExperimentalEventsSubscriber subscribe:
+		self
 ]
 
 { #category : #'life cycle' }
@@ -29,7 +34,7 @@ MAGroundExperimental >> componentInitialize [
 	mySpace := self openInNewSpace extent:
 		           MASimulationManagerExperimental simulationWidth
 		           @
-		           (MASimulationManagerExperimental simulationHeight + 350).
+		           (MASimulationManagerExperimental simulationHeight + 400).
 
 	self createInfoPanel
 ]
@@ -39,7 +44,10 @@ MAGroundExperimental >> componentPassivate [
 
 	"Passivating the MAGround component."
 
-	self getTMASimulationExperimentalToGlobalEventsSubscriber unsubscribe: self
+	self getTMASimulationExperimentalToGlobalEventsSubscriber 
+		unsubscribe: self.
+		
+	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -56,54 +64,11 @@ MAGroundExperimental >> createInfoPanel [
 
 	"Initialize the info panel of the view. It initialize each item of the panel (buttons, texts ...)."
 
-	| infoPanel timeTravelPanel button |
-	timeTravelPanel := BlElement new.
-	timeTravelPanel background: Color black.
-	timeTravelPanel relocate:
-		0 @ MASimulationManagerExperimental simulationHeight.
-	timeTravelPanel size:
-		MASimulationManagerExperimental simulationWidth @ 300.
-	timeTravelPanel constraintsDo: [ :c | 
-		c maxHeight: 50.
-		c maxWidth: MASimulationManagerExperimental simulationWidth ].
-	mySpace addChild: timeTravelPanel.
-
-	"Adding One Step before button"
-	button := BlElement new.
-	button background: Color white.
-	button size: 120 @ 25.
-	button relocate:
-		MASimulationManagerExperimental simulationWidth / 10 * 2 @ 10.
-	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
-			 'One step before' asRopedText).
-	button addEventHandler: (BlEventHandler
-			 on: BlClickEvent
-			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ "Action to write here !" ].
-				 anEvent consumed: true ]).
-	timeTravelPanel addChild: button.
-
-	"Adding One Step after button"
-	button := BlElement new.
-	button background: Color white.
-	button size: 120 @ 25.
-	button relocate:
-		MASimulationManagerExperimental simulationWidth / 10 * 6 @ 10.
-	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
-			 'One step after' asRopedText).
-	button addEventHandler: (BlEventHandler
-			 on: BlClickEvent
-			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ "Action to write here !" ].
-				 anEvent consumed: true ]).
-	timeTravelPanel addChild: button.
-
-
-
+	| infoPanel button |
 	infoPanel := BlElement new.
 	infoPanel background: Color lightGray.
 	infoPanel relocate:
-		0 @ (MASimulationManagerExperimental simulationHeight + 50).
+		0 @ MASimulationManagerExperimental simulationHeight.
 	infoPanel size: MASimulationManagerExperimental simulationWidth @ 300.
 	infoPanel constraintsDo: [ :c | 
 		c maxHeight: 300.
@@ -124,7 +89,8 @@ MAGroundExperimental >> createInfoPanel [
 			 do: [ :anEvent | 
 				 button isVisible ifTrue: [ 
 					 self isRunning ifTrue: [ 
-						 MASimulationManagerExperimental pauseSimulation ] ].
+						 self isRestoring ifFalse: [ 
+						 MASimulationManagerExperimental pauseSimulation ]] ].
 				 anEvent consumed: true ]).
 	infoPanel addChild: button.
 
@@ -141,7 +107,8 @@ MAGroundExperimental >> createInfoPanel [
 			 do: [ :anEvent | 
 				 button isVisible ifTrue: [ 
 					 self isRunning ifFalse: [ 
-						 MASimulationManagerExperimental playSimulation ] ].
+						 self isRestoring ifFalse: [ 
+							 MASimulationManagerExperimental playSimulation ] ] ].
 				 anEvent consumed: true ]).
 	infoPanel addChild: button.
 
@@ -201,7 +168,116 @@ MAGroundExperimental >> createInfoPanel [
 			              * 5 + 100 @ 100;
 		              background: Color transparent;
 		              text: '000' asRopedText.
-	infoPanel addChild: nbAntsView
+	infoPanel addChild: nbAntsView.
+
+	self createTimeTravelPanel
+]
+
+{ #category : #initialization }
+MAGroundExperimental >> createTimeTravelPanel [
+
+	| timeTravelPanel button |
+	timeTravelPanel := BlElement new.
+	timeTravelPanel background: Color gray.
+	timeTravelPanel relocate:
+		0 @ (MASimulationManagerExperimental simulationHeight + 300).
+	timeTravelPanel size:
+		MASimulationManagerExperimental simulationWidth @ 100.
+	timeTravelPanel constraintsDo: [ :c | 
+		c maxHeight: 100.
+		c maxWidth: MASimulationManagerExperimental simulationWidth ].
+	mySpace addChild: timeTravelPanel.
+
+	"Adding the Start time trave button"
+	button := BlElement new.
+	button background: Color white.
+	button size: 120 @ 25.
+	button relocate:
+		MASimulationManagerExperimental simulationWidth / 10 @ 10.
+	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
+			 'Start time travel' asRopedText).
+	button addEventHandler: (BlEventHandler
+			 on: BlClickEvent
+			 do: [ :anEvent | 
+				 button isVisible ifTrue: [ 
+					 self isRunning ifTrue: [ 
+						 self isRestoring ifFalse: [ 
+							 self getTMASimulationExperimentalServicesProvider
+								 startTimeTravel ] ]
+						ifFalse:[
+							self isRestoring ifFalse: [
+									MASimulationManagerExperimental playSimulation.
+									self getTMASimulationExperimentalServicesProvider
+								 startTimeTravel
+								] ]].
+				 anEvent consumed: true ]).
+	timeTravelPanel addChild: button.
+
+	"Adding the Stop time trave button"
+	button := BlElement new.
+	button background: Color white.
+	button size: 120 @ 25.
+	button relocate:
+		MASimulationManagerExperimental simulationWidth / 10 * 3 @ 10.
+	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
+			 'Stop time travel' asRopedText).
+	button addEventHandler: (BlEventHandler
+			 on: BlClickEvent
+			 do: [ :anEvent | 
+				 button isVisible ifTrue: [ 
+					 self isRunning ifFalse: [ 
+						 self isRestoring ifTrue: [ 
+							 self getTMASimulationExperimentalServicesProvider
+								 stopTimeTravel ] ] ].
+				 anEvent consumed: true ]).
+	timeTravelPanel addChild: button.
+	"Adding One Step before button"
+	button := BlElement new.
+	button background: Color white.
+	button size: 120 @ 25.
+	button relocate:
+		MASimulationManagerExperimental simulationWidth / 10 * 5 @ 10.
+	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
+			 'One step before' asRopedText).
+	button addEventHandler: (BlEventHandler
+			 on: BlClickEvent
+			 do: [ :anEvent | 
+				 button isVisible ifTrue: [ 
+					 self getTMASimulationExperimentalServicesProvider
+						 restoreOneStepBefore ].
+				 anEvent consumed: true ]).
+	timeTravelPanel addChild: button.
+
+	"Adding One Step after button"
+	button := BlElement new.
+	button background: Color white.
+	button size: 120 @ 25.
+	button relocate:
+		MASimulationManagerExperimental simulationWidth / 10 * 7 @ 10.
+	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
+			 'One step after' asRopedText).
+	button addEventHandler: (BlEventHandler
+			 on: BlClickEvent
+			 do: [ :anEvent | 
+				 button isVisible ifTrue: [ 
+					 self getTMASimulationExperimentalServicesProvider
+						 restoreOneStepAfter ].
+				 anEvent consumed: true ]).
+	timeTravelPanel addChild: button.
+
+	"Ajout du returningStep à l'interface."
+	timeTravelPanel addChild: ((BlTextElement new
+			  relocate:
+				  MASimulationManagerExperimental simulationWidth / 10 @ 50;
+			  background: Color transparent) text:
+			 'Returning Step :' asRopedText).
+	returningStepView := BlTextElement new
+		                     relocate:
+			                     MASimulationManagerExperimental
+				                     simulationWidth / 10 @ 70;
+		                     background: Color transparent;
+		                     text: '000' asRopedText.
+	timeTravelPanel addChild: returningStepView
 ]
 
 { #category : #initialization }
@@ -262,16 +338,40 @@ MAGroundExperimental >> getTMASimulationExperimentalToGlobalEventsSubscriber [
 	^eventsSubscriber
 ]
 
+{ #category : #'component accessing' }
+MAGroundExperimental >> getTMATimeTravelExperimentalEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelExperimentalEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelExperimentalEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAGroundExperimental >> getTMATimeTravelExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
+{ #category : #initialization }
+MAGroundExperimental >> isRestoring [
+
+	^ self getTMASimulationExperimentalServicesProvider isRestoring
+]
+
 { #category : #initialization }
 MAGroundExperimental >> isRunning [
 
 	^ self getTMASimulationExperimentalServicesProvider isRunning
-]
-
-{ #category : #'events - lifecycle' }
-MAGroundExperimental >> simulationStepSent [
-
-	self doSimulationStep.
 ]
 
 { #category : #initialization }
@@ -279,11 +379,24 @@ MAGroundExperimental >> updateInfoPanel [
 
 	"Modify each elements of the info panel. It permit to keep the view up to date with the simulation."
 
+	returningStepView text:
+		self getTMASimulationExperimentalServicesProvider getReturningStep
+			asRopedText.
 	stepView text:
 		self getTMASimulationExperimentalServicesProvider getStep
 			asRopedText.
 	nbAntsView text:
 		self getTMASimulationExperimentalServicesProvider getAnts size
 			asRopedText.
-		nbInsectsView text: self getTMASimulationExperimentalServicesProvider getInsects size asRopedText.			
+	nbInsectsView text:
+		self getTMASimulationExperimentalServicesProvider getInsects size
+			asRopedText
+]
+
+{ #category : #'events - lifecycle' }
+MAGroundExperimental >> updateView [
+	
+	self doSimulationStep
+
+	
 ]

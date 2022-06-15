@@ -1,16 +1,18 @@
 Class {
 	#name : #MASimulationManagerExperimental,
 	#superclass : #MolAbstractComponentImpl,
-	#traits : 'TMASimulationManagerExperimentalType + TMASimulationExperimentalServices',
-	#classTraits : 'TMASimulationManagerExperimentalType classTrait + TMASimulationExperimentalServices classTrait',
+	#traits : 'TMASimulationManagerExperimentalType + TMASimulationExperimentalServices + TMATimeTravelExperimentalEvents',
+	#classTraits : 'TMASimulationManagerExperimentalType classTrait + TMASimulationExperimentalServices classTrait + TMATimeTravelExperimentalEvents classTrait',
 	#instVars : [
 		'simulationThread',
 		'step',
+		'restoringStep',
 		'insects',
 		'nbInsects',
 		'ants',
 		'nbAnts',
-		'isRunning'
+		'isRunning',
+		'isRestoring'
 	],
 	#category : #MolAntsExperimental
 }
@@ -78,6 +80,9 @@ MASimulationManagerExperimental >> componentActivate [
 
 	super componentActivate.
 	isRunning := true.
+	
+		self getTMATimeTravelExperimentalEventsSubscriber subscribe:
+		self
 ]
 
 { #category : #'life cycle' }
@@ -96,6 +101,8 @@ MASimulationManagerExperimental >> componentPassivate [
 
 	super componentPassivate.
 	isRunning := false.
+	
+	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -120,7 +127,8 @@ MASimulationManagerExperimental >> createAnts [
 		ant position: self class simulationAntHillPosition.
 
 		"Adding the ant to the OrderedCollection of ants"
-		ants add: ant ]
+		ants add: ant.
+		self getTMATimeTravelExperimentalServicesProvider save: ant at: step]
 ]
 
 { #category : #'life cycle' }
@@ -139,7 +147,8 @@ MASimulationManagerExperimental >> createInsects [
 			(Random new nextIntegerBetween: 1 and: self class simulationHeight).
 
 		"Adding the insect to the OrderedCollection of insects"
-		insects add: ((insect position)->insect)]
+		insects add: insect position -> insect.
+		self getTMATimeTravelExperimentalServicesProvider save: insect at: step  ]
 ]
 
 { #category : #services }
@@ -155,6 +164,12 @@ MASimulationManagerExperimental >> getInsects [
 ]
 
 { #category : #services }
+MASimulationManagerExperimental >> getReturningStep [
+
+	^ restoringStep
+]
+
+{ #category : #services }
 MASimulationManagerExperimental >> getStep [
 
 	^step
@@ -163,6 +178,36 @@ MASimulationManagerExperimental >> getStep [
 { #category : #'component accessing' }
 MASimulationManagerExperimental >> getTMASimulationExperimentalToGlobalEventsNotifier [
 	^self eventsNotifiers at: TMASimulationExperimentalToGlobalEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMASimulationExperimentalToGlobalEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MASimulationManagerExperimental >> getTMATimeTravelExperimentalEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelExperimentalEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelExperimentalEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MASimulationManagerExperimental >> getTMATimeTravelExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> isRestoring [
+
+	^ isRestoring
 ]
 
 { #category : #services }
@@ -197,11 +242,40 @@ MASimulationManagerExperimental >> removeInsects [
 	nbInsects := 0
 ]
 
+{ #category : #services }
+MASimulationManagerExperimental >> restoreOneStepAfter [
+
+	isRestoring ifTrue: [ 
+	restoringStep < step ifTrue: [ 
+		restoringStep := restoringStep + 1.
+		self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
+			restoringStep.
+		self getTMASimulationExperimentalToGlobalEventsNotifier updateView ]]
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> restoreOneStepBefore [
+
+	isRestoring ifTrue: [ 
+		restoringStep > 0 ifTrue: [ 
+			restoringStep := restoringStep - 1.
+			self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
+				restoringStep.
+			self getTMASimulationExperimentalToGlobalEventsNotifier updateView ] ]
+]
+
 { #category : #'component accessing' }
 MASimulationManagerExperimental >> start [
+
 	MATimeTravelExperimental start: 'TimeTravel'.
+	self
+		forServices: TMATimeTravelExperimentalServices
+		useProvider: #TimeTravel.
+	isRunning := true.
+	isRestoring := false.
 	simulationThread := nil.
 	step := 0.
+	restoringStep := 0.
 	ants := OrderedCollection new.
 	nbAnts := 0.
 	insects := Dictionary new.
@@ -210,7 +284,6 @@ MASimulationManagerExperimental >> start [
 	self createAnts.
 	self createInsects.
 	self startSimulationLoop.
-	isRunning := true.
 	self getTMASimulationExperimentalToGlobalEventsNotifier started
 ]
 
@@ -221,16 +294,32 @@ MASimulationManagerExperimental >> startSimulationLoop [
 		simulationThread := [ 
 		                    [ true ] whileTrue: [ 
 			                    isRunning ifTrue: [ 
-				                    step := step + 1.
-				                    self getTMASimulationExperimentalToGlobalEventsNotifier
-					                    simulationStepSent.
-				                    (Delay forMilliseconds:
-					                     self class simulationStepDurationInMs) wait ] ] ]
-			                    newProcess priority:
+				                    isRestoring
+					                    ifTrue: [  ]
+					                    ifFalse: [ 
+						                    step := step + 1.
+						                    restoringStep := step.
+						                    self
+							                    getTMASimulationExperimentalToGlobalEventsNotifier 
+							                    simulationStepSent: step.
+							self
+							                    getTMASimulationExperimentalToGlobalEventsNotifier 
+							                    updateView.
+						                    (Delay forMilliseconds:
+							                     self class simulationStepDurationInMs)
+							                    wait ] ] ] ] newProcess priority:
 			                    Processor userBackgroundPriority.
 		simulationThread name:
 			'Molecule SimulationManagerExperimental Process' ].
 	simulationThread resume
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> startTimeTravel [
+
+	isRunning := false.
+	isRestoring := true.
+	self getTMATimeTravelExperimentalServicesProvider startTimeTravel
 ]
 
 { #category : #'component accessing' }
@@ -251,4 +340,15 @@ MASimulationManagerExperimental >> stopSimulationLoop [
 	simulationThread ifNil: [ ^ self ].
 	simulationThread terminate.
 	simulationThread := nil
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> stopTimeTravel [
+
+	isRestoring ifTrue: [ 
+		self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
+			step.
+		self getTMATimeTravelExperimentalServicesProvider stopTimeTravel.
+		isRestoring := false.
+		isRunning := true ]
 ]

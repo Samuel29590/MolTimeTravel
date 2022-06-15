@@ -1,8 +1,8 @@
 Class {
 	#name : #MAInsectExperimental,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAInsectsExperimentalType + TMASimulationExperimentalToGlobalEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAInsectsExperimentalType classTrait + TMASimulationExperimentalToGlobalEvents classTrait',
+	#traits : 'MolComponentImpl + TMAInsectsExperimentalType + TMASimulationExperimentalToGlobalEvents + TMATimeTravelExperimentalEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAInsectsExperimentalType classTrait + TMASimulationExperimentalToGlobalEvents classTrait + TMATimeTravelExperimentalEvents classTrait',
 	#instVars : [
 		'position',
 		'ageInMs'
@@ -16,7 +16,22 @@ MAInsectExperimental >> componentActivate [
 	"Activation of the MAGround component."
 
 	self getTMASimulationExperimentalToGlobalEventsSubscriber subscribe:
+		self.
+		
+	self getTMATimeTravelExperimentalEventsSubscriber subscribe:
 		self
+]
+
+{ #category : #'life cycle' }
+MAInsectExperimental >> componentInitialize [
+
+	"Initialization of the MAAnt component."
+
+	self
+		forServices: TMATimeTravelExperimentalServices
+		useProvider: #TimeTravel.
+
+	ageInMs := 0
 ]
 
 { #category : #'life cycle' }
@@ -25,7 +40,9 @@ MAInsectExperimental >> componentPassivate [
 	"Passivating the MAGround component."
 
 	self getTMASimulationExperimentalToGlobalEventsSubscriber 
-		unsubscribe: self
+		unsubscribe: self.
+		
+	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'component accessing' }
@@ -38,6 +55,30 @@ MAInsectExperimental >> getTMASimulationExperimentalToGlobalEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMASimulationExperimentalToGlobalEvents named: eventsSymbol ]. 
 	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAInsectExperimental >> getTMATimeTravelExperimentalEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelExperimentalEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelExperimentalEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAInsectExperimental >> getTMATimeTravelExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'events - lifecycle' }
@@ -71,8 +112,16 @@ MAInsectExperimental >> position: anObject [
 	position := anObject
 ]
 
+{ #category : #events }
+MAInsectExperimental >> restore: aComponentName value: componentValues [
+
+	self componentName = aComponentName ifTrue: [ 
+		self position: componentValues ]
+]
+
 { #category : #'events - lifecycle' }
-MAInsectExperimental >> simulationStepSent [
+MAInsectExperimental >> simulationStepSent: aStep [
 
 	self move.
+	self getTMATimeTravelExperimentalServicesProvider save: self at: aStep.
 ]

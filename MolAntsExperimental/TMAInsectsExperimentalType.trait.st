@@ -9,5 +9,12 @@ Trait {
 TMAInsectsExperimentalType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMASimulationExperimentalToGlobalEvents }
+	^ { TMASimulationExperimentalToGlobalEvents . TMATimeTravelExperimentalEvents }
+]
+
+{ #category : #'accessing - services' }
+TMAInsectsExperimentalType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { TMATimeTravelExperimentalServices }
 ]
