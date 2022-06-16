@@ -46,6 +46,38 @@ MAAntExperimental >> componentPassivate [
 	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self.
 ]
 
+{ #category : #'events - lifecycle' }
+MAAntExperimental >> doSimulationStep [
+
+	| antRectangle |
+	antRectangle := BlBounds origin: position - (30 @ 30) extent: 60 @ 60.
+
+
+	self getTMASimulationExperimentalServicesProvider getInsects keysDo: [ 
+		:each | 
+		| insectRectangle |
+		insectRectangle := BlBounds origin: each extent: 0 @ 0.
+		(antRectangle intersects: insectRectangle) ifTrue: [ 
+			self getTMAAntsEventsNotifier ant: self eatAt: each ] ]
+]
+
+{ #category : #'component accessing' }
+MAAntExperimental >> getTMAAntsEventsNotifier [
+	^self eventsNotifiers at: TMAAntsEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMAAntsEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MAAntExperimental >> getTMASimulationExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
 { #category : #'component accessing' }
 MAAntExperimental >> getTMASimulationExperimentalToGlobalEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
@@ -113,16 +145,11 @@ MAAntExperimental >> position: anObject [
 	position := anObject
 ]
 
-{ #category : #events }
-MAAntExperimental >> restore: aComponentName value: componentValues [
-
-	self componentName = aComponentName ifTrue: [ 
-		position := componentValues ]
-]
-
 { #category : #'events - lifecycle' }
 MAAntExperimental >> simulationStepSent: aStep [
 
+	
+	self doSimulationStep.
 	self move.
 	self getTMATimeTravelExperimentalServicesProvider
 		save: self

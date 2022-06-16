@@ -6,5 +6,12 @@ Trait {
 }
 
 { #category : #events }
-TMATimeTravelExperimentalEvents >> restore: aComponentName value: componentValues [
+TMATimeTravelExperimentalEvents >> restore: aComponentName values: componentValues [
+
+	self componentName = aComponentName ifTrue: [ 
+		| compt |
+		compt := 1.
+		componentValues do: [ :value | 
+			self instVarAt: compt put: value.
+			compt := compt + 1 ] ]
 ]

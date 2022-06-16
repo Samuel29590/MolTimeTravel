@@ -6,7 +6,8 @@ Class {
 	#instVars : [
 		'history',
 		'isSaving',
-		'isRestoring'
+		'isRestoring',
+		'test'
 	],
 	#category : #MolAntsExperimental
 }
@@ -36,22 +37,31 @@ MATimeTravelExperimental >> getTMATimeTravelExperimentalEventsNotifier [
 
 { #category : #services }
 MATimeTravelExperimental >> restoreAtStep: aStep [
- isRestoring ifTrue: [ 
-	aStep < 0 ifTrue: [ ^ self ].
-	(history at: aStep) keysAndValuesDo: [ :k :v | 
-		self getTMATimeTravelExperimentalEventsNotifier restore: k value: v ]]
+
+	isRestoring ifTrue: [ 
+		aStep < 0 ifTrue: [ ^ self ].
+		(history at: aStep) keysAndValuesDo: [ :k :v | 
+			self getTMATimeTravelExperimentalEventsNotifier restore: k values: v ] ]
 ]
 
 { #category : #services }
 MATimeTravelExperimental >> save: aComponent at: aStep [
 
-	isSaving ifTrue: [
+	| variablesOfTheComponent |
+	isSaving ifTrue: [ 
+		variablesOfTheComponent := OrderedCollection new.
 
-	(history includesKey: aStep) ifFalse: [ 
-		history add: aStep -> Dictionary new ].
+		0 to: aComponent class instSize do: [ :index | 
+			index >0 ifTrue: [ 
+		variablesOfTheComponent add: (aComponent instVarAt: index)] ].
 
-	(history at: aStep) add:
-		aComponent componentName -> aComponent position]
+		test := variablesOfTheComponent.
+
+		(history includesKey: aStep) ifFalse: [ 
+			history add: aStep -> Dictionary new ].
+
+		(history at: aStep) add:
+			aComponent componentName -> variablesOfTheComponent ]
 ]
 
 { #category : #services }

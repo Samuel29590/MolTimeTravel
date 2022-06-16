@@ -9,7 +9,8 @@ Class {
 		'stepView',
 		'nbAntsView',
 		'nbInsectsView',
-		'returningStepView'
+		'returningStepView',
+		'storageView'
 	],
 	#category : #MolAntsExperimental
 }
@@ -90,7 +91,7 @@ MAGroundExperimental >> createInfoPanel [
 				 button isVisible ifTrue: [ 
 					 self isRunning ifTrue: [ 
 						 self isRestoring ifFalse: [ 
-						 MASimulationManagerExperimental pauseSimulation ]] ].
+							 MASimulationManagerExperimental pauseSimulation ] ] ].
 				 anEvent consumed: true ]).
 	infoPanel addChild: button.
 
@@ -165,10 +166,23 @@ MAGroundExperimental >> createInfoPanel [
 	nbAntsView := BlTextElement new
 		              relocate:
 			              MASimulationManagerExperimental simulationWidth / 10
-			              * 5 + 100 @ 100;
+			              * 5 @ 100;
 		              background: Color transparent;
 		              text: '000' asRopedText.
 	infoPanel addChild: nbAntsView.
+
+	"Ajout du storage à l'interface."
+	infoPanel addChild: ((BlTextElement new
+			  relocate:
+				  MASimulationManagerExperimental simulationWidth / 10 * 5 @ 130;
+			  background: Color transparent) text: 'Storage :' asRopedText).
+	storageView := BlTextElement new
+		                 relocate:
+			                 MASimulationManagerExperimental simulationWidth
+			                 / 10 * 5 @ 150;
+		                 background: Color transparent;
+		                 text: '000' asRopedText.
+	infoPanel addChild: storageView.
 
 	self createTimeTravelPanel
 ]
@@ -305,10 +319,10 @@ MAGroundExperimental >> drawOnSpartaCanvas: aCanvas [
 
 	self getTMASimulationExperimentalServicesProvider getInsects 
 		ifNotNil: [ 
-			self getTMASimulationExperimentalServicesProvider getInsects do: [ 
-				:insect | 
+			self getTMASimulationExperimentalServicesProvider getInsects keysAndValuesDo: [ 
+				:position :insects | 
 				aCanvas figure
-					path: (aCanvas shape circleAt: insect position radius: 5);
+					path: (aCanvas shape circleAt: position radius: 5);
 					background: Color black;
 					backgroundAlpha: 1;
 					draw ] ]
@@ -390,6 +404,9 @@ MAGroundExperimental >> updateInfoPanel [
 			asRopedText.
 	nbInsectsView text:
 		self getTMASimulationExperimentalServicesProvider getInsects size
+			asRopedText.
+	storageView text:
+		self getTMASimulationExperimentalServicesProvider getStorage
 			asRopedText
 ]
 

@@ -46,6 +46,11 @@ MAInsectExperimental >> componentPassivate [
 ]
 
 { #category : #'component accessing' }
+MAInsectExperimental >> getTMAInsectsEventsNotifier [
+	^self eventsNotifiers at: TMAInsectsEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMAInsectsEvents name: nil].
+]
+
+{ #category : #'component accessing' }
 MAInsectExperimental >> getTMASimulationExperimentalToGlobalEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
 	itf := TMASimulationExperimentalToGlobalEvents.
@@ -84,7 +89,8 @@ MAInsectExperimental >> getTMATimeTravelExperimentalServicesProvider [
 { #category : #'events - lifecycle' }
 MAInsectExperimental >> move [
 
-	| newPos |
+	| newPos oldPosition |
+	oldPosition := position.
 	newPos := position
 	          +
 	          ((Random new next * 6 - 3) rounded
@@ -97,7 +103,13 @@ MAInsectExperimental >> move [
 	newPos y > MASimulationManagerExperimental simulationHeight ifTrue: [ 
 		newPos := newPos x
 		          @ MASimulationManagerExperimental simulationHeight ].
-	position := newPos
+	
+	position := newPos.
+	
+	self getTMAInsectsEventsNotifier positionChangedFor: self oldPos: oldPosition newPos: position.
+	
+	
+	
 ]
 
 { #category : #accessing }
@@ -112,16 +124,12 @@ MAInsectExperimental >> position: anObject [
 	position := anObject
 ]
 
-{ #category : #events }
-MAInsectExperimental >> restore: aComponentName value: componentValues [
-
-	self componentName = aComponentName ifTrue: [ 
-		self position: componentValues ]
-]
-
 { #category : #'events - lifecycle' }
 MAInsectExperimental >> simulationStepSent: aStep [
 
 	self move.
-	self getTMATimeTravelExperimentalServicesProvider save: self at: aStep.
+
+	self getTMATimeTravelExperimentalServicesProvider
+		save: self
+		at: aStep
 ]

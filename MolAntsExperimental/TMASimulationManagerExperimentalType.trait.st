@@ -9,7 +9,10 @@ Trait {
 TMASimulationManagerExperimentalType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMATimeTravelExperimentalEvents }
+	^ { 
+			TMAAntsEvents .
+		  TMAInsectsEvents.
+		  TMATimeTravelExperimentalEvents }
 ]
 
 { #category : #'accessing - events' }

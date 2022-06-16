@@ -30,6 +30,12 @@ TMASimulationExperimentalServices >> getStep [
 ]
 
 { #category : #services }
+TMASimulationExperimentalServices >> getStorage [
+
+	
+]
+
+{ #category : #services }
 TMASimulationExperimentalServices >> isRestoring [
 
 	

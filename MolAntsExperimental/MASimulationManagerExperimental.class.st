@@ -1,8 +1,8 @@
 Class {
 	#name : #MASimulationManagerExperimental,
 	#superclass : #MolAbstractComponentImpl,
-	#traits : 'TMASimulationManagerExperimentalType + TMASimulationExperimentalServices + TMATimeTravelExperimentalEvents',
-	#classTraits : 'TMASimulationManagerExperimentalType classTrait + TMASimulationExperimentalServices classTrait + TMATimeTravelExperimentalEvents classTrait',
+	#traits : 'TMASimulationManagerExperimentalType + TMASimulationExperimentalServices + TMATimeTravelExperimentalEvents + TMAInsectsEvents + TMAAntsEvents',
+	#classTraits : 'TMASimulationManagerExperimentalType classTrait + TMASimulationExperimentalServices classTrait + TMATimeTravelExperimentalEvents classTrait + TMAInsectsEvents classTrait + TMAAntsEvents classTrait',
 	#instVars : [
 		'simulationThread',
 		'step',
@@ -11,6 +11,7 @@ Class {
 		'nbInsects',
 		'ants',
 		'nbAnts',
+		'storage',
 		'isRunning',
 		'isRestoring'
 	],
@@ -73,6 +74,22 @@ MASimulationManagerExperimental class >> stopSimulation [
 	MolComponentManager cleanUp
 ]
 
+{ #category : #accessing }
+MASimulationManagerExperimental >> ant: anAnt eatAt: aPoint [
+
+	| insect |
+	"Removing the insect in the dictionary."
+	(insects includesKey: aPoint) ifTrue: [ 
+		insect := (insects at: aPoint) removeFirst.
+		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
+
+	"Stoping the insect's component instance."
+	MAInsectExperimental stop: insect componentName.
+
+	storage := storage + 1.
+
+]
+
 { #category : #'life cycle' }
 MASimulationManagerExperimental >> componentActivate [
 
@@ -80,9 +97,10 @@ MASimulationManagerExperimental >> componentActivate [
 
 	super componentActivate.
 	isRunning := true.
-	
-		self getTMATimeTravelExperimentalEventsSubscriber subscribe:
-		self
+
+	self getTMAAntsEventsSubscriber subscribe: self.
+	self getTMAInsectsEventsSubscriber subscribe: self.
+	self getTMATimeTravelExperimentalEventsSubscriber subscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -101,7 +119,9 @@ MASimulationManagerExperimental >> componentPassivate [
 
 	super componentPassivate.
 	isRunning := false.
-	
+
+	self getTMAAntsEventsSubscriber unsubscribe: self.
+	self getTMAInsectsEventsSubscriber unsubscribe: self.
 	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self
 ]
 
@@ -128,7 +148,15 @@ MASimulationManagerExperimental >> createAnts [
 
 		"Adding the ant to the OrderedCollection of ants"
 		ants add: ant.
-		self getTMATimeTravelExperimentalServicesProvider save: ant at: step]
+
+		"Adding events producer into SimulationMManager"
+		self forEvents: TMAAntsEvents addProducer: name.
+
+			ant
+		forServices: TMASimulationExperimentalServices 
+		useProvider: self componentName.
+
+		self getTMATimeTravelExperimentalServicesProvider save: ant at: step ]
 ]
 
 { #category : #'life cycle' }
@@ -142,13 +170,31 @@ MASimulationManagerExperimental >> createInsects [
 		name := ('Insect' , nbInsects printString) asSymbol.
 		insect := MAInsectExperimental start: name.
 		insect position:
+			450
+			@
+			200.
+	"	insect position:
 			(Random new nextIntegerBetween: 1 and: self class simulationWidth)
 			@
 			(Random new nextIntegerBetween: 1 and: self class simulationHeight).
+"
+		"Adding events producer into SimulationMManager"
+		self forEvents: TMAInsectsEvents addProducer: name.
 
 		"Adding the insect to the OrderedCollection of insects"
-		insects add: insect position -> insect.
-		self getTMATimeTravelExperimentalServicesProvider save: insect at: step  ]
+		self getTMATimeTravelExperimentalServicesProvider
+			save: insect
+			at: step.
+
+		"adding the insect to the insects's dictionary"
+		"Add the insect to the dictionary of insects positions."
+		(insects includesKey: insect position)
+			ifFalse: [ 
+				| collection |
+				collection := OrderedCollection new.
+				collection add: insect.
+				insects add: insect position -> collection ]
+			ifTrue: [ (insects at: insect position) addLast: insect ] ]
 ]
 
 { #category : #services }
@@ -173,6 +219,36 @@ MASimulationManagerExperimental >> getReturningStep [
 MASimulationManagerExperimental >> getStep [
 
 	^step
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> getStorage [
+
+	^ storage
+]
+
+{ #category : #'component accessing' }
+MASimulationManagerExperimental >> getTMAAntsEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMAAntsEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMAAntsEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MASimulationManagerExperimental >> getTMAInsectsEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMAInsectsEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMAInsectsEvents named: eventsSymbol ]. 
+	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
@@ -222,6 +298,27 @@ MASimulationManagerExperimental >> nbAnts [
 	^ nbAnts
 ]
 
+{ #category : #events }
+MASimulationManagerExperimental >> positionChangedFor: anInsect oldPos: aPoint newPos: anotherPoint [
+
+	"Add or update the insect position in the dictionary."
+
+	"remove the old position."
+
+	(insects includesKey: aPoint) ifTrue: [ 
+		(insects at: aPoint) remove: anInsect ifAbsent: [  ].
+		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
+
+	"Add to the new position."
+	(insects includesKey: anotherPoint)
+		ifFalse: [ 
+			| collection |
+			collection := OrderedCollection new.
+			collection add: anInsect.
+			insects add: anotherPoint -> collection ]
+		ifTrue: [ (insects at: anotherPoint) addLast: anInsect ]
+]
+
 { #category : #'life cycle' }
 MASimulationManagerExperimental >> removeAnts [
 
@@ -237,7 +334,11 @@ MASimulationManagerExperimental >> removeInsects [
 
 	"Delete nbAnt ants"
 
-	insects do: [ :e | MAInsectExperimental stop: e componentName ].
+	insects do: [ :each | 
+		| name |
+		each do: [ :insect | "Delete insect"
+			name := insect componentName.
+			MAInsectExperimental stop: name ] ].
 	insects := nil.
 	nbInsects := 0
 ]
@@ -276,13 +377,14 @@ MASimulationManagerExperimental >> start [
 	simulationThread := nil.
 	step := 0.
 	restoringStep := 0.
-	ants := OrderedCollection new.
-	nbAnts := 0.
 	insects := Dictionary new.
 	nbInsects := 0.
+	ants := OrderedCollection new.
+	nbAnts := 0.
+	storage := 0.
 	MAGroundExperimental start: 'Ground'.
-	self createAnts.
 	self createInsects.
+	self createAnts.
 	self startSimulationLoop.
 	self getTMASimulationExperimentalToGlobalEventsNotifier started
 ]

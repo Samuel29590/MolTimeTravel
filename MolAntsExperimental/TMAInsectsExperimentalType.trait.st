@@ -12,6 +12,13 @@ TMAInsectsExperimentalType classSide >> consumedComponentEvents [
 	^ { TMASimulationExperimentalToGlobalEvents . TMATimeTravelExperimentalEvents }
 ]
 
+{ #category : #'accessing - events' }
+TMAInsectsExperimentalType classSide >> producedComponentEvents [
+
+	<componentContract>
+	^ { TMAInsectsEvents }
+]
+
 { #category : #'accessing - services' }
 TMAInsectsExperimentalType classSide >> usedComponentServices [
 
