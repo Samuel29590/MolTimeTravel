@@ -15,8 +15,8 @@ Pharo 8, Pharo 9 and Pharo 10 :
 ### Prerequisites
 
 MolAnts require ![Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and ![Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
-  
-![TimeTravel](https://user-images.githubusercontent.com/64481702/173848990-10014350-4c89-4f85-b1fb-20c22705d9e1.png)
+
+![TimeTravel](https://user-images.githubusercontent.com/64481702/174041805-89c3dc86-ed19-4990-b42a-bb5d27483647.png)
 
 <br><br><br><br>
 
