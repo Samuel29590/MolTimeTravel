@@ -52,8 +52,8 @@ MATimeTravelExperimental >> save: aComponent at: aStep [
 		variablesOfTheComponent := OrderedCollection new.
 
 		0 to: aComponent class instSize do: [ :index | 
-			index >0 ifTrue: [ 
-		variablesOfTheComponent add: (aComponent instVarAt: index)] ].
+			index > 0 ifTrue: [ 
+				variablesOfTheComponent add: (aComponent instVarAt: index) copy ] ].
 
 		test := variablesOfTheComponent.
 

@@ -343,6 +343,24 @@ MASimulationManagerExperimental >> removeInsects [
 	nbInsects := 0
 ]
 
+{ #category : #events }
+MASimulationManagerExperimental >> restore: aComponentName values: componentValues [
+
+	| lastStep |
+	
+	lastStep := step.
+	
+	self componentName = aComponentName ifTrue: [ 
+		| compt |
+		compt := 1.
+		componentValues do: [ :value | 
+			self instVarAt: compt put: value.
+			compt := compt + 1 ] ].
+	isRunning := false.
+	isRestoring := true.
+	step := lastStep 
+]
+
 { #category : #services }
 MASimulationManagerExperimental >> restoreOneStepAfter [
 
@@ -385,6 +403,7 @@ MASimulationManagerExperimental >> start [
 	MAGroundExperimental start: 'Ground'.
 	self createInsects.
 	self createAnts.
+	self getTMATimeTravelExperimentalServicesProvider save: self at:0.
 	self startSimulationLoop.
 	self getTMASimulationExperimentalToGlobalEventsNotifier started
 ]
@@ -404,9 +423,12 @@ MASimulationManagerExperimental >> startSimulationLoop [
 						                    self
 							                    getTMASimulationExperimentalToGlobalEventsNotifier 
 							                    simulationStepSent: step.
-							self
-							                    getTMASimulationExperimentalToGlobalEventsNotifier 
+						                    self
+							                    getTMASimulationExperimentalToGlobalEventsNotifier
 							                    updateView.
+								self getTMATimeTravelExperimentalServicesProvider
+		save: self
+		at: step.
 						                    (Delay forMilliseconds:
 							                     self class simulationStepDurationInMs)
 							                    wait ] ] ] ] newProcess priority:
@@ -446,8 +468,7 @@ MASimulationManagerExperimental >> stopSimulationLoop [
 
 { #category : #services }
 MASimulationManagerExperimental >> stopTimeTravel [
-
-	isRestoring ifTrue: [ 
+isRestoring ifTrue: [ 
 		self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
 			step.
 		self getTMATimeTravelExperimentalServicesProvider stopTimeTravel.
