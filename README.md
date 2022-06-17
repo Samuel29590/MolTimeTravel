@@ -46,13 +46,13 @@ This implementation provides start / pause / play / stop methods on the class si
 
 ## Insects
 
-The component insect is very simple, insects spawn randomly on the ground and move randomly on the ground.
+The component insect is very simple, insects spawn randomly on the ground and move randomly on the ground waiting to be eaten.
 
 <br><br><br><br>
 
 ## Ants
 
-The component ant. Ants spawn in the of the ground and move also randomly on the ground.
+The component ant. Ants spawn in the of the ground and move also randomly on the ground. If an ant is close to an insect, the insect die and the storage variable of the simulation increase.
 
 <br><br><br><br>
 
