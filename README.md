@@ -28,7 +28,7 @@ The data are stored in the dictionary: *history* of the compinent *TimeTravel*. 
 
 <br><br><br><br>
 
-##### UML of the components, events and 
+##### UML of the components, events and services of MolAntsExperimental
 
 ![TimeTravel](https://user-images.githubusercontent.com/64481702/174041805-89c3dc86-ed19-4990-b42a-bb5d27483647.png)
 
