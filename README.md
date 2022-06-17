@@ -18,7 +18,7 @@ MolAntsExperimental require ![Molecule](https://github.com/OpenSmock/Molecule) f
 
 ### Documentation
 
-MolAntsExperiment like ![MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, it's called time-traveling.
+MolAntsExperiment like ![MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, and replay the simulation step by step, it's called time-traveling.
 
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
