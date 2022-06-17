@@ -18,6 +18,10 @@ MolAntsExperimental require ![Molecule](https://github.com/OpenSmock/Molecule) f
 
 ### Documentation
 
+MolAntsExperiment like ![MolAnts](https://github.com/Samuel29590/MolAnts) is an simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, it's called time-traveling.
+
+This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
+
 ##### How is the data recorded ?
 
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/174248508-3057c45c-e5c0-42b7-8cf9-c76935b9d547.png)
@@ -25,8 +29,6 @@ MolAntsExperimental require ![Molecule](https://github.com/OpenSmock/Molecule) f
 Each time a component is modified, the component uses the *TMATimeTravelServices* and the *save: aComponent at: aStep* method to save its data at this stage of the simulation.
 
 The data are stored in the dictionary: *history* of the compinent *TimeTravel*. This dictionary has the simulation step as its key and another dictionary as its value which contains all the data on the simulation components. Thus, for each component, the data is stored in ordered collections to be able to retrieve them when we replay the simulation.
-
-<br><br><br><br>
 
 ##### UML of the components, events and services of MolAntsExperimental
 
