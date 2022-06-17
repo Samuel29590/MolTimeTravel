@@ -1,4 +1,4 @@
-# MolAnts
+# MolAntsExperimental
 
 This is the experimental version of ![MolAnts](https://github.com/Samuel29590/MolAnts).
 
