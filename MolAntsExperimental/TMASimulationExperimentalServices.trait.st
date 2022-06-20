@@ -47,6 +47,14 @@ TMASimulationExperimentalServices >> isRunning [
 ]
 
 { #category : #services }
+TMASimulationExperimentalServices >> playBackward [
+]
+
+{ #category : #services }
+TMASimulationExperimentalServices >> replay [
+]
+
+{ #category : #services }
 TMASimulationExperimentalServices >> restoreOneStepAfter [
 
 	

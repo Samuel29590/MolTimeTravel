@@ -6,6 +6,18 @@ Trait {
 }
 
 { #category : #services }
+TMATimeTravelExperimentalServices >> playBackward [
+
+	
+]
+
+{ #category : #services }
+TMATimeTravelExperimentalServices >> replay [
+
+	
+]
+
+{ #category : #services }
 TMATimeTravelExperimentalServices >> restoreAtStep: aStep [
 ]
 

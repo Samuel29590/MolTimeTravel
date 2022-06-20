@@ -341,6 +341,14 @@ MASimulationManagerExperimental >> nbInsects: anObject [
 	nbInsects := anObject
 ]
 
+{ #category : #services }
+MASimulationManagerExperimental >> playBackward [
+
+		isRestoring ifTrue: [ 
+		restoringStep > 0 ifTrue: [ 
+			self getTMATimeTravelExperimentalServicesProvider playBackward ] ]
+]
+
 { #category : #events }
 MASimulationManagerExperimental >> positionChangedFor: anInsect oldPos: aPoint newPos: anotherPoint [
 
@@ -384,6 +392,14 @@ MASimulationManagerExperimental >> removeInsects [
 			MAInsectExperimental stop: name ] ].
 	insects := nil.
 	nbInsects := 0
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> replay [
+
+	isRestoring ifTrue: [ 
+		restoringStep < step ifTrue: [
+			self getTMATimeTravelExperimentalServicesProvider replay ] ]
 ]
 
 { #category : #events }

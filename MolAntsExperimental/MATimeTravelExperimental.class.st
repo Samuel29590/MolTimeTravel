@@ -35,6 +35,21 @@ MATimeTravelExperimental >> getTMATimeTravelExperimentalEventsNotifier [
 ]
 
 { #category : #services }
+MATimeTravelExperimental >> playBackward [
+
+	
+	Transcript
+		show: 'playbackward';
+		cr
+]
+
+{ #category : #services }
+MATimeTravelExperimental >> replay [
+
+	Transcript show:'replay';cr.
+]
+
+{ #category : #services }
 MATimeTravelExperimental >> restoreAtStep: aStep [
 
 	| stepToIndex mementos |
