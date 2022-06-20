@@ -10,7 +10,9 @@ Class {
 		'nbAntsView',
 		'nbInsectsView',
 		'returningStepView',
-		'storageView'
+		'storageView',
+		'labelText',
+		'label'
 	],
 	#category : #MolAntsExperimental
 }
@@ -202,83 +204,181 @@ MAGroundExperimental >> createTimeTravelPanel [
 		c maxWidth: MASimulationManagerExperimental simulationWidth ].
 	mySpace addChild: timeTravelPanel.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding the Start time trave button"
-	button := BlElement new.
-	button background: Color white.
-	button size: 120 @ 25.
-	button relocate:
-		MASimulationManagerExperimental simulationWidth / 10 @ 10.
-	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
-			 'Start time travel' asRopedText).
-	button addEventHandler: (BlEventHandler
-			 on: BlClickEvent
-			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ 
-					 self isRunning ifTrue: [ 
-						 self isRestoring ifFalse: [ 
-							 self getTMASimulationExperimentalServicesProvider
-								 startTimeTravel ] ]
-						ifFalse:[
-							self isRestoring ifFalse: [
-									MASimulationManagerExperimental playSimulation.
-									self getTMASimulationExperimentalServicesProvider
-								 startTimeTravel
-								] ]].
-				 anEvent consumed: true ]).
+	button := BlElement new
+		          background: Color white;
+		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		          padding: (BlInsets
+				           top: 8
+				           right: 16
+				           bottom: 8
+				           left: 16);
+		          layout: BlLinearLayout horizontal;
+		          effect: (BlGaussianShadowEffect
+				           color: (Color black alpha: 0.3)
+				           width: 1
+				           offset: 0 @ 2);
+		          constraintsDo: [ :c | 
+			          c horizontal fitContent.
+			          c vertical fitContent ];
+		          relocate:
+			          MASimulationManagerExperimental simulationWidth / 10 @ 10;
+		          addEventHandler: (BlEventHandler
+				           on: BlClickEvent
+				           do: [ :anEvent | 
+					           button isVisible ifTrue: [ 
+							           self isRunning
+								           ifTrue: [ 
+									           self isRestoring ifFalse: [ 
+											           self
+												           getTMASimulationExperimentalServicesProvider
+												           startTimeTravel ] ]
+								           ifFalse: [ 
+									           self isRestoring ifFalse: [ 
+											           MASimulationManagerExperimental playSimulation.
+											           self
+												           getTMASimulationExperimentalServicesProvider
+												           startTimeTravel ] ] ].
+					           anEvent consumed: true ]).
+	labelText := 'Start time travel' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	button addChild: label.
 	timeTravelPanel addChild: button.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding the Stop time trave button"
-	button := BlElement new.
-	button background: Color white.
-	button size: 120 @ 25.
-	button relocate:
-		MASimulationManagerExperimental simulationWidth / 10 * 3 @ 10.
-	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
-			 'Stop time travel' asRopedText).
-	button addEventHandler: (BlEventHandler
-			 on: BlClickEvent
-			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ 
-					 self isRunning ifFalse: [ 
-						 self isRestoring ifTrue: [ 
-							 self getTMASimulationExperimentalServicesProvider
-								 stopTimeTravel ] ] ].
-				 anEvent consumed: true ]).
+	button := BlElement new
+		          background: Color white;
+		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		          padding: (BlInsets
+				           top: 8
+				           right: 16
+				           bottom: 8
+				           left: 16);
+		          layout: BlLinearLayout horizontal;
+		          effect: (BlGaussianShadowEffect
+				           color: (Color black alpha: 0.3)
+				           width: 1
+				           offset: 0 @ 2);
+		          constraintsDo: [ :c | 
+			          c horizontal fitContent.
+			          c vertical fitContent ];
+		          relocate:
+			          MASimulationManagerExperimental simulationWidth / 10 * 3
+			          @ 10;
+		          addEventHandler: (BlEventHandler
+				           on: BlClickEvent
+				           do: [ :anEvent | 
+					           button isVisible ifTrue: [ 
+							           self isRunning ifFalse: [ 
+									           self isRestoring ifTrue: [ 
+											           self
+												           getTMASimulationExperimentalServicesProvider
+												           stopTimeTravel ] ] ].
+					           anEvent consumed: true ]).
+	labelText := 'Stop time travel' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	button addChild: label.
 	timeTravelPanel addChild: button.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding One Step before button"
-	button := BlElement new.
-	button background: Color white.
-	button size: 120 @ 25.
-	button relocate:
-		MASimulationManagerExperimental simulationWidth / 10 * 5 @ 10.
-	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
-			 'One step before' asRopedText).
-	button addEventHandler: (BlEventHandler
-			 on: BlClickEvent
-			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ 
-					 self getTMASimulationExperimentalServicesProvider
-						 restoreOneStepBefore ].
-				 anEvent consumed: true ]).
+	button := BlElement new
+		          background: Color white;
+		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		          padding: (BlInsets
+				           top: 8
+				           right: 16
+				           bottom: 8
+				           left: 16);
+		          layout: BlLinearLayout horizontal;
+		          effect: (BlGaussianShadowEffect
+				           color: (Color black alpha: 0.3)
+				           width: 1
+				           offset: 0 @ 2);
+		          constraintsDo: [ :c | 
+			          c horizontal fitContent.
+			          c vertical fitContent ];
+		          relocate:
+			          MASimulationManagerExperimental simulationWidth / 10 * 5
+			          @ 10;
+		          addEventHandler: (BlEventHandler
+				           on: BlClickEvent
+				           do: [ :anEvent | 
+					           button isVisible ifTrue: [ 
+							           self getTMASimulationExperimentalServicesProvider
+								           restoreOneStepBefore ].
+					           anEvent consumed: true ]).
+	labelText := 'One step before' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	button addChild: label.
 	timeTravelPanel addChild: button.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding One Step after button"
-	button := BlElement new.
-	button background: Color white.
-	button size: 120 @ 25.
-	button relocate:
-		MASimulationManagerExperimental simulationWidth / 10 * 7 @ 10.
-	button addChild: ((BlTextElement new relocate: 5 @ 5) text:
-			 'One step after' asRopedText).
-	button addEventHandler: (BlEventHandler
-			 on: BlClickEvent
-			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ 
-					 self getTMASimulationExperimentalServicesProvider
-						 restoreOneStepAfter ].
-				 anEvent consumed: true ]).
+	button := BlElement new
+		          background: Color white;
+		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		          padding: (BlInsets
+				           top: 8
+				           right: 16
+				           bottom: 8
+				           left: 16);
+		          layout: BlLinearLayout horizontal;
+		          effect: (BlGaussianShadowEffect
+				           color: (Color black alpha: 0.3)
+				           width: 1
+				           offset: 0 @ 2);
+		          constraintsDo: [ :c | 
+			          c horizontal fitContent.
+			          c vertical fitContent ];
+		          relocate:
+			          MASimulationManagerExperimental simulationWidth / 10 * 7
+			          @ 10;
+		          addEventHandler: (BlEventHandler
+				           on: BlClickEvent
+				           do: [ :anEvent | 
+					           button isVisible ifTrue: [ 
+							           self getTMASimulationExperimentalServicesProvider
+								           restoreOneStepAfter ].
+					           anEvent consumed: true ]).
+	labelText := 'One step after' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	button addChild: label.
 	timeTravelPanel addChild: button.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	"Ajout du returningStep à l'interface."
 	timeTravelPanel addChild: ((BlTextElement new
 			  relocate:

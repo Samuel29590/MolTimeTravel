@@ -10,6 +10,18 @@ Class {
 	#category : #MolAntsExperimental
 }
 
+{ #category : #accessing }
+MAInsectExperimental >> ageInMs [
+
+	^ ageInMs
+]
+
+{ #category : #accessing }
+MAInsectExperimental >> ageInMs: anObject [
+
+	ageInMs := anObject
+]
+
 { #category : #'life cycle' }
 MAInsectExperimental >> componentActivate [
 
@@ -17,9 +29,12 @@ MAInsectExperimental >> componentActivate [
 
 	self getTMASimulationExperimentalToGlobalEventsSubscriber subscribe:
 		self.
-		
-	self getTMATimeTravelExperimentalEventsSubscriber subscribe:
-		self
+
+	self getTMATimeTravelExperimentalEventsSubscriber subscribe: self.
+
+	self
+		forEvents: TMATimeTravelExperimentalEvents
+		addProducer: 'TimeTravel'
 ]
 
 { #category : #'life cycle' }
@@ -124,12 +139,30 @@ MAInsectExperimental >> position: anObject [
 	position := anObject
 ]
 
+{ #category : #events }
+MAInsectExperimental >> restore: aComponentName values: aMemento [
+
+	self componentName = aComponentName ifTrue: [ 
+		position := aMemento position.
+		ageInMs := aMemento ageInMs ]
+]
+
 { #category : #'events - lifecycle' }
 MAInsectExperimental >> simulationStepSent: aStep [
 
+	| memento |
+	memento := MAInsectMemento new.
+
+	"age of the insect increase"
+	ageInMs := aStep
+	           *
+	           MASimulationManagerExperimental simulationStepDurationInMs.
+
+	"insect move"
 	self move.
 
+	"insect save it state"
 	self getTMATimeTravelExperimentalServicesProvider
-		save: self
+		save: (memento save: self)
 		at: aStep
 ]

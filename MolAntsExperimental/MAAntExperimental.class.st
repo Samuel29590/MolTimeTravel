@@ -10,6 +10,18 @@ Class {
 	#category : #MolAntsExperimental
 }
 
+{ #category : #accessing }
+MAAntExperimental >> ageInMs [
+
+	^ ageInMs
+]
+
+{ #category : #accessing }
+MAAntExperimental >> ageInMs: anObject [
+
+	ageInMs := anObject
+]
+
 { #category : #'life cycle' }
 MAAntExperimental >> componentActivate [
 
@@ -47,12 +59,14 @@ MAAntExperimental >> componentPassivate [
 ]
 
 { #category : #'events - lifecycle' }
-MAAntExperimental >> doSimulationStep [
+MAAntExperimental >> doSimulationStep: aStep [
 
 	| antRectangle |
+	"age of the ant increase"
+	ageInMs := aStep * MASimulationManagerExperimental simulationStepDurationInMs.
+
+	"Detection of insects and eat if one is near."
 	antRectangle := BlBounds origin: position - (30 @ 30) extent: 60 @ 60.
-
-
 	self getTMASimulationExperimentalServicesProvider getInsects keysDo: [ 
 		:each | 
 		| insectRectangle |
@@ -145,13 +159,29 @@ MAAntExperimental >> position: anObject [
 	position := anObject
 ]
 
+{ #category : #events }
+MAAntExperimental >> restore: aComponentName values: aMemento [
+
+	self componentName = aComponentName ifTrue: [ 
+		position := aMemento position.
+		ageInMs := aMemento ageInMs ]
+]
+
 { #category : #'events - lifecycle' }
 MAAntExperimental >> simulationStepSent: aStep [
 
+	| memento |
+	memento := MAAntMemento new.
+
+	"ant do actions"
+	self doSimulationStep: aStep.
 	
-	self doSimulationStep.
+	"ant move"
 	self move.
+
+	"ant save it state"
 	self getTMATimeTravelExperimentalServicesProvider
-		save: self
+		save: (memento save: self)
 		at: aStep
+
 ]

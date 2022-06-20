@@ -78,16 +78,28 @@ MASimulationManagerExperimental class >> stopSimulation [
 MASimulationManagerExperimental >> ant: anAnt eatAt: aPoint [
 
 	| insect |
+	
 	"Removing the insect in the dictionary."
-	(insects includesKey: aPoint) ifTrue: [ 
+	"(insects includesKey: aPoint) ifTrue: [ 
 		insect := (insects at: aPoint) removeFirst.
-		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
+		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ]."
 
 	"Stoping the insect's component instance."
-	MAInsectExperimental stop: insect componentName.
+"	MAInsectExperimental stop: insect componentName.
+"
+	storage := storage + 1
+]
 
-	storage := storage + 1.
+{ #category : #services }
+MASimulationManagerExperimental >> ants [
 
+	^ ants
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> ants: anObject [
+
+	ants := anObject
 ]
 
 { #category : #'life cycle' }
@@ -139,8 +151,10 @@ MASimulationManagerExperimental >> createAnts [
 
 	"Creation of a new ant"
 
-	| name ant |
+	| name ant memento |
+	
 	1 to: 2 do: [ :e | 
+		memento := MAAntMemento new.
 		nbAnts := nbAnts + 1.
 		name := ('Ant' , nbAnts printString) asSymbol.
 		ant := MAAntExperimental start: name.
@@ -152,11 +166,13 @@ MASimulationManagerExperimental >> createAnts [
 		"Adding events producer into SimulationMManager"
 		self forEvents: TMAAntsEvents addProducer: name.
 
-			ant
-		forServices: TMASimulationExperimentalServices 
-		useProvider: self componentName.
+		ant
+			forServices: TMASimulationExperimentalServices
+			useProvider: self componentName.
 
-		self getTMATimeTravelExperimentalServicesProvider save: ant at: step ]
+		self getTMATimeTravelExperimentalServicesProvider
+			save: (memento save: ant)
+			at: step ]
 ]
 
 { #category : #'life cycle' }
@@ -164,16 +180,14 @@ MASimulationManagerExperimental >> createInsects [
 
 	"Creation of a new insect"
 
-	| name insect |
+	| name insect memento |
 	1 to: 2 do: [ :e | 
+	memento := MAInsectMemento new.
 		nbInsects := nbInsects + 1.
 		name := ('Insect' , nbInsects printString) asSymbol.
 		insect := MAInsectExperimental start: name.
-		insect position:
-			450
-			@
-			200.
-	"	insect position:
+		insect position: 450 @ 200.
+		"	insect position:
 			(Random new nextIntegerBetween: 1 and: self class simulationWidth)
 			@
 			(Random new nextIntegerBetween: 1 and: self class simulationHeight).
@@ -183,7 +197,7 @@ MASimulationManagerExperimental >> createInsects [
 
 		"Adding the insect to the OrderedCollection of insects"
 		self getTMATimeTravelExperimentalServicesProvider
-			save: insect
+			save: (memento save: insect)
 			at: step.
 
 		"adding the insect to the insects's dictionary"
@@ -281,6 +295,17 @@ MASimulationManagerExperimental >> getTMATimeTravelExperimentalServicesProvider 
 ]
 
 { #category : #services }
+MASimulationManagerExperimental >> insects [
+	^ insects
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> insects: anObject [
+
+	insects := anObject
+]
+
+{ #category : #services }
 MASimulationManagerExperimental >> isRestoring [
 
 	^ isRestoring
@@ -296,6 +321,24 @@ MASimulationManagerExperimental >> isRunning [
 MASimulationManagerExperimental >> nbAnts [
 
 	^ nbAnts
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> nbAnts: anObject [
+
+	nbAnts := anObject
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> nbInsects [
+
+	^ nbInsects
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> nbInsects: anObject [
+
+	nbInsects := anObject
 ]
 
 { #category : #events }
@@ -344,21 +387,16 @@ MASimulationManagerExperimental >> removeInsects [
 ]
 
 { #category : #events }
-MASimulationManagerExperimental >> restore: aComponentName values: componentValues [
+MASimulationManagerExperimental >> restore: aComponentName values: aMemento [
 
-	| lastStep |
-	
-	lastStep := step.
-	
 	self componentName = aComponentName ifTrue: [ 
-		| compt |
-		compt := 1.
-		componentValues do: [ :value | 
-			self instVarAt: compt put: value.
-			compt := compt + 1 ] ].
-	isRunning := false.
-	isRestoring := true.
-	step := lastStep 
+			componentName := aMemento componentName.
+	restoringStep := aMemento restoringStep.
+	insects := aMemento insects.
+	nbInsects := aMemento nbInsects.
+	ants := aMemento ants.
+	nbAnts := aMemento nbAnts.
+	storage := aMemento storage ]
 ]
 
 { #category : #services }
@@ -383,8 +421,23 @@ MASimulationManagerExperimental >> restoreOneStepBefore [
 			self getTMASimulationExperimentalToGlobalEventsNotifier updateView ] ]
 ]
 
+{ #category : #services }
+MASimulationManagerExperimental >> restoringStep [
+
+	^ restoringStep
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> restoringStep: anObject [
+
+	restoringStep := anObject
+]
+
 { #category : #'component accessing' }
 MASimulationManagerExperimental >> start [
+
+	| memento |
+	memento := MASimulationMemento new.
 
 	MATimeTravelExperimental start: 'TimeTravel'.
 	self
@@ -403,7 +456,7 @@ MASimulationManagerExperimental >> start [
 	MAGroundExperimental start: 'Ground'.
 	self createInsects.
 	self createAnts.
-	self getTMATimeTravelExperimentalServicesProvider save: self at:0.
+	self getTMATimeTravelExperimentalServicesProvider save: (memento save: self) at: 0.
 	self startSimulationLoop.
 	self getTMASimulationExperimentalToGlobalEventsNotifier started
 ]
@@ -418,6 +471,9 @@ MASimulationManagerExperimental >> startSimulationLoop [
 				                    isRestoring
 					                    ifTrue: [  ]
 					                    ifFalse: [ 
+						
+													|memento|
+													memento := MASimulationMemento new.
 						                    step := step + 1.
 						                    restoringStep := step.
 						                    self
@@ -426,9 +482,11 @@ MASimulationManagerExperimental >> startSimulationLoop [
 						                    self
 							                    getTMASimulationExperimentalToGlobalEventsNotifier
 							                    updateView.
-								self getTMATimeTravelExperimentalServicesProvider
-		save: self
-		at: step.
+						                    self
+							                    getTMATimeTravelExperimentalServicesProvider
+							                    save: (memento 
+									                     save: self)
+							                    at: step.
 						                    (Delay forMilliseconds:
 							                     self class simulationStepDurationInMs)
 							                    wait ] ] ] ] newProcess priority:
@@ -474,4 +532,16 @@ isRestoring ifTrue: [
 		self getTMATimeTravelExperimentalServicesProvider stopTimeTravel.
 		isRestoring := false.
 		isRunning := true ]
+]
+
+{ #category : #services }
+MASimulationManagerExperimental >> storage [
+
+	^ storage
+]
+
+{ #category : #accessing }
+MASimulationManagerExperimental >> storage: anObject [
+
+	storage := anObject
 ]

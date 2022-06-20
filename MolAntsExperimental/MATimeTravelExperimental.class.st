@@ -6,8 +6,7 @@ Class {
 	#instVars : [
 		'history',
 		'isSaving',
-		'isRestoring',
-		'test'
+		'isRestoring'
 	],
 	#category : #MolAntsExperimental
 }
@@ -17,7 +16,7 @@ MATimeTravelExperimental >> componentInitialize [
 
 	"here write the code corresponding to component initialisation phase"
 
-	history := Dictionary new.
+	history := OrderedCollection new.
 	isSaving := true.
 	isRestoring := false
 ]
@@ -38,30 +37,34 @@ MATimeTravelExperimental >> getTMATimeTravelExperimentalEventsNotifier [
 { #category : #services }
 MATimeTravelExperimental >> restoreAtStep: aStep [
 
+	| stepToIndex mementos |
+	stepToIndex := aStep + 1.
+
 	isRestoring ifTrue: [ 
-		aStep < 0 ifTrue: [ ^ self ].
-		(history at: aStep) keysAndValuesDo: [ :k :v | 
-			self getTMATimeTravelExperimentalEventsNotifier restore: k values: v ] ]
+		stepToIndex < 1 | (stepToIndex > history size) ifTrue: [ 
+			
+			Transcript
+				show: 'Index ERROR !';
+				cr.
+			^ self ].
+
+		mementos := (history at: stepToIndex) mementos.
+		mementos do: [ :memento | 
+			self getTMATimeTravelExperimentalEventsNotifier
+				restore: memento componentName
+				values: memento ] ]
 ]
 
 { #category : #services }
-MATimeTravelExperimental >> save: aComponent at: aStep [
+MATimeTravelExperimental >> save: aComponentMemento at: aStep [
 
-	| variablesOfTheComponent |
-	isSaving ifTrue: [ 
-		variablesOfTheComponent := OrderedCollection new.
+	| stepToIndex |
+	stepToIndex := aStep + 1.
 
-		0 to: aComponent class instSize do: [ :index | 
-			index > 0 ifTrue: [ 
-				variablesOfTheComponent add: (aComponent instVarAt: index) copy ] ].
-
-		test := variablesOfTheComponent.
-
-		(history includesKey: aStep) ifFalse: [ 
-			history add: aStep -> Dictionary new ].
-
-		(history at: aStep) add:
-			aComponent componentName -> variablesOfTheComponent ]
+	[history size < stepToIndex] whileTrue: [ 
+		history add: MAComponentsMementos new ].
+	
+	( history at: stepToIndex ) save: aComponentMemento.
 ]
 
 { #category : #services }
