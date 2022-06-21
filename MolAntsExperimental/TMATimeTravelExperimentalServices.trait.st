@@ -6,6 +6,16 @@ Trait {
 }
 
 { #category : #services }
+TMATimeTravelExperimentalServices >> isPlayingBackward [ 
+
+	
+]
+
+{ #category : #services }
+TMATimeTravelExperimentalServices >> isReplaying [
+]
+
+{ #category : #services }
 TMATimeTravelExperimentalServices >> playBackward [
 
 	

@@ -28,7 +28,7 @@ MATimeTravelExperimental >> componentInitialize [
 	isPlayingBackward := false.
 	timeTravelLoop := nil.
 	timeTravelIndex := 0.
-	restoringStep := 0.
+	restoringStep := 0
 ]
 
 { #category : #'life cycle' }
@@ -42,6 +42,18 @@ MATimeTravelExperimental >> componentRemove [
 { #category : #'component accessing' }
 MATimeTravelExperimental >> getTMATimeTravelExperimentalEventsNotifier [
 	^self eventsNotifiers at: TMATimeTravelExperimentalEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMATimeTravelExperimentalEvents name: nil].
+]
+
+{ #category : #services }
+MATimeTravelExperimental >> isPlayingBackward [
+
+	^ isPlayingBackward
+]
+
+{ #category : #services }
+MATimeTravelExperimental >> isReplaying [
+
+	^ isReplaying
 ]
 
 { #category : #services }

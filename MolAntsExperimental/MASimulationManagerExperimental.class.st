@@ -406,9 +406,7 @@ MASimulationManagerExperimental >> restore: aComponentName values: aMemento [
 		nbInsects := aMemento nbInsects.
 		ants := aMemento ants.
 		nbAnts := aMemento nbAnts.
-		storage := aMemento storage.
-
-		self getTMASimulationExperimentalToGlobalEventsNotifier updateView ]
+		storage := aMemento storage. ]
 ]
 
 { #category : #services }
@@ -416,10 +414,9 @@ MASimulationManagerExperimental >> restoreOneStepAfter [
 
 	| restoringStep |
 	restoringStep := self getTMATimeTravelExperimentalServicesProvider
-		                 restoringStep +1.
+		                 restoringStep + 1.
 	self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
 		restoringStep.
-	self getTMASimulationExperimentalToGlobalEventsNotifier updateView
 ]
 
 { #category : #services }
@@ -428,9 +425,8 @@ MASimulationManagerExperimental >> restoreOneStepBefore [
 	| restoringStep |
 	restoringStep := self getTMATimeTravelExperimentalServicesProvider
 		                 restoringStep - 1.
-			self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
-				restoringStep.
-			self getTMASimulationExperimentalToGlobalEventsNotifier updateView
+	self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
+		restoringStep.
 ]
 
 { #category : #'component accessing' }
@@ -478,9 +474,6 @@ MASimulationManagerExperimental >> startSimulationLoop [
 						                    self
 							                    getTMASimulationExperimentalToGlobalEventsNotifier 
 							                    simulationStepSent: step.
-						                    self
-							                    getTMASimulationExperimentalToGlobalEventsNotifier
-							                    updateView.
 						                    self
 							                    getTMATimeTravelExperimentalServicesProvider
 							                    save: (memento save: self)
