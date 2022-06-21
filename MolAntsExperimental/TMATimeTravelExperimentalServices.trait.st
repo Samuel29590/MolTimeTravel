@@ -22,6 +22,12 @@ TMATimeTravelExperimentalServices >> restoreAtStep: aStep [
 ]
 
 { #category : #services }
+TMATimeTravelExperimentalServices >> restoringStep [ 
+
+	
+]
+
+{ #category : #services }
 TMATimeTravelExperimentalServices >> save: aComponent at: aStep [
 ]
 

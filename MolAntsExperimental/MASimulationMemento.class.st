@@ -55,7 +55,6 @@ MASimulationMemento >> save: aSimulationManager [
 
 	insects := dict.
 	componentName := aSimulationManager componentName.
-	restoringStep := aSimulationManager restoringStep.
 	nbInsects := aSimulationManager nbInsects.
 	ants := aSimulationManager ants.
 	nbAnts := aSimulationManager nbAnts.

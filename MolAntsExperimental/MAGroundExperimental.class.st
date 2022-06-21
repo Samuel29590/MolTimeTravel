@@ -222,13 +222,13 @@ MAGroundExperimental >> createInfoPanel [
 	"Ajout du nombre de proies à l'interface."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
-				  MASimulationManagerExperimental simulationWidth / 10 @ 130;
+				  MASimulationManagerExperimental simulationWidth / 10 @ 150;
 			  background: Color transparent) text:
 			 'Number of insects :' asRopedText).
 	nbInsectsView := BlTextElement new
 		                 relocate:
 			                 MASimulationManagerExperimental simulationWidth
-			                 / 10 @ 150;
+			                 / 10 @ 170;
 		                 background: Color transparent;
 		                 text: '000' asRopedText.
 	infoPanel addChild: nbInsectsView.
@@ -239,13 +239,13 @@ MAGroundExperimental >> createInfoPanel [
 	"Ajout du nombre de fourmis à l'interface."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
-				  MASimulationManagerExperimental simulationWidth / 10 * 5 @ 80;
+				  MASimulationManagerExperimental simulationWidth / 10 * 4 @ 150;
 			  background: Color transparent) text:
 			 'Number of ants :' asRopedText).
 	nbAntsView := BlTextElement new
 		              relocate:
 			              MASimulationManagerExperimental simulationWidth / 10
-			              * 5 @ 100;
+			              * 4 @ 170;
 		              background: Color transparent;
 		              text: '000' asRopedText.
 	infoPanel addChild: nbAntsView.
@@ -256,12 +256,12 @@ MAGroundExperimental >> createInfoPanel [
 	"Ajout du storage à l'interface."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
-				  MASimulationManagerExperimental simulationWidth / 10 * 5 @ 130;
+				  MASimulationManagerExperimental simulationWidth / 10 * 7 @ 150;
 			  background: Color transparent) text: 'Storage :' asRopedText).
 	storageView := BlTextElement new
 		               relocate:
 			               MASimulationManagerExperimental simulationWidth / 10
-			               * 5 @ 150;
+			               * 7 @ 170;
 		               background: Color transparent;
 		               text: '000' asRopedText.
 	infoPanel addChild: storageView.
@@ -287,6 +287,22 @@ MAGroundExperimental >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
+	"Ajout du returningStep à l'interface."
+	timeTravelPanel addChild: ((BlTextElement new
+			  relocate:
+				  MASimulationManagerExperimental simulationWidth / 10 @ 20;
+			  background: Color transparent) text:
+			 'Returning Step :' asRopedText).
+	returningStepView := BlTextElement new
+		                     relocate:
+			                     MASimulationManagerExperimental
+				                     simulationWidth / 10 @ 40;
+		                     background: Color transparent;
+		                     text: '000' asRopedText.
+	timeTravelPanel addChild: returningStepView.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding the Start time trave button"
 	button := BlElement new
 		          background: Color white;
@@ -305,7 +321,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 			          c horizontal fitContent.
 			          c vertical fitContent ];
 		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 @ 10;
+			          MASimulationManagerExperimental simulationWidth / 10 @ 80;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
@@ -355,7 +371,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 			          c vertical fitContent ];
 		          relocate:
 			          MASimulationManagerExperimental simulationWidth / 10 * 3
-			          @ 10;
+			          @ 80;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
@@ -398,7 +414,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 			          c vertical fitContent ];
 		          relocate:
 			          MASimulationManagerExperimental simulationWidth / 10 * 5
-			          @ 10;
+			          @ 80;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
@@ -438,7 +454,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 			          c vertical fitContent ];
 		          relocate:
 			          MASimulationManagerExperimental simulationWidth / 10 * 7
-			          @ 10;
+			          @ 80;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
@@ -456,26 +472,51 @@ MAGroundExperimental >> createTimeTravelPanel [
 	button addChild: label.
 	timeTravelPanel addChild: button.
 
+
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Ajout du returningStep à l'interface."
-	timeTravelPanel addChild: ((BlTextElement new
-			  relocate:
-				  MASimulationManagerExperimental simulationWidth / 10 @ 80;
-			  background: Color transparent) text:
-			 'Returning Step :' asRopedText).
-	returningStepView := BlTextElement new
-		                     relocate:
-			                     MASimulationManagerExperimental
-				                     simulationWidth / 10 @ 100;
-		                     background: Color transparent;
-		                     text: '000' asRopedText.
-	timeTravelPanel addChild: returningStepView.
+	"Adding playing backward button"
+	button := BlElement new
+		          background: Color white;
+		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		          padding: (BlInsets
+				           top: 8
+				           right: 16
+				           bottom: 8
+				           left: 16);
+		          layout: BlLinearLayout horizontal;
+		          effect: (BlGaussianShadowEffect
+				           color: (Color black alpha: 0.3)
+				           width: 1
+				           offset: 0 @ 2);
+		          constraintsDo: [ :c | 
+			          c horizontal fitContent.
+			          c vertical fitContent ];
+		          relocate:
+			          MASimulationManagerExperimental simulationWidth / 10 * 3
+			          @ 130;
+		          addEventHandler: (BlEventHandler
+				           on: BlClickEvent
+				           do: [ :anEvent | 
+					           button isVisible ifTrue: [ 
+							           self getTMASimulationExperimentalServicesProvider
+								           playBackward ].
+					           anEvent consumed: true ]).
+	labelText := 'Play Backward' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	button addChild: label.
+	timeTravelPanel addChild: button.
+
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding One Step after button"
+	"Adding replay button"
 	button := BlElement new
 		          background: Color white;
 		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
@@ -494,47 +535,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 			          c vertical fitContent ];
 		          relocate:
 			          MASimulationManagerExperimental simulationWidth / 10 * 5
-			          @ 80;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           button isVisible ifTrue: [ 
-							           self getTMASimulationExperimentalServicesProvider
-								           playBackward ].
-					           anEvent consumed: true ]).
-	labelText := 'Play Backward' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	button addChild: label.
-	timeTravelPanel addChild: button.
-	
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding One Step after button"
-	button := BlElement new
-		          background: Color white;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 * 7
-			          @ 80;
+			          @ 130;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
@@ -550,7 +551,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	button addChild: label.
-	timeTravelPanel addChild: button.
+	timeTravelPanel addChild: button
 ]
 
 { #category : #initialization }
