@@ -16,6 +16,10 @@ TMATimeTravelExperimentalServices >> isReplaying [
 ]
 
 { #category : #services }
+TMATimeTravelExperimentalServices >> isRestoring [
+]
+
+{ #category : #services }
 TMATimeTravelExperimentalServices >> playBackward [
 
 	

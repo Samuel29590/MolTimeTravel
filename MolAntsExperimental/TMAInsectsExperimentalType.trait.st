@@ -23,5 +23,5 @@ TMAInsectsExperimentalType classSide >> producedComponentEvents [
 TMAInsectsExperimentalType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMATimeTravelExperimentalServices }
+	^ { TMASimulationExperimentalServices .TMATimeTravelExperimentalServices }
 ]

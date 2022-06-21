@@ -42,11 +42,19 @@ MAInsectExperimental >> componentInitialize [
 
 	"Initialization of the MAAnt component."
 
+	| memento |
 	self
 		forServices: TMATimeTravelExperimentalServices
 		useProvider: #TimeTravel.
 
-	ageInMs := 0
+	ageInMs := 0.
+
+	self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
+	"insect notify the creation"
+	memento := MAComponentCreationMemento new.
+	self getTMATimeTravelExperimentalServicesProvider
+		creationOf: (memento save: self)
+		at: self getTMASimulationExperimentalServicesProvider getStep]
 ]
 
 { #category : #'life cycle' }
@@ -60,9 +68,34 @@ MAInsectExperimental >> componentPassivate [
 	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self
 ]
 
+{ #category : #'life cycle' }
+MAInsectExperimental >> componentRemove [
+
+	"insect notify the remove"
+
+	| memento |
+		self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
+	memento := MAComponentRemoveMemento new.
+	self getTMATimeTravelExperimentalServicesProvider
+		removeOf: (memento save: self)
+		at: self getTMASimulationExperimentalServicesProvider getStep]
+]
+
 { #category : #'component accessing' }
 MAInsectExperimental >> getTMAInsectsEventsNotifier [
 	^self eventsNotifiers at: TMAInsectsEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMAInsectsEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MAInsectExperimental >> getTMASimulationExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }

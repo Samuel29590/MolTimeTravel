@@ -77,15 +77,13 @@ MASimulationManagerExperimental class >> stopSimulation [
 MASimulationManagerExperimental >> ant: anAnt eatAt: aPoint [
 
 	| insect |
-	
 	"Removing the insect in the dictionary."
-	"(insects includesKey: aPoint) ifTrue: [ 
+	(insects includesKey: aPoint) ifTrue: [ 
 		insect := (insects at: aPoint) removeFirst.
-		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ]."
-
+		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
 	"Stoping the insect's component instance."
-"	MAInsectExperimental stop: insect componentName.
-"
+		MAInsectExperimental stop: insect componentName.
+
 	storage := storage + 1
 ]
 
@@ -151,7 +149,6 @@ MASimulationManagerExperimental >> createAnts [
 	"Creation of a new ant"
 
 	| name ant memento |
-	
 	1 to: 2 do: [ :e | 
 		memento := MAAntMemento new.
 		nbAnts := nbAnts + 1.
@@ -165,10 +162,6 @@ MASimulationManagerExperimental >> createAnts [
 		"Adding events producer into SimulationMManager"
 		self forEvents: TMAAntsEvents addProducer: name.
 
-		ant
-			forServices: TMASimulationExperimentalServices
-			useProvider: self componentName.
-
 		self getTMATimeTravelExperimentalServicesProvider
 			save: (memento save: ant)
 			at: step ]
@@ -181,16 +174,12 @@ MASimulationManagerExperimental >> createInsects [
 
 	| name insect memento |
 	1 to: 2 do: [ :e | 
-	memento := MAInsectMemento new.
+		memento := MAInsectMemento new.
 		nbInsects := nbInsects + 1.
 		name := ('Insect' , nbInsects printString) asSymbol.
 		insect := MAInsectExperimental start: name.
 		insect position: 450 @ 200.
-		"	insect position:
-			(Random new nextIntegerBetween: 1 and: self class simulationWidth)
-			@
-			(Random new nextIntegerBetween: 1 and: self class simulationHeight).
-"
+
 		"Adding events producer into SimulationMManager"
 		self forEvents: TMAInsectsEvents addProducer: name.
 
@@ -199,7 +188,6 @@ MASimulationManagerExperimental >> createInsects [
 			save: (memento save: insect)
 			at: step.
 
-		"adding the insect to the insects's dictionary"
 		"Add the insect to the dictionary of insects positions."
 		(insects includesKey: insect position)
 			ifFalse: [ 

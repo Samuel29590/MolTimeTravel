@@ -39,6 +39,21 @@ MATimeTravelExperimental >> componentRemove [
 	history := nil.
 ]
 
+{ #category : #services }
+MATimeTravelExperimental >> creationOf: aComponentMemento at: aStep [
+
+	| stepToIndex |
+	stepToIndex := aStep + 1.
+
+	[ history size < stepToIndex ] whileTrue: [ 
+		history add: MAComponentsMementos new ].
+
+	(history at: stepToIndex) saveCreationOf: aComponentMemento.
+
+	timeTravelIndex := stepToIndex.
+	restoringStep := aStep
+]
+
 { #category : #'component accessing' }
 MATimeTravelExperimental >> getTMATimeTravelExperimentalEventsNotifier [
 	^self eventsNotifiers at: TMATimeTravelExperimentalEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMATimeTravelExperimentalEvents name: nil].
@@ -57,6 +72,12 @@ MATimeTravelExperimental >> isReplaying [
 ]
 
 { #category : #services }
+MATimeTravelExperimental >> isRestoring [
+
+	^ isRestoring
+]
+
+{ #category : #services }
 MATimeTravelExperimental >> playBackward [
 
 	isRestoring ifFalse: [ ^ self ].
@@ -72,8 +93,7 @@ MATimeTravelExperimental >> playBackward [
 			isPlayingBackward := true.
 			timeTravelLoop := [ 
 			                  [ restoringStep > 0 ] whileTrue: [ 
-				                  restoringStep := restoringStep - 1.
-				                  self restoreAtStep: restoringStep.
+				                  self restoreAtStep: (restoringStep-1).
 				                  (Delay forMilliseconds:
 					                   MASimulationManagerExperimental
 						                   simulationStepDurationInMs) wait ].
@@ -82,9 +102,23 @@ MATimeTravelExperimental >> playBackward [
 			                  timeTravelLoop terminate.
 			                  timeTravelLoop := nil ] newProcess priority:
 				                  Processor userBackgroundPriority.
-			timeTravelLoop name:
-				'Molecule TimeTravelLoop Process'.
+			timeTravelLoop name: 'Molecule TimeTravelLoop Process'.
 			timeTravelLoop resume ]
+]
+
+{ #category : #services }
+MATimeTravelExperimental >> removeOf: aComponentMemento at: aStep [
+
+	| stepToIndex |
+	stepToIndex := aStep + 1.
+
+	[ history size < stepToIndex ] whileTrue: [ 
+		history add: MAComponentsMementos new ].
+
+	(history at: stepToIndex) saveRemoveOf: aComponentMemento.
+
+	timeTravelIndex := stepToIndex.
+	restoringStep := aStep
 ]
 
 { #category : #services }
@@ -98,35 +132,58 @@ MATimeTravelExperimental >> replay [
 			isReplaying := false.
 			timeTravelLoop ifNil: [ ^ self ].
 			timeTravelLoop terminate.
-			timeTravelLoop := nil.
-		] ifFalse: [ 
+			timeTravelLoop := nil ]
+		ifFalse: [ 
 			isReplaying := true.
 			timeTravelLoop := [ 
-			                  [ restoringStep <( history size - 1) ] whileTrue: [ 
-				                  restoringStep := restoringStep + 1.
-				                  self restoreAtStep: restoringStep.
-				                  (Delay forMilliseconds:
-					                   MASimulationManagerExperimental
-						                   simulationStepDurationInMs) wait ].
+			                  [ restoringStep < (history size - 1) ] 
+				                  whileTrue: [ 
+					                  self restoreAtStep: (restoringStep+1).
+					                  (Delay forMilliseconds:
+						                   MASimulationManagerExperimental
+							                   simulationStepDurationInMs) wait ].
 			                  isReplaying := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
 			                  timeTravelLoop terminate.
 			                  timeTravelLoop := nil ] newProcess priority:
 				                  Processor userBackgroundPriority.
 			timeTravelLoop name: 'Molecule TimeTravelLoop Process'.
-			timeTravelLoop resume ].
-			
+			timeTravelLoop resume ]
 ]
 
 { #category : #services }
 MATimeTravelExperimental >> restoreAtStep: aStep [
 
-	| stepToIndex mementos |
+	| stepToIndex componentsLifeCycles mementos |
 	isRestoring ifFalse: [ ^ self ].
 
 	stepToIndex := aStep + 1.
 	stepToIndex < 1 | (stepToIndex > history size) ifTrue: [ ^ self ].
 
+	"Creation or remove of component"
+	aStep < restoringStep ifTrue: [ 
+		componentsLifeCycles := (history at: stepToIndex +1)
+			                        componentsLifeCycles.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle isCreation ifTrue: [ 
+				componentLifeCycle componentClass stop:
+					componentLifeCycle componentName ].
+			componentLifeCycle isRemoving ifTrue: [ 
+				componentLifeCycle componentClass start:
+					componentLifeCycle componentName ] ] ].
+
+	restoringStep < aStep ifTrue: [ 
+		componentsLifeCycles := (history at: stepToIndex)
+			                        componentsLifeCycles.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle isCreation ifTrue: [ 
+				componentLifeCycle componentClass start:
+					componentLifeCycle componentName ].
+			componentLifeCycle isRemoving ifTrue: [ 
+				componentLifeCycle componentClass stop:
+					componentLifeCycle componentName ] ] ].
+
+	"Restoration of the state of components"
 	mementos := (history at: stepToIndex) mementos.
 	mementos do: [ :memento | 
 		self getTMATimeTravelExperimentalEventsNotifier
@@ -134,7 +191,7 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 			values: memento ].
 
 	timeTravelIndex := stepToIndex.
-	restoringStep := aStep.
+	restoringStep := aStep
 ]
 
 { #category : #services }

@@ -40,11 +40,22 @@ MAAntExperimental >> componentInitialize [
 
 	"Initialization of the MAAnt component."
 
+	| memento |
 	self
 		forServices: TMATimeTravelExperimentalServices
 		useProvider: #TimeTravel.
+	self
+		forServices: TMASimulationExperimentalServices
+		useProvider: #default.
 
-	ageInMs := 0
+	ageInMs := 0.
+
+	self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
+	"ant notify the creation"
+	memento := MAComponentCreationMemento new.
+	self getTMATimeTravelExperimentalServicesProvider
+		creationOf: (memento save: self)
+		at: self getTMASimulationExperimentalServicesProvider getStep]
 ]
 
 { #category : #'life cycle' }
@@ -56,6 +67,19 @@ MAAntExperimental >> componentPassivate [
 		unsubscribe: self.
 
 	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self.
+]
+
+{ #category : #'life cycle' }
+MAAntExperimental >> componentRemove [
+
+	"ant notify the remove"
+
+	| memento |
+		self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
+	memento := MAComponentRemoveMemento new.
+	self getTMATimeTravelExperimentalServicesProvider
+		removeOf: (memento save: self)
+		at: self getTMASimulationExperimentalServicesProvider getStep]
 ]
 
 { #category : #'events - lifecycle' }
