@@ -24,7 +24,7 @@ This repository aims to help the search in Time-Traveling debugging techniques w
 
 ##### How is the data recorded ?
 
-![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/174248508-3057c45c-e5c0-42b7-8cf9-c76935b9d547.png)
+![TimeTravel_DataStorage(1)](https://user-images.githubusercontent.com/64481702/174839782-0dd43b24-a752-485a-a16b-4c45b7f3ba0c.png)
 
 Each time a component is modified, the component uses the *TMATimeTravelServices* and the *save: aComponent at: aStep* method to save its data at this stage of the simulation.
 
