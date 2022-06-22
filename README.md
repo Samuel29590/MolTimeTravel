@@ -24,7 +24,9 @@ This repository aims to help the search in Time-Traveling debugging techniques w
 
 ##### How is the data recorded ?
 
-![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/174248508-3057c45c-e5c0-42b7-8cf9-c76935b9d547.png)
+![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/174978677-4da7b82f-aef1-44a9-9cec-661b7a5c0e06.png)
+
+![MomentosOrganization](https://user-images.githubusercontent.com/64481702/174978694-3813a42e-69b7-4f95-a2d1-fbcb5e13f154.png)
 
 Each time a component is modified, the component uses the *TMATimeTravelServices* and the *save: aComponent at: aStep* method to save its data at this stage of the simulation.
 
@@ -32,7 +34,7 @@ The data are stored in the dictionary: *history* of the compinent *TimeTravel*. 
 
 ##### UML of the components, events and services of MolAntsExperimental
 
-![TimeTravel](https://user-images.githubusercontent.com/64481702/174041805-89c3dc86-ed19-4990-b42a-bb5d27483647.png)
+![TimeTravel-Component-UML](https://user-images.githubusercontent.com/64481702/174978742-26bc40b0-36aa-44f8-a480-4fffed527e26.png)
 
 <br><br><br><br>
 
