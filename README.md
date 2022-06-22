@@ -48,11 +48,20 @@ With this data about components we are able to go backward on the simulation and
 
 ### How is the data recorded ?
 
+Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
+
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/174978677-4da7b82f-aef1-44a9-9cec-661b7a5c0e06.png)
+
+This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentsMementos*. Each index of this collection represent the simulation state at on step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
+
+*MAComponentsMementos* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *componentsLifeCycles*. This two variables are ordered collections of respetively: *MAComponentMemento*'subclasses and *MAComponentLifeCycleMemento*'s subclasses.
 
 ![MomentosOrganization](https://user-images.githubusercontent.com/64481702/174978694-3813a42e-69b7-4f95-a2d1-fbcb5e13f154.png)
 
-Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
+
+
+
+So when a component is created or deleted from the simulation, the component create respectively a *MAComponentCreationMemento* or a *MAComponentDeletionMemento* and notify the component *TimeTravel* to store it. This two mementos are subclasses of *MAComponentLifeCycleMemento*.
 
 ### UML of the components, events and services of MolAntsExperimental
 
