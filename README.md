@@ -67,3 +67,16 @@ This is the component *TimeTravel* that store the history, in the variable *hist
 So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* or a *MAComponentDeletionMemento*, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsMementos* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentLifeCycleMemento* on the variable *ComponentsLifeCycles* of the *MAComponentsMementos*. From there, the creation or deletion has been saved.
 
 For components state it is almost the same process. When a component is updated it will create a memento. The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *ant* will create a *MAAntMemento*. These three mementos are all subclasses of *MAComponentMemento*. The process to store them is almost the same as *ComponentsLifeCycle*, the component *TimeTravel* receive the notification to save the memento and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsMementos* associate to the step where the *MAComponentMemento* has been created. From there, the state of the component has been saved through its memento.
+
+## Illustrations
+
+
+<img src="https://user-images.githubusercontent.com/64481702/175001208-438f7c33-f4a9-49ac-88fa-85e58d051d1a.png" width="50%">
+
+<img src="https://user-images.githubusercontent.com/64481702/175001208-438f7c33-f4a9-49ac-88fa-85e58d051d1a.png" width="50%">
+
+![Screenshot from 2022-06-22 11-53-38](https://user-images.githubusercontent.com/64481702/175001226-4100de54-5faf-4234-ab44-508c80248062.png)
+![Screenshot from 2022-06-22 11-53-51](https://user-images.githubusercontent.com/64481702/175001242-2a2d55f4-ea23-4bae-8e92-d5e07d72a8b5.png)
+![Screenshot from 2022-06-22 11-54-13](https://user-images.githubusercontent.com/64481702/175001261-fa80636e-97ff-413b-8cd7-be632148541b.png)
+
+
