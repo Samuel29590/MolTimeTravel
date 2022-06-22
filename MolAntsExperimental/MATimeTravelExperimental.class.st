@@ -162,13 +162,13 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 
 	"Creation or remove of component"
 	aStep < restoringStep ifTrue: [ 
-		componentsLifeCycles := (history at: stepToIndex +1)
+		componentsLifeCycles := (history at: stepToIndex + 1)
 			                        componentsLifeCycles.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle isCreation ifTrue: [ 
 				componentLifeCycle componentClass stop:
 					componentLifeCycle componentName ].
-			componentLifeCycle isRemoving ifTrue: [ 
+			componentLifeCycle isDeletion ifTrue: [ 
 				componentLifeCycle componentClass start:
 					componentLifeCycle componentName ] ] ].
 
@@ -179,7 +179,7 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 			componentLifeCycle isCreation ifTrue: [ 
 				componentLifeCycle componentClass start:
 					componentLifeCycle componentName ].
-			componentLifeCycle isRemoving ifTrue: [ 
+			componentLifeCycle isDeletion ifTrue: [ 
 				componentLifeCycle componentClass stop:
 					componentLifeCycle componentName ] ] ].
 
@@ -192,6 +192,19 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 
 	timeTravelIndex := stepToIndex.
 	restoringStep := aStep
+]
+
+{ #category : #services }
+MATimeTravelExperimental >> restoreOneStepAfter [
+
+	self restoreAtStep: restoringStep +1
+]
+
+{ #category : #services }
+MATimeTravelExperimental >> restoreOneStepBefore [
+
+	self restoreAtStep:
+		restoringStep -1
 ]
 
 { #category : #services }
@@ -221,14 +234,26 @@ MATimeTravelExperimental >> startTimeTravel [
 	isSaving := false.
 	isRestoring := true.
 	timeTravelIndex := history size.
-	restoringStep := history size -1.
+	restoringStep := history size - 1.
+	self getTMATimeTravelExperimentalEventsNotifier startTimeTravel
 ]
 
 { #category : #services }
 MATimeTravelExperimental >> stopTimeTravel [
 
-	isSaving := true.
-	isRestoring := false.
+	isRestoring ifTrue: [ 
+
+
+
 	timeTravelIndex := history size.
-	restoringStep := history size-1.
+	restoringStep := history size - 1.
+			self restoreAtStep:
+			restoringStep.
+		isSaving := true.
+	isRestoring := false.
+	self getTMATimeTravelExperimentalEventsNotifier stopTimeTravel].
+	
+
+
+
 ]

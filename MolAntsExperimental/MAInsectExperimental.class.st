@@ -49,12 +49,12 @@ MAInsectExperimental >> componentInitialize [
 
 	ageInMs := 0.
 
-	self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
-	"insect notify the creation"
-	memento := MAComponentCreationMemento new.
-	self getTMATimeTravelExperimentalServicesProvider
-		creationOf: (memento save: self)
-		at: self getTMASimulationExperimentalServicesProvider getStep]
+	self getTMATimeTravelExperimentalServicesProvider isRestoring 
+		ifFalse: [ "insect notify the creation"
+			memento := MAComponentCreationMemento new.
+			self getTMATimeTravelExperimentalServicesProvider
+				creationOf: (memento save: self)
+				at: self getTMASimulationExperimentalServicesProvider step ]
 ]
 
 { #category : #'life cycle' }
@@ -74,11 +74,12 @@ MAInsectExperimental >> componentRemove [
 	"insect notify the remove"
 
 	| memento |
-		self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
-	memento := MAComponentRemoveMemento new.
-	self getTMATimeTravelExperimentalServicesProvider
-		removeOf: (memento save: self)
-		at: self getTMASimulationExperimentalServicesProvider getStep]
+	self getTMATimeTravelExperimentalServicesProvider isRestoring 
+		ifFalse: [ 
+			memento := MAComponentDeletionMemento new.
+			self getTMATimeTravelExperimentalServicesProvider
+				removeOf: (memento save: self)
+				at: self getTMASimulationExperimentalServicesProvider step ]
 ]
 
 { #category : #'component accessing' }

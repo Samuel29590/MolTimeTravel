@@ -73,7 +73,7 @@ MASimulationManagerExperimental class >> stopSimulation [
 	MolComponentManager cleanUp
 ]
 
-{ #category : #accessing }
+{ #category : #events }
 MASimulationManagerExperimental >> ant: anAnt eatAt: aPoint [
 
 	| insect |
@@ -91,12 +91,6 @@ MASimulationManagerExperimental >> ant: anAnt eatAt: aPoint [
 MASimulationManagerExperimental >> ants [
 
 	^ ants
-]
-
-{ #category : #accessing }
-MASimulationManagerExperimental >> ants: anObject [
-
-	ants := anObject
 ]
 
 { #category : #'life cycle' }
@@ -198,36 +192,6 @@ MASimulationManagerExperimental >> createInsects [
 			ifTrue: [ (insects at: insect position) addLast: insect ] ]
 ]
 
-{ #category : #services }
-MASimulationManagerExperimental >> getAnts [
-
-	^ants
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> getInsects [
-
-	^insects
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> getReturningStep [
-
-	^ self getTMATimeTravelExperimentalServicesProvider restoringStep 
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> getStep [
-
-	^step
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> getStorage [
-
-	^ storage
-]
-
 { #category : #'component accessing' }
 MASimulationManagerExperimental >> getTMAAntsEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
@@ -283,19 +247,8 @@ MASimulationManagerExperimental >> getTMATimeTravelExperimentalServicesProvider 
 
 { #category : #services }
 MASimulationManagerExperimental >> insects [
+
 	^ insects
-]
-
-{ #category : #accessing }
-MASimulationManagerExperimental >> insects: anObject [
-
-	insects := anObject
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> isRestoring [
-
-	^ isRestoring
 ]
 
 { #category : #services }
@@ -311,27 +264,9 @@ MASimulationManagerExperimental >> nbAnts [
 ]
 
 { #category : #accessing }
-MASimulationManagerExperimental >> nbAnts: anObject [
-
-	nbAnts := anObject
-]
-
-{ #category : #accessing }
 MASimulationManagerExperimental >> nbInsects [
 
 	^ nbInsects
-]
-
-{ #category : #accessing }
-MASimulationManagerExperimental >> nbInsects: anObject [
-
-	nbInsects := anObject
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> playBackward [
-
-			self getTMATimeTravelExperimentalServicesProvider playBackward
 ]
 
 { #category : #events }
@@ -379,12 +314,6 @@ MASimulationManagerExperimental >> removeInsects [
 	nbInsects := 0
 ]
 
-{ #category : #services }
-MASimulationManagerExperimental >> replay [
-
-			self getTMATimeTravelExperimentalServicesProvider replay
-]
-
 { #category : #events }
 MASimulationManagerExperimental >> restore: aComponentName values: aMemento [
 
@@ -397,27 +326,7 @@ MASimulationManagerExperimental >> restore: aComponentName values: aMemento [
 		storage := aMemento storage. ]
 ]
 
-{ #category : #services }
-MASimulationManagerExperimental >> restoreOneStepAfter [
-
-	| restoringStep |
-	restoringStep := self getTMATimeTravelExperimentalServicesProvider
-		                 restoringStep + 1.
-	self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
-		restoringStep.
-]
-
-{ #category : #services }
-MASimulationManagerExperimental >> restoreOneStepBefore [
-
-	| restoringStep |
-	restoringStep := self getTMATimeTravelExperimentalServicesProvider
-		                 restoringStep - 1.
-	self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
-		restoringStep.
-]
-
-{ #category : #'component accessing' }
+{ #category : #'life cycle' }
 MASimulationManagerExperimental >> start [
 
 	| memento |
@@ -446,7 +355,7 @@ MASimulationManagerExperimental >> start [
 	self getTMASimulationExperimentalToGlobalEventsNotifier started
 ]
 
-{ #category : #'component accessing' }
+{ #category : #'life cycle' }
 MASimulationManagerExperimental >> startSimulationLoop [
 
 	simulationThread ifNil: [ 
@@ -475,15 +384,20 @@ MASimulationManagerExperimental >> startSimulationLoop [
 	simulationThread resume
 ]
 
-{ #category : #services }
+{ #category : #events }
 MASimulationManagerExperimental >> startTimeTravel [
 
 	isRunning := false.
 	isRestoring := true.
-	self getTMATimeTravelExperimentalServicesProvider startTimeTravel
 ]
 
-{ #category : #'component accessing' }
+{ #category : #services }
+MASimulationManagerExperimental >> step [
+
+	^step
+]
+
+{ #category : #'life cycle' }
 MASimulationManagerExperimental >> stop [
 
 	self stopSimulationLoop.
@@ -495,7 +409,7 @@ MASimulationManagerExperimental >> stop [
 	MATimeTravelExperimental stop: 'TimeTravel'.
 ]
 
-{ #category : #'component accessing' }
+{ #category : #'life cycle' }
 MASimulationManagerExperimental >> stopSimulationLoop [
 
 	simulationThread ifNil: [ ^ self ].
@@ -503,24 +417,15 @@ MASimulationManagerExperimental >> stopSimulationLoop [
 	simulationThread := nil
 ]
 
-{ #category : #services }
+{ #category : #events }
 MASimulationManagerExperimental >> stopTimeTravel [
-isRestoring ifTrue: [ 
-		self getTMATimeTravelExperimentalServicesProvider restoreAtStep:
-			step.
-		self getTMATimeTravelExperimentalServicesProvider stopTimeTravel.
-		isRestoring := false.
-		isRunning := true ]
+
+	isRestoring := false.
+	isRunning := true
 ]
 
 { #category : #services }
 MASimulationManagerExperimental >> storage [
 
 	^ storage
-]
-
-{ #category : #accessing }
-MASimulationManagerExperimental >> storage: anObject [
-
-	storage := anObject
 ]

@@ -347,7 +347,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 								                          ifTrue: [ 
 									                          self isRestoring ifFalse: [ 
 											                          self
-												                          getTMASimulationExperimentalServicesProvider
+												                          getTMATimeTravelExperimentalServicesProvider
 												                          startTimeTravel.
 											                          self updateView ] ]
 								                          ifFalse: [ 
@@ -400,7 +400,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 							                         self isRunning ifFalse: [ 
 									                         self isRestoring ifTrue: [ 
 											                         self
-												                         getTMASimulationExperimentalServicesProvider
+												                         getTMATimeTravelExperimentalServicesProvider
 												                         stopTimeTravel.
 											                         self updateView ] ] ].
 					                         anEvent consumed: true ]).
@@ -419,32 +419,34 @@ MAGroundExperimental >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding One Step before button"
 	buttonOneStepBefore := BlElement new
-		          background: Color white;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 * 5
-			          @ 80;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           buttonOneStepBefore isVisible ifTrue: [ 
-							           self getTMASimulationExperimentalServicesProvider
-								           restoreOneStepBefore.
-							           self updateView ].
-					           anEvent consumed: true ]).
+		                       background: Color white;
+		                       geometry:
+			                       (BlRoundedRectangleGeometry cornerRadius: 2);
+		                       padding: (BlInsets
+				                        top: 8
+				                        right: 16
+				                        bottom: 8
+				                        left: 16);
+		                       layout: BlLinearLayout horizontal;
+		                       effect: (BlGaussianShadowEffect
+				                        color: (Color black alpha: 0.3)
+				                        width: 1
+				                        offset: 0 @ 2);
+		                       constraintsDo: [ :c | 
+			                       c horizontal fitContent.
+			                       c vertical fitContent ];
+		                       relocate:
+			                       MASimulationManagerExperimental
+				                       simulationWidth / 10 * 5 @ 80;
+		                       addEventHandler: (BlEventHandler
+				                        on: BlClickEvent
+				                        do: [ :anEvent | 
+					                        buttonOneStepBefore isVisible ifTrue: [ 
+							                        self
+								                        getTMATimeTravelExperimentalServicesProvider
+								                        restoreOneStepBefore.
+							                        self updateView ].
+					                        anEvent consumed: true ]).
 	labelText := 'One step before' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -460,32 +462,34 @@ MAGroundExperimental >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding One Step after button"
 	buttonOneStepAfter := BlElement new
-		          background: Color white;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 * 7
-			          @ 80;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           buttonOneStepAfter isVisible ifTrue: [ 
-							           self getTMASimulationExperimentalServicesProvider
-								           restoreOneStepAfter.
-							           self updateView ].
-					           anEvent consumed: true ]).
+		                      background: Color white;
+		                      geometry:
+			                      (BlRoundedRectangleGeometry cornerRadius: 2);
+		                      padding: (BlInsets
+				                       top: 8
+				                       right: 16
+				                       bottom: 8
+				                       left: 16);
+		                      layout: BlLinearLayout horizontal;
+		                      effect: (BlGaussianShadowEffect
+				                       color: (Color black alpha: 0.3)
+				                       width: 1
+				                       offset: 0 @ 2);
+		                      constraintsDo: [ :c | 
+			                      c horizontal fitContent.
+			                      c vertical fitContent ];
+		                      relocate:
+			                      MASimulationManagerExperimental
+				                      simulationWidth / 10 * 7 @ 80;
+		                      addEventHandler: (BlEventHandler
+				                       on: BlClickEvent
+				                       do: [ :anEvent | 
+					                       buttonOneStepAfter isVisible ifTrue: [ 
+							                       self
+								                       getTMATimeTravelExperimentalServicesProvider
+								                       restoreOneStepAfter.
+							                       self updateView ].
+					                       anEvent consumed: true ]).
 	labelText := 'One step after' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -502,32 +506,34 @@ MAGroundExperimental >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding playing backward button"
 	buttonPlayBackward := BlElement new
-		          background: Color white;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 * 3
-			          @ 130;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           buttonPlayBackward isVisible ifTrue: [ 
-							           self getTMASimulationExperimentalServicesProvider
-								           playBackward.
-							           self updateView ].
-					           anEvent consumed: true ]).
+		                      background: Color white;
+		                      geometry:
+			                      (BlRoundedRectangleGeometry cornerRadius: 2);
+		                      padding: (BlInsets
+				                       top: 8
+				                       right: 16
+				                       bottom: 8
+				                       left: 16);
+		                      layout: BlLinearLayout horizontal;
+		                      effect: (BlGaussianShadowEffect
+				                       color: (Color black alpha: 0.3)
+				                       width: 1
+				                       offset: 0 @ 2);
+		                      constraintsDo: [ :c | 
+			                      c horizontal fitContent.
+			                      c vertical fitContent ];
+		                      relocate:
+			                      MASimulationManagerExperimental
+				                      simulationWidth / 10 * 3 @ 130;
+		                      addEventHandler: (BlEventHandler
+				                       on: BlClickEvent
+				                       do: [ :anEvent | 
+					                       buttonPlayBackward isVisible ifTrue: [ 
+							                       self
+								                       getTMATimeTravelExperimentalServicesProvider
+								                       playBackward.
+							                       self updateView ].
+					                       anEvent consumed: true ]).
 	labelText := 'Play Backward' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -543,32 +549,34 @@ MAGroundExperimental >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding replay button"
 	buttonReplay := BlElement new
-		          background: Color white;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 * 5
-			          @ 130;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           buttonReplay isVisible ifTrue: [ 
-							           self getTMASimulationExperimentalServicesProvider
-								           replay.
-							           self updateView ].
-					           anEvent consumed: true ]).
+		                background: Color white;
+		                geometry:
+			                (BlRoundedRectangleGeometry cornerRadius: 2);
+		                padding: (BlInsets
+				                 top: 8
+				                 right: 16
+				                 bottom: 8
+				                 left: 16);
+		                layout: BlLinearLayout horizontal;
+		                effect: (BlGaussianShadowEffect
+				                 color: (Color black alpha: 0.3)
+				                 width: 1
+				                 offset: 0 @ 2);
+		                constraintsDo: [ :c | 
+			                c horizontal fitContent.
+			                c vertical fitContent ];
+		                relocate:
+			                MASimulationManagerExperimental simulationWidth
+			                / 10 * 5 @ 130;
+		                addEventHandler: (BlEventHandler
+				                 on: BlClickEvent
+				                 do: [ :anEvent | 
+					                 buttonReplay isVisible ifTrue: [ 
+							                 self
+								                 getTMATimeTravelExperimentalServicesProvider
+								                 replay.
+							                 self updateView ].
+					                 anEvent consumed: true ]).
 	labelText := 'Relay' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -595,18 +603,17 @@ MAGroundExperimental >> drawOnSpartaCanvas: aCanvas [
 
 	super drawOnSpartaCanvas: aCanvas.
 
-	self getTMASimulationExperimentalServicesProvider getAnts ifNotNil: [ 
-		self getTMASimulationExperimentalServicesProvider getAnts do: [ :ant | 
+	self getTMASimulationExperimentalServicesProvider ants ifNotNil: [ 
+		self getTMASimulationExperimentalServicesProvider ants do: [ :ant | 
 			aCanvas figure
 				path: (aCanvas shape circleAt: ant position radius: 5);
 				background: Color orange;
 				backgroundAlpha: 1;
 				draw ] ].
 
-	self getTMASimulationExperimentalServicesProvider getInsects 
-		ifNotNil: [ 
-			self getTMASimulationExperimentalServicesProvider getInsects keysAndValuesDo: [ 
-				:position :insects | 
+	self getTMASimulationExperimentalServicesProvider insects ifNotNil: [ 
+		self getTMASimulationExperimentalServicesProvider insects 
+			keysAndValuesDo: [ :position :insects | 
 				aCanvas figure
 					path: (aCanvas shape circleAt: position radius: 5);
 					background: Color black;
@@ -677,7 +684,7 @@ MAGroundExperimental >> isReplaying [
 { #category : #initialization }
 MAGroundExperimental >> isRestoring [
 
-	^ self getTMASimulationExperimentalServicesProvider isRestoring
+	^ self getTMATimeTravelExperimentalServicesProvider isRestoring
 ]
 
 { #category : #initialization }
@@ -718,23 +725,22 @@ MAGroundExperimental >> updateInfoPanel [
 	"Modify each elements of the info panel. It permit to keep the view up to date with the simulation."
 
 	returningStepView text:
-		self getTMASimulationExperimentalServicesProvider getReturningStep
+		self getTMATimeTravelExperimentalServicesProvider restoringStep
 			asRopedText.
 	stepView text:
-		self getTMASimulationExperimentalServicesProvider getStep
-			asRopedText.
+		self getTMASimulationExperimentalServicesProvider step asRopedText.
 	nbAntsView text:
-		self getTMASimulationExperimentalServicesProvider getAnts size
+		self getTMASimulationExperimentalServicesProvider ants size
 			asRopedText.
 	nbInsectsView text:
-		self getTMASimulationExperimentalServicesProvider getInsects size
+		self getTMASimulationExperimentalServicesProvider insects size
 			asRopedText.
 	storageView text:
-		self getTMASimulationExperimentalServicesProvider getStorage
+		self getTMASimulationExperimentalServicesProvider storage
 			asRopedText
 ]
 
-{ #category : #'events - lifecycle' }
+{ #category : #'as yet unclassified' }
 MAGroundExperimental >> updateView [
 
 	self doSimulationStep.

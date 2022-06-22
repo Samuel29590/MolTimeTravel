@@ -6,6 +6,11 @@ Trait {
 }
 
 { #category : #services }
+TMATimeTravelExperimentalServices >> creationOf: aComponentMemento at: aStep [
+
+]
+
+{ #category : #services }
 TMATimeTravelExperimentalServices >> isPlayingBackward [ 
 
 	
@@ -17,12 +22,18 @@ TMATimeTravelExperimentalServices >> isReplaying [
 
 { #category : #services }
 TMATimeTravelExperimentalServices >> isRestoring [
+
+	
 ]
 
 { #category : #services }
 TMATimeTravelExperimentalServices >> playBackward [
 
 	
+]
+
+{ #category : #services }
+TMATimeTravelExperimentalServices >> removeOf: aComponentMemento at: aStep [
 ]
 
 { #category : #services }
@@ -36,6 +47,18 @@ TMATimeTravelExperimentalServices >> restoreAtStep: aStep [
 ]
 
 { #category : #services }
+TMATimeTravelExperimentalServices >> restoreOneStepAfter [ 
+
+	
+]
+
+{ #category : #services }
+TMATimeTravelExperimentalServices >> restoreOneStepBefore [
+
+	
+]
+
+{ #category : #services }
 TMATimeTravelExperimentalServices >> restoringStep [ 
 
 	
@@ -46,7 +69,7 @@ TMATimeTravelExperimentalServices >> save: aComponent at: aStep [
 ]
 
 { #category : #services }
-TMATimeTravelExperimentalServices >> startTimeTravel [ 
+TMATimeTravelExperimentalServices >> startTimeTravel [
 ]
 
 { #category : #services }

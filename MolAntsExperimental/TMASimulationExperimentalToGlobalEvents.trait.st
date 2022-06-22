@@ -22,9 +22,3 @@ TMASimulationExperimentalToGlobalEvents >> stopped [
 
 	
 ]
-
-{ #category : #'events - lifecycle' }
-TMASimulationExperimentalToGlobalEvents >> updateView [
-
-	
-]

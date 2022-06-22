@@ -50,12 +50,12 @@ MAAntExperimental >> componentInitialize [
 
 	ageInMs := 0.
 
-	self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
-	"ant notify the creation"
-	memento := MAComponentCreationMemento new.
-	self getTMATimeTravelExperimentalServicesProvider
-		creationOf: (memento save: self)
-		at: self getTMASimulationExperimentalServicesProvider getStep]
+	self getTMATimeTravelExperimentalServicesProvider isRestoring 
+		ifFalse: [ "ant notify the creation"
+			memento := MAComponentCreationMemento new.
+			self getTMATimeTravelExperimentalServicesProvider
+				creationOf: (memento save: self)
+				at: self getTMASimulationExperimentalServicesProvider step ]
 ]
 
 { #category : #'life cycle' }
@@ -75,11 +75,12 @@ MAAntExperimental >> componentRemove [
 	"ant notify the remove"
 
 	| memento |
-		self getTMATimeTravelExperimentalServicesProvider isRestoring ifFalse:[
-	memento := MAComponentRemoveMemento new.
-	self getTMATimeTravelExperimentalServicesProvider
-		removeOf: (memento save: self)
-		at: self getTMASimulationExperimentalServicesProvider getStep]
+	self getTMATimeTravelExperimentalServicesProvider isRestoring 
+		ifFalse: [ 
+			memento := MAComponentDeletionMemento new.
+			self getTMATimeTravelExperimentalServicesProvider
+				removeOf: (memento save: self)
+				at: self getTMASimulationExperimentalServicesProvider step ]
 ]
 
 { #category : #'events - lifecycle' }
@@ -87,11 +88,13 @@ MAAntExperimental >> doSimulationStep: aStep [
 
 	| antRectangle |
 	"age of the ant increase"
-	ageInMs := aStep * MASimulationManagerExperimental simulationStepDurationInMs.
+	ageInMs := aStep
+	           *
+	           MASimulationManagerExperimental simulationStepDurationInMs.
 
 	"Detection of insects and eat if one is near."
 	antRectangle := BlBounds origin: position - (30 @ 30) extent: 60 @ 60.
-	self getTMASimulationExperimentalServicesProvider getInsects keysDo: [ 
+	self getTMASimulationExperimentalServicesProvider insects keysDo: [ 
 		:each | 
 		| insectRectangle |
 		insectRectangle := BlBounds origin: each extent: 0 @ 0.
