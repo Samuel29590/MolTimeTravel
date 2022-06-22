@@ -27,21 +27,23 @@ MolAntsExperiment like [MolAnts](https://github.com/Samuel29590/MolAnts) is a si
 
 #### Simulation
 
-The component *SimulationManager* is the manager of the simulation it contains the main loop of the system. This loop send the simulationStepSend event message to each entity at each turn.
-This implementation provides start / pause / play / stop methods on the class side.
+The component *SimulationManager* is the manager of the simulation it contains the main loop of the system and data about the simulation as: number of ants, number of insect, insects positions, step ... 
+
+The component *SimulationManager* provide one service, that permit to the other components to get access on simulation's data. And produce one event that is consumed by all the other components. In this event there is the method *simulationStepSend* that components of the simulation consumes to do their actions.
 
 #### Ground
 
 The component *Ground* is the implementation of the system's view. It permits to draw all the entities of the system on a canvas and to keep the information panel up-to-date. It also permits to have a functional interface with buttons to start, pause and stop the system.
-Futhermore, it also provide the time-travel panel.
+Futhermore, it also provide the time-travel panel. To get data about the simulation, the view consumes the *SimulationManager* service. The view is update on a different thread from the simulation. 
 
 #### Insects
 
-The component insect is very simple, insects spawn randomly on the ground and move randomly on the ground waiting to be eaten.
+The component insect is very simple, insects spawn randomly on the ground and move randomly on the ground waiting to be eaten. At each move the insect produce an event that the *SimulationManager* consumes to update the insect position.
 
 #### Ants
 
-The component ant. Ants spawn in the of the ground and move also randomly on the ground. If an ant is close to an insect, the insect die and the storage variable of the simulation increase.
+Ants spawn in the middle of the ground and move randomly on the ground. 
+The ant component consumes the service of the *SimulationManager* to know positions of insects. And if an ant is close to an insect, the ant produce and event that is consumed by the *SimulatioManager* andthe insect die and the storage variable of the simulation increase.
 
 #### TimeTravel
 
