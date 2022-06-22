@@ -70,8 +70,6 @@ For components state it is almost the same process. When a component is updated 
 
 ## Illustrations
 
-<img src="https://user-images.githubusercontent.com/64481702/175001208-438f7c33-f4a9-49ac-88fa-85e58d051d1a.png" width="45%">
-<img src="https://user-images.githubusercontent.com/64481702/175001226-4100de54-5faf-4234-ab44-508c80248062.png" width="45%">
+<img src="https://user-images.githubusercontent.com/64481702/175001208-438f7c33-f4a9-49ac-88fa-85e58d051d1a.png" width="45%"><img src="https://user-images.githubusercontent.com/64481702/175001226-4100de54-5faf-4234-ab44-508c80248062.png" width="45%">
 
-<img src="https://user-images.githubusercontent.com/64481702/175001242-2a2d55f4-ea23-4bae-8e92-d5e07d72a8b5.png" width="45%">
-<img src="https://user-images.githubusercontent.com/64481702/175001261-fa80636e-97ff-413b-8cd7-be632148541b.png" width="45%">
+<img src="https://user-images.githubusercontent.com/64481702/175001242-2a2d55f4-ea23-4bae-8e92-d5e07d72a8b5.png" width="45%"><img src="https://user-images.githubusercontent.com/64481702/175001261-fa80636e-97ff-413b-8cd7-be632148541b.png" width="45%">
