@@ -50,7 +50,7 @@ The ant component consumes the service of the *SimulationManager* to know positi
 The component TimeTravel aims to store data about all the components of the simulation. So when components variables changes, this changes are recorded by the TimeTravel component.
 With this data about components we are able to go backward on the simulation and replay step by step all the simulation.
 
-The component *TimeTravel* is extrenal from the simulation, and all components consume its event and use its service.
+The component *TimeTravel* is extrenal from the simulation, and all components consume its event and use its service. Its event permit to restore the state of an object at a particular step and to notify when the component is recording or time traveling. Its service permit for components to save their states, permit to get data about the component and permit to do action while time-traveling. 
 
 ### How is the data recorded ?
 
