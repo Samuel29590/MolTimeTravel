@@ -1,6 +1,6 @@
 # MolAntsExperimental
 
-This is the experimental version of ![MolAnts](https://github.com/Samuel29590/MolAnts) for time-traveling.
+This is the experimental version of [MolAnts](https://github.com/Samuel29590/MolAnts) for time-traveling.
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
 ## Getting Started
@@ -15,11 +15,11 @@ Pharo 8, Pharo 9 and Pharo 10 :
 
 ### Prerequisites
 
-MolAntsExperimental require ![Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and ![Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
+MolAntsExperimental require [Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and [Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
 
 ## Documentation
 
-MolAntsExperiment like ![MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, and replay the simulation step by step, it's called time-traveling.
+MolAntsExperiment like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, and replay the simulation step by step, it's called time-traveling.
 
 ### Components explanation
 
@@ -52,7 +52,7 @@ With this data about components we are able to go backward on the simulation and
 
 ![MomentosOrganization](https://user-images.githubusercontent.com/64481702/174978694-3813a42e-69b7-4f95-a2d1-fbcb5e13f154.png)
 
-Data of the simulation are recorded following the ![Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
+Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
 
 ### UML of the components, events and services of MolAntsExperimental
 
