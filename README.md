@@ -58,11 +58,8 @@ This is the component *TimeTravel* that store the history, in the variable *hist
 
 ![MomentosOrganization](https://user-images.githubusercontent.com/64481702/174978694-3813a42e-69b7-4f95-a2d1-fbcb5e13f154.png)
 
+So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* or a *MAComponentDeletionMemento*, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsMementos* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentLifeCycleMemento* on the variable *ComponentsLifeCycles* of the *MAComponentsMementos*. From there, the creation or deletion has been saved.
 
-
-
-So when a component is created or deleted from the simulation, the component create respectively a *MAComponentCreationMemento* or a *MAComponentDeletionMemento* and notify the component *TimeTravel* to store it. This two mementos are subclasses of *MAComponentLifeCycleMemento*.
-
-### UML of the components, events and services of MolAntsExperimental
+For components state it is almost the same process. The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *ant* will create a *MAAntMemento*. These three mementos are all subclasses of *MAComponentMemento*. The process to store them is the same, the component *TimeTravel* receive the notification to save it and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsMementos* associate to the step where the *MAComponentMemento* has been created.
 
 ![TimeTravel-Component-UML](https://user-images.githubusercontent.com/64481702/174978742-26bc40b0-36aa-44f8-a480-4fffed527e26.png)
