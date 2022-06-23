@@ -45,18 +45,26 @@ MASimulationMemento >> restoringStep [
 { #category : #actions }
 MASimulationMemento >> save: aSimulationManager [
 
-	| dict |
+	| dict orderedCollection |
 	dict := Dictionary new.
-	aSimulationManager insects keysAndValuesDo: [ :k :v | 
-		| list |
-		list := OrderedCollection new.
-		v do: [ :value | list add: value ].
-		dict add: k -> list ].
-
+	aSimulationManager insects isDictionary ifTrue: [ 
+		aSimulationManager insects keysAndValuesDo: [ :k :v | 
+			| list |
+			list := OrderedCollection new.
+			v do: [ :value | list add: value class -> value componentName ].
+			dict add: k -> list ] ].
 	insects := dict.
+	
 	componentName := aSimulationManager componentName.
 	nbInsects := aSimulationManager nbInsects.
-	ants := aSimulationManager ants.
+	
+	
+	orderedCollection := OrderedCollection new.
+		aSimulationManager ants isCollection ifTrue: [ 
+		aSimulationManager ants do: [ :value | 
+			orderedCollection add: value class -> value componentName  ] ].
+	ants := orderedCollection.
+	
 	nbAnts := aSimulationManager nbAnts.
 	storage := aSimulationManager storage
 ]

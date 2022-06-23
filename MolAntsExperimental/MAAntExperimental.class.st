@@ -81,6 +81,8 @@ MAAntExperimental >> componentRemove [
 			self getTMATimeTravelExperimentalServicesProvider
 				removeOf: (memento save: self)
 				at: self getTMASimulationExperimentalServicesProvider step ]
+
+	
 ]
 
 { #category : #'events - lifecycle' }

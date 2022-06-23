@@ -19,7 +19,9 @@ Class {
 		'buttonOneStepBefore',
 		'buttonOneStepAfter',
 		'buttonPlayBackward',
-		'buttonReplay'
+		'buttonReplay',
+		'buttonPlay',
+		'buttonPause'
 	],
 	#category : #MolAntsExperimental
 }
@@ -96,7 +98,7 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding Pause button"
-	button := BlElement new
+	buttonPause := BlElement new
 		          background: Color orange;
 		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
 		          padding: (BlInsets
@@ -117,7 +119,7 @@ MAGroundExperimental >> createInfoPanel [
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
-					           button isVisible ifTrue: [ 
+					           buttonPause isVisible ifTrue: [ 
 							           self isRunning ifTrue: [ 
 									           self isRestoring ifFalse: [ 
 											           MASimulationManagerExperimental pauseSimulation ] ] ].
@@ -129,14 +131,14 @@ MAGroundExperimental >> createInfoPanel [
 		             thin.
 	label := BlTextElement new.
 	label text: labelText.
-	button addChild: label.
-	infoPanel addChild: button.
+	buttonPause addChild: label.
+	infoPanel addChild: buttonPause.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding Play button"
-	button := BlElement new
+	buttonPlay := BlElement new
 		          background: Color green;
 		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
 		          padding: (BlInsets
@@ -158,7 +160,7 @@ MAGroundExperimental >> createInfoPanel [
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
-					           button isVisible ifTrue: [ 
+					           buttonPlay isVisible ifTrue: [ 
 							           self isRunning ifFalse: [ 
 									           self isRestoring ifFalse: [ 
 											           MASimulationManagerExperimental playSimulation ] ] ].
@@ -170,8 +172,8 @@ MAGroundExperimental >> createInfoPanel [
 		             thin.
 	label := BlTextElement new.
 	label text: labelText.
-	button addChild: label.
-	infoPanel addChild: button.
+	buttonPlay addChild: label.
+	infoPanel addChild: buttonPlay.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -355,7 +357,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 											                          MASimulationManagerExperimental
 												                          playSimulation.
 											                          self
-												                          getTMASimulationExperimentalServicesProvider
+												                          getTMATimeTravelExperimentalServicesProvider
 												                          startTimeTravel.
 											                          self updateView ] ] ].
 					                          anEvent consumed: true ]).
@@ -589,14 +591,6 @@ MAGroundExperimental >> createTimeTravelPanel [
 ]
 
 { #category : #initialization }
-MAGroundExperimental >> doSimulationStep [
-
-	"Incrementing the number of step, then refreshing the view if it's necessary."
-
-	 self updateInfoPanel
-]
-
-{ #category : #initialization }
 MAGroundExperimental >> drawOnSpartaCanvas: aCanvas [
 
 	"Re writing this method here, in order to directly draw inside the canvas all the elements of the system. Tihs permit to keep good performances even if there is a lot of elements to draw."
@@ -724,9 +718,6 @@ MAGroundExperimental >> updateInfoPanel [
 
 	"Modify each elements of the info panel. It permit to keep the view up to date with the simulation."
 
-	returningStepView text:
-		self getTMATimeTravelExperimentalServicesProvider restoringStep
-			asRopedText.
 	stepView text:
 		self getTMASimulationExperimentalServicesProvider step asRopedText.
 	nbAntsView text:
@@ -737,15 +728,28 @@ MAGroundExperimental >> updateInfoPanel [
 			asRopedText.
 	storageView text:
 		self getTMASimulationExperimentalServicesProvider storage
-			asRopedText
+			asRopedText.
+
+	self isRunning
+		ifTrue: [ 
+			buttonPlay background: Color gray.
+			buttonPause background: Color orange ]
+		ifFalse: [ 
+			buttonPause background: Color gray.
+			self isRestoring ifTrue:[buttonPlay background: Color gray.] ifFalse: [ buttonPlay background: Color green. ].
+			 ]
 ]
 
-{ #category : #'as yet unclassified' }
-MAGroundExperimental >> updateView [
+{ #category : #initialization }
+MAGroundExperimental >> updateTimeTravelPanel [
 
-	self doSimulationStep.
+	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
-	self isRestoring
+	returningStepView text:
+		self getTMATimeTravelExperimentalServicesProvider restoringStep
+			asRopedText.
+			
+		self isRestoring
 		ifTrue: [ 
 			buttonStartTimeTravel background: Color gray.
 			buttonStopTimeTravel background: Color white.
@@ -767,5 +771,13 @@ MAGroundExperimental >> updateView [
 			buttonOneStepBefore background: Color gray.
 			buttonOneStepAfter background: Color gray.
 			buttonPlayBackward background: Color gray.
-			buttonReplay background: Color gray ].
+			buttonReplay background: Color gray ]
+]
+
+{ #category : #'life cycle' }
+MAGroundExperimental >> updateView [
+
+	self updateInfoPanel.
+
+	self updateTimeTravelPanel
 ]

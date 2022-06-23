@@ -317,13 +317,28 @@ MASimulationManagerExperimental >> removeInsects [
 { #category : #events }
 MASimulationManagerExperimental >> restore: aComponentName values: aMemento [
 
+	| dict orderedCollection |
 	self componentName = aComponentName ifTrue: [ 
 		componentName := aMemento componentName.
-		insects := aMemento insects.
 		nbInsects := aMemento nbInsects.
-		ants := aMemento ants.
 		nbAnts := aMemento nbAnts.
-		storage := aMemento storage. ]
+		storage := aMemento storage.
+
+		aMemento insects isDictionary ifTrue: [ 
+			dict := Dictionary new.
+			aMemento insects keysAndValuesDo: [ :k :v | 
+				| list |
+				list := OrderedCollection new.
+				v do: [ :value | 
+					list add: (MolUtils instanceOf: value key named: value value) ].
+				dict add: k -> list ] ].
+		insects := dict.
+
+		orderedCollection := OrderedCollection new.
+		aMemento ants isCollection ifTrue: [ 
+			aMemento ants do: [ :value | 
+				orderedCollection add: (MolUtils instanceOf: value key named: value value)  ] ].
+		ants := orderedCollection ]
 ]
 
 { #category : #'life cycle' }
