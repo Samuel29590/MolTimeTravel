@@ -143,7 +143,7 @@ MASimulationManagerExperimental >> createAnts [
 	"Creation of a new ant"
 
 	| name ant memento |
-	1 to: 2 do: [ :e | 
+	1 to: 5 do: [ :e | 
 		memento := MAAntMemento new.
 		nbAnts := nbAnts + 1.
 		name := ('Ant' , nbAnts printString) asSymbol.
@@ -167,12 +167,17 @@ MASimulationManagerExperimental >> createInsects [
 	"Creation of a new insect"
 
 	| name insect memento |
-	1 to: 2 do: [ :e | 
+	1 to: 50 do: [ :e | 
 		memento := MAInsectMemento new.
 		nbInsects := nbInsects + 1.
 		name := ('Insect' , nbInsects printString) asSymbol.
 		insect := MAInsectExperimental start: name.
-		insect position: 450 @ 200.
+		insect position: (Random new
+				 nextIntegerBetween: 1
+				 and: MASimulationManagerExperimental simulationWidth)
+			@ (Random new
+					 nextIntegerBetween: 1
+					 and: MASimulationManagerExperimental simulationHeight).
 
 		"Adding events producer into SimulationMManager"
 		self forEvents: TMAInsectsEvents addProducer: name.
