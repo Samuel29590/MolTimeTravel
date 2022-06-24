@@ -1,5 +1,5 @@
 Class {
-	#name : #MAComponentsMementos,
+	#name : #MAComponentStep,
 	#superclass : #Object,
 	#instVars : [
 		'mementos',
@@ -9,13 +9,13 @@ Class {
 }
 
 { #category : #accessing }
-MAComponentsMementos >> componentsLifeCycles [
+MAComponentStep >> componentsLifeCycles [
 
 	^ componentsLifeCycles
 ]
 
 { #category : #initialization }
-MAComponentsMementos >> initialize [
+MAComponentStep >> initialize [
 
 	super initialize.
 	mementos := OrderedCollection new.
@@ -23,25 +23,25 @@ MAComponentsMementos >> initialize [
 ]
 
 { #category : #accessing }
-MAComponentsMementos >> mementos [
+MAComponentStep >> mementos [
 
 	^ mementos
 ]
 
 { #category : #initialization }
-MAComponentsMementos >> save: aComponentMemento [
+MAComponentStep >> save: aComponentMemento [
 
 	mementos add: aComponentMemento 
 ]
 
 { #category : #initialization }
-MAComponentsMementos >> saveCreationOf: aComponentMemento [
+MAComponentStep >> saveCreationOf: aComponentMemento [
 
 	componentsLifeCycles add: aComponentMemento
 ]
 
 { #category : #initialization }
-MAComponentsMementos >> saveRemoveOf: aComponentMemento [
+MAComponentStep >> saveRemoveOf: aComponentMemento [
 
 	componentsLifeCycles add: aComponentMemento
 ]

@@ -167,7 +167,7 @@ MASimulationManagerExperimental >> createInsects [
 	"Creation of a new insect"
 
 	| name insect memento |
-	1 to: 50 do: [ :e | 
+	1 to: 10 do: [ :e | 
 		memento := MAInsectMemento new.
 		nbInsects := nbInsects + 1.
 		name := ('Insect' , nbInsects printString) asSymbol.

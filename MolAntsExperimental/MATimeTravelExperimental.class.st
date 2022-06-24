@@ -46,7 +46,7 @@ MATimeTravelExperimental >> creationOf: aComponentMemento at: aStep [
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentsMementos new ].
+		history add: MAComponentStep new ].
 
 	(history at: stepToIndex) saveCreationOf: aComponentMemento.
 
@@ -113,7 +113,7 @@ MATimeTravelExperimental >> removeOf: aComponentMemento at: aStep [
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentsMementos new ].
+		history add: MAComponentStep new ].
 
 	(history at: stepToIndex) saveRemoveOf: aComponentMemento.
 
@@ -220,7 +220,7 @@ MATimeTravelExperimental >> save: aComponentMemento at: aStep [
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentsMementos new ].
+		history add: MAComponentStep new ].
 
 	(history at: stepToIndex) save: aComponentMemento.
 
