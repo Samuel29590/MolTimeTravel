@@ -20,6 +20,16 @@ MAInsectMemento >> position [
 	^ position
 ]
 
+{ #category : #accessing }
+MAInsectMemento >> redo [ 
+
+	self restoreValues.
+]
+
+{ #category : #accessing }
+MAInsectMemento >> restoreValues [
+]
+
 { #category : #actions }
 MAInsectMemento >> save: anInsect [
 
@@ -27,4 +37,10 @@ MAInsectMemento >> save: anInsect [
 	componentName := anInsect componentName.
 	position := anInsect position.
 	ageInMs := anInsect ageInMs
+]
+
+{ #category : #accessing }
+MAInsectMemento >> undo [
+
+	self restoreValues
 ]

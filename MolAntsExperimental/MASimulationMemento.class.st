@@ -37,6 +37,16 @@ MASimulationMemento >> nbInsects [
 ]
 
 { #category : #accessing }
+MASimulationMemento >> redo [ 
+	
+	self restoreValues 
+]
+
+{ #category : #accessing }
+MASimulationMemento >> restoreValues [
+]
+
+{ #category : #accessing }
 MASimulationMemento >> restoringStep [
 
 	^ restoringStep
@@ -73,4 +83,10 @@ MASimulationMemento >> save: aSimulationManager [
 MASimulationMemento >> storage [
 
 	^ storage
+]
+
+{ #category : #accessing }
+MASimulationMemento >> undo [
+
+	self restoreValues
 ]

@@ -160,7 +160,7 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 	stepToIndex := aStep + 1.
 	stepToIndex < 1 | (stepToIndex > history size) ifTrue: [ ^ self ].
 
-	"Creation or remove of component"
+	"Undo"
 	aStep < restoringStep ifTrue: [ 
 		componentsLifeCycles := (history at: stepToIndex + 1)
 			                        componentsLifeCycles.
@@ -171,7 +171,7 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 			componentLifeCycle isDeletion ifTrue: [ 
 				componentLifeCycle componentClass start:
 					componentLifeCycle componentName ] ] ].
-
+	"Redo"
 	restoringStep < aStep ifTrue: [ 
 		componentsLifeCycles := (history at: stepToIndex)
 			                        componentsLifeCycles.
