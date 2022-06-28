@@ -3,15 +3,15 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'mementos',
-		'componentsLifeCycles'
+		'creationsAndDeletions'
 	],
 	#category : #MolAntsExperimental
 }
 
 { #category : #accessing }
-MAComponentStep >> componentsLifeCycles [
+MAComponentStep >> creationsAndDeletions [
 
-	^ componentsLifeCycles
+	^ creationsAndDeletions
 ]
 
 { #category : #initialization }
@@ -19,7 +19,7 @@ MAComponentStep >> initialize [
 
 	super initialize.
 	mementos := OrderedCollection new.
-	componentsLifeCycles := OrderedCollection new
+	creationsAndDeletions := OrderedCollection new
 ]
 
 { #category : #accessing }
@@ -35,13 +35,7 @@ MAComponentStep >> save: aComponentMemento [
 ]
 
 { #category : #initialization }
-MAComponentStep >> saveCreationOf: aComponentMemento [
+MAComponentStep >> saveCreationOrDeletionOf: aComponentMemento [
 
-	componentsLifeCycles add: aComponentMemento
-]
-
-{ #category : #initialization }
-MAComponentStep >> saveRemoveOf: aComponentMemento [
-
-	componentsLifeCycles add: aComponentMemento
+	creationsAndDeletions add: aComponentMemento
 ]

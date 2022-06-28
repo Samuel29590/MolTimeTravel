@@ -24,6 +24,13 @@ MAComponentMemento >> componentName [
 MAComponentMemento >> redo [
 ]
 
+{ #category : #accessing }
+MAComponentMemento >> restoreValues [
+ | instance |
+	instance := (MolUtils instanceOf: componentClass named: componentName) .
+	instance ifNotNil: [ instance restoreFrom: self. ]
+]
+
 { #category : #actions }
 MAComponentMemento >> save: aComponent [
 ]

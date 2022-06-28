@@ -4,17 +4,19 @@ Class {
 	#category : #MolAntsExperimental
 }
 
-{ #category : #actions }
-MAComponentDeletionMemento >> isDeletion [
-	^ true
-]
-
 { #category : #'undo - undo' }
 MAComponentDeletionMemento >> redo [ 
 	
 	self componentClass stop: self componentName.
 	
 
+]
+
+{ #category : #actions }
+MAComponentDeletionMemento >> save: aComponent [
+
+	componentClass := aComponent class.
+	componentName := aComponent componentName.
 ]
 
 { #category : #'undo - undo' }

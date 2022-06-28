@@ -2,8 +2,8 @@ Class {
 	#name : #MAAntMemento,
 	#superclass : #MAComponentMemento,
 	#instVars : [
-		'position',
-		'ageInMs'
+		'ageInMs',
+		'position'
 	],
 	#category : #MolAntsExperimental
 }
@@ -26,13 +26,10 @@ MAAntMemento >> redo [
 	self restoreValues.
 ]
 
-{ #category : #'undo - undo' }
-MAAntMemento >> restoreValues [
-]
-
 { #category : #actions }
 MAAntMemento >> save: anAnt [
 
+	componentClass := anAnt class.
 	componentName := anAnt componentName.
 	position := anAnt position.
 	ageInMs := anAnt ageInMs

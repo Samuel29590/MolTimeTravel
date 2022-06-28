@@ -40,15 +40,17 @@ MATimeTravelExperimental >> componentRemove [
 ]
 
 { #category : #services }
-MATimeTravelExperimental >> creationOf: aComponentMemento at: aStep [
+MATimeTravelExperimental >> creationOf: aComponent at: aStep [
 
-	| stepToIndex |
+	| stepToIndex aComponentMemento |
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
 		history add: MAComponentStep new ].
 
-	(history at: stepToIndex) saveCreationOf: aComponentMemento.
+	aComponentMemento := MAComponentCreationMemento new save: aComponent.
+
+	(history at: stepToIndex) saveCreationOrDeletionOf: aComponentMemento.
 
 	timeTravelIndex := stepToIndex.
 	restoringStep := aStep
@@ -107,15 +109,17 @@ MATimeTravelExperimental >> playBackward [
 ]
 
 { #category : #services }
-MATimeTravelExperimental >> removeOf: aComponentMemento at: aStep [
+MATimeTravelExperimental >> removeOf: aComponent at: aStep [
 
-	| stepToIndex |
+	| stepToIndex aComponentMemento |
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
 		history add: MAComponentStep new ].
-
-	(history at: stepToIndex) saveRemoveOf: aComponentMemento.
+	
+	aComponentMemento := MAComponentDeletionMemento new save:aComponent.
+	
+	(history at: stepToIndex) saveCreationOrDeletionOf: aComponentMemento.
 
 	timeTravelIndex := stepToIndex.
 	restoringStep := aStep
@@ -161,34 +165,25 @@ MATimeTravelExperimental >> restoreAtStep: aStep [
 	stepToIndex < 1 | (stepToIndex > history size) ifTrue: [ ^ self ].
 
 	"Undo"
-	aStep < restoringStep ifTrue: [ 
+	aStep < restoringStep ifTrue: [ "Remove or create components"
 		componentsLifeCycles := (history at: stepToIndex + 1)
-			                        componentsLifeCycles.
+			                        creationsAndDeletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle isCreation ifTrue: [ 
-				componentLifeCycle componentClass stop:
-					componentLifeCycle componentName ].
-			componentLifeCycle isDeletion ifTrue: [ 
-				componentLifeCycle componentClass start:
-					componentLifeCycle componentName ] ] ].
-	"Redo"
-	restoringStep < aStep ifTrue: [ 
-		componentsLifeCycles := (history at: stepToIndex)
-			                        componentsLifeCycles.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle isCreation ifTrue: [ 
-				componentLifeCycle componentClass start:
-					componentLifeCycle componentName ].
-			componentLifeCycle isDeletion ifTrue: [ 
-				componentLifeCycle componentClass stop:
-					componentLifeCycle componentName ] ] ].
+			componentLifeCycle undo ].
 
-	"Restoration of the state of components"
-	mementos := (history at: stepToIndex) mementos.
-	mementos do: [ :memento | 
-		self getTMATimeTravelExperimentalEventsNotifier
-			restore: memento componentName
-			values: memento ].
+		"Restoration of the state of components"
+		mementos := (history at: stepToIndex) mementos.
+		mementos do: [ :memento | memento undo ] ].
+	"Redo"
+	restoringStep < aStep ifTrue: [ "Remove or create components"
+		componentsLifeCycles := (history at: stepToIndex)
+			                        creationsAndDeletions.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle redo ].
+
+		"Restoration of the state of components"
+		mementos := (history at: stepToIndex) mementos.
+		mementos do: [ :memento | memento redo ] ].
 
 	timeTravelIndex := stepToIndex.
 	restoringStep := aStep
