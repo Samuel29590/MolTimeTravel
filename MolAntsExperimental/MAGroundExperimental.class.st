@@ -597,6 +597,14 @@ MAGroundExperimental >> drawOnSpartaCanvas: aCanvas [
 
 	super drawOnSpartaCanvas: aCanvas.
 
+
+	aCanvas figure
+		path: (Rectangle
+				 origin: MASimulationManagerExperimental  simulationAntHillPosition - (20 @ 20)
+				 extent: 40 @ 40);
+		background: Color white;
+		draw.
+
 	self getTMASimulationExperimentalServicesProvider ants ifNotNil: [ 
 		self getTMASimulationExperimentalServicesProvider ants do: [ :ant | 
 			aCanvas figure
@@ -661,6 +669,17 @@ MAGroundExperimental >> getTMATimeTravelExperimentalServicesProvider [
 			[servicesProvider := MolComponentManager default locatorServices 
 						searchServicesProviderFor: TMATimeTravelExperimentalServices named: servicesSymbol]. 
 	^servicesProvider
+]
+
+{ #category : #'life cycle' }
+MAGroundExperimental >> initialize [
+
+	"Initialization of the ground"
+
+	super initialize.
+	self size: MASimulationManagerExperimental simulationWidth
+		@ MASimulationManagerExperimental  simulationHeight.
+	self background: (Color fromHexString: 'c7baae')
 ]
 
 { #category : #initialization }
