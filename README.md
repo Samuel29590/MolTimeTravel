@@ -23,7 +23,7 @@ MolAntsExperiment like [MolAnts](https://github.com/Samuel29590/MolAnts) is a si
 
 ### Components explanation
 
-![TimeTravel-Component-UML](https://user-images.githubusercontent.com/64481702/176142855-c6ca017b-ca56-428b-89b4-4535c4ad3fef.png)
+![TimeTravel-Component-UML](https://user-images.githubusercontent.com/64481702/176172623-98fdb9da-cf8c-4d1c-911a-a47f8cff7924.png)
 
 #### Simulation
 
@@ -56,13 +56,13 @@ The component *TimeTravel* is extrenal from the simulation, and all components c
 
 Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
 
-![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/174978677-4da7b82f-aef1-44a9-9cec-661b7a5c0e06.png)
+![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176172665-daa4d63c-d399-4443-9677-2f4b1c654f0d.png)
 
 This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentsMementos*. Each index of this collection represent the simulation state at on step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
 *MAComponentsMementos* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *componentsLifeCycles*. This two variables are ordered collections of respetively: *MAComponentMemento*'subclasses and *MAComponentLifeCycleMemento*'s subclasses.
 
-![MomentosOrganization](https://user-images.githubusercontent.com/64481702/176142971-c352872c-bf82-41f0-b9d1-2c218d1086fe.png)
+![MomentosOrganization](https://user-images.githubusercontent.com/64481702/176172704-74c857e7-15ef-41b9-a028-8ca15bc8be91.png)
 
 So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* or a *MAComponentDeletionMemento*, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsMementos* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentLifeCycleMemento* on the variable *ComponentsLifeCycles* of the *MAComponentsMementos*. From there, the creation or deletion has been saved.
 
@@ -80,7 +80,7 @@ For saving objects that are instances of component the process is a little diffe
 
 #### Creation and deletion of components
 
-![CreationAndDeletion](https://user-images.githubusercontent.com/64481702/176143026-fe4a4704-1d59-4a7e-9417-24539dbfbeba.png)
+![CreationAndDeletion](https://user-images.githubusercontent.com/64481702/176172831-82114751-9798-4b90-9399-dc5110f33e69.png)
 
 ## Illustrations
 
