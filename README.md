@@ -78,9 +78,16 @@ For saving objects that are instances of component the process is a little diffe
 
 ### How is the data restored ?
 
+The process to restore data is quite simple. The component *TimeTravel* examine the history that was saved during the execution and restore the data by updating all the other components directly. The component *TimeTravel* also restore or remove components that appear or disappear during the simulation. With this two feature it's possible to play backward the simulation and to replay it step-by-step.
+
 #### Creation and deletion of components
 
 ![CreationAndDeletion](https://user-images.githubusercontent.com/64481702/176172831-82114751-9798-4b90-9399-dc5110f33e69.png)
+
+During undo, components created and deleted during the simulation are also replay. If we go back, the creations are replayed in deletion, and the deletions are replayed in creation. With this behavior, when we go back we have the same components present in the simulation.
+
+
+*MAComponentCreationMemento* *MAComponentDeletionMemento*
 
 ## Illustrations
 
