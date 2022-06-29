@@ -15,7 +15,7 @@ Add the repository directly in Pharo thanks to the Iceberg.
 
 ## Documentation
 
-MolAntsExperiment like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, and replay the simulation step by step, it's called time-traveling.
+MolAntsExperimental like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill, here the implementation of the anthill and entities are simplfy to test quickly. Futhermore, this version add the possibility of returning in the past, and replay the simulation step by step, it's called time-traveling.
 
 ### Components explanation
 
@@ -39,14 +39,14 @@ The component insect is very simple, insects spawn randomly on the ground and mo
 #### Ants
 
 Ants spawn in the middle of the ground and move randomly on the ground. 
-The ant component consumes the service of the *SimulationManager* to know positions of insects. And if an ant is close to an insect, the ant produce and event that is consumed by the *SimulatioManager* andthe insect die and the storage variable of the simulation increase.
+The ant component consumes the service of the *SimulationManager* to know positions of insects. And if an ant is close to an insect, the ant produce and event that is consumed by the *SimulatioManager* and the insect die and the storage variable of the simulation increase.
 
 #### TimeTravel
 
 The component TimeTravel aims to store data about all the components of the simulation. So when components variables changes, this changes are recorded by the TimeTravel component.
 With this data about components we are able to go backward on the simulation and replay step by step all the simulation.
 
-The component *TimeTravel* is extrenal from the simulation, and all components consume its event and use its service. Its event permit to restore the state of an object at a particular step and to notify when the component is recording or time traveling. Its service permit for components to save their states, permit to get data about the component and permit to do action while time-traveling. 
+The component *TimeTravel* is extrenal from the simulation, and all components consume its event and use its service. Its event permit to restore the state of an object at a particular step and to notify when the component is recording or time traveling. Its service permit for components to save their states, to get data about the component and permit to do action while time-traveling. 
 
 ### How is the data recorded ?
 
@@ -54,23 +54,25 @@ Data of the simulation are recorded following the [Momento Pattern](https://en.w
 
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176172665-daa4d63c-d399-4443-9677-2f4b1c654f0d.png)
 
-This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentsMementos*. Each index of this collection represent the simulation state at on step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
+This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at on step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
-*MAComponentsMementos* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *componentsLifeCycles*. This two variables are ordered collections of respetively: *MAComponentMemento*'subclasses and *MAComponentLifeCycleMemento*'s subclasses.
+*MAComponentStep* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *creationsAndDeletions*. This two variables are ordered collections of *MAComponentMemento*'subclasses.
 
 ![MomentosOrganization](https://user-images.githubusercontent.com/64481702/176172704-74c857e7-15ef-41b9-a028-8ca15bc8be91.png)
 
-So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* or a *MAComponentDeletionMemento*, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsMementos* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentLifeCycleMemento* on the variable *ComponentsLifeCycles* of the *MAComponentsMementos*. From there, the creation or deletion has been saved.
+So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
 
-For components state it is almost the same process. When a component is updated it will create a memento. The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *ant* will create a *MAAntMemento*. These three mementos are all subclasses of *MAComponentMemento*. The process to store them is almost the same as *ComponentsLifeCycle*, the component *TimeTravel* receive the notification to save the memento and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsMementos* associate to the step where the *MAComponentMemento* has been created. From there, the state of the component has been saved through its memento.
+For components state it is almost the same process. When a component is updated it will create a memento. The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *ant* will create a *MAAntMemento*. These three mementos are all subclasses of *MAComponentMemento*. The process to store them is almost the same as *creationsAndDeletions*, the component *TimeTravel* receive the notification to save the memento and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsStep* associate to the step where the *MAComponentMemento* has been created. From there, the state of the component has been saved through its memento.
+
+#### How to save reference of a component
+
+For saving objects that are instances of component the process is a little different. Saving the instance isn't a good idea because components can be created or removed during the simulation, so the instances saved will refer to old component instances. The solution to solve this problem is quite simple, with [Molecule](https://github.com/OpenSmock/Molecule), component names are unique for each component types. It means that two different component with different type can have the same name, but two components with the same type can't have the same name. Thanks to this feature, a solution to solve the problem of saving component instances is to save the component class and the component name instead of the instance. From there if the component instance is stopped and restarted we don't have the problem of an incorrect instance. The process to restore the correct instance is simple, using *MolUtils* (a feature of [Molecule](https://github.com/OpenSmock/Molecule)), we are able to retrieve any component instance by specifying the component class and component name (*instanceOf: aClass named: aName*).
 
 <br>
 
 ![collection_save](https://user-images.githubusercontent.com/64481702/175542288-49e089d1-a23c-4a98-8149-05f1ffc95e82.png)
 
 <br>
-
-For saving objects that are instances of component the process is a little different. Saving the instance isn't a good idea because components can be created or removed during the simulation, so the instances saved will refer to old component instances. The solution to solve this problem is quite simple, with [Molecule](https://github.com/OpenSmock/Molecule), component names are unique for each component types. It means that two different component with different type can have the same name, but two components with the same type can't have the same name. Thanks to this feature, a solution to solve the problem of saving component instances is to save the component class and the component name instead of the instance. From there if the component instance is stopped and restarted we don't have the problem of an incorrect instance. The process to restore the correct instance is simple, using *MolUtils* (a feature of [Molecule](https://github.com/OpenSmock/Molecule)), we are able to retrieve any component instance by specifying the component class and component name (*instanceOf: aClass named: aName*).
 
 ### How is the data restored ?
 
