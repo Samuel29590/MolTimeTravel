@@ -39,8 +39,6 @@ MAAntExperimental >> componentActivate [
 MAAntExperimental >> componentInitialize [
 
 	"Initialization of the MAAnt component."
-
-	| memento |
 	self
 		forServices: TMATimeTravelExperimentalServices
 		useProvider: #TimeTravel.
@@ -52,9 +50,8 @@ MAAntExperimental >> componentInitialize [
 
 	self getTMATimeTravelExperimentalServicesProvider isRestoring 
 		ifFalse: [ "ant notify the creation"
-			memento := MAComponentCreationMemento new.
 			self getTMATimeTravelExperimentalServicesProvider
-				creationOf: (memento save: self)
+				creationOf: self
 				at: self getTMASimulationExperimentalServicesProvider step ]
 ]
 
@@ -73,16 +70,11 @@ MAAntExperimental >> componentPassivate [
 MAAntExperimental >> componentRemove [
 
 	"ant notify the remove"
-
-	| memento |
 	self getTMATimeTravelExperimentalServicesProvider isRestoring 
 		ifFalse: [ 
-			memento := MAComponentDeletionMemento new.
 			self getTMATimeTravelExperimentalServicesProvider
-				removeOf: (memento save: self)
+				removeOf: self
 				at: self getTMASimulationExperimentalServicesProvider step ]
-
-	
 ]
 
 { #category : #'events - lifecycle' }
@@ -194,6 +186,13 @@ MAAntExperimental >> restore: aComponentName values: aMemento [
 	self componentName = aComponentName ifTrue: [ 
 		position := aMemento position.
 		ageInMs := aMemento ageInMs ]
+]
+
+{ #category : #events }
+MAAntExperimental >> restoreFrom: aMemento [
+
+		position := aMemento position.
+		ageInMs := aMemento ageInMs
 ]
 
 { #category : #'events - lifecycle' }

@@ -2,8 +2,8 @@ Class {
 	#name : #MAInsectMemento,
 	#superclass : #MAComponentMemento,
 	#instVars : [
-		'position',
-		'ageInMs'
+		'ageInMs',
+		'position'
 	],
 	#category : #MolAntsExperimental
 }
@@ -26,14 +26,10 @@ MAInsectMemento >> redo [
 	self restoreValues.
 ]
 
-{ #category : #accessing }
-MAInsectMemento >> restoreValues [
-]
-
 { #category : #actions }
 MAInsectMemento >> save: anInsect [
 
-	
+	componentClass := anInsect class.
 	componentName := anInsect componentName.
 	position := anInsect position.
 	ageInMs := anInsect ageInMs

@@ -112,6 +112,7 @@ MASimulationManagerExperimental >> componentInitialize [
 	"Initialization of the MASimulationManager component."
 
 	super componentInitialize.
+
 	self start
 ]
 
@@ -134,6 +135,7 @@ MASimulationManagerExperimental >> componentRemove [
 	"Removing the MASimulationManager component."
 
 	super componentRemove.
+
 	self stop
 ]
 
@@ -174,10 +176,10 @@ MASimulationManagerExperimental >> createInsects [
 		insect := MAInsectExperimental start: name.
 		insect position: (Random new
 				 nextIntegerBetween: 1
-				 and: MASimulationManagerExperimental simulationWidth)
+				 and: self class simulationWidth)
 			@ (Random new
 					 nextIntegerBetween: 1
-					 and: MASimulationManagerExperimental simulationHeight).
+					 and: self class simulationHeight).
 
 		"Adding events producer into SimulationMManager"
 		self forEvents: TMAInsectsEvents addProducer: name.
@@ -344,6 +346,33 @@ MASimulationManagerExperimental >> restore: aComponentName values: aMemento [
 			aMemento ants do: [ :value | 
 				orderedCollection add: (MolUtils instanceOf: value key named: value value)  ] ].
 		ants := orderedCollection ]
+]
+
+{ #category : #events }
+MASimulationManagerExperimental >> restoreFrom: aMemento [
+
+	| dict orderedCollection |
+		componentName := aMemento componentName.
+		nbInsects := aMemento nbInsects.
+		nbAnts := aMemento nbAnts.
+		storage := aMemento storage.
+
+		aMemento insects isDictionary ifTrue: [ 
+			dict := Dictionary new.
+			aMemento insects keysAndValuesDo: [ :k :v | 
+				| list |
+				list := OrderedCollection new.
+				v do: [ :value | 
+					list add: (MolUtils instanceOf: value key named: value value) ].
+				dict add: k -> list ] ].
+		insects := dict.
+
+		orderedCollection := OrderedCollection new.
+		aMemento ants isCollection ifTrue: [ 
+			aMemento ants do: [ :value | 
+				orderedCollection add:
+					(MolUtils instanceOf: value key named: value value) ] ].
+		ants := orderedCollection
 ]
 
 { #category : #'life cycle' }

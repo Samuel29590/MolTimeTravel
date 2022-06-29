@@ -43,10 +43,6 @@ MASimulationMemento >> redo [
 ]
 
 { #category : #accessing }
-MASimulationMemento >> restoreValues [
-]
-
-{ #category : #accessing }
 MASimulationMemento >> restoringStep [
 
 	^ restoringStep
@@ -64,17 +60,18 @@ MASimulationMemento >> save: aSimulationManager [
 			v do: [ :value | list add: value class -> value componentName ].
 			dict add: k -> list ] ].
 	insects := dict.
-	
+
+	componentClass := aSimulationManager class.
 	componentName := aSimulationManager componentName.
 	nbInsects := aSimulationManager nbInsects.
-	
-	
+
+
 	orderedCollection := OrderedCollection new.
-		aSimulationManager ants isCollection ifTrue: [ 
+	aSimulationManager ants isCollection ifTrue: [ 
 		aSimulationManager ants do: [ :value | 
-			orderedCollection add: value class -> value componentName  ] ].
+			orderedCollection add: value class -> value componentName ] ].
 	ants := orderedCollection.
-	
+
 	nbAnts := aSimulationManager nbAnts.
 	storage := aSimulationManager storage
 ]
