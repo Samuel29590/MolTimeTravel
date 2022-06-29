@@ -82,12 +82,13 @@ The process to restore data is quite simple. The component *TimeTravel* examine 
 
 #### Creation and deletion of components
 
-![CreationAndDeletion](https://user-images.githubusercontent.com/64481702/176172831-82114751-9798-4b90-9399-dc5110f33e69.png)
+![undo](https://user-images.githubusercontent.com/64481702/176385748-186ad58b-ef82-4dfc-a226-33aaefacfe90.png)
 
-During undo, components created and deleted during the simulation are also replay. If we go back, the creations are replayed in deletion, and the deletions are replayed in creation. With this behavior, when we go back we have the same components present in the simulation.
+During undo, components created and deleted during the simulation are also replay. When we go back, the creations (*MAComponentCreationMemento*) are replayed in deletion, and the deletions (*MAComponentDeletionMemento*) are replayed in creation. With this behavior, when we go back we have the same components present in the simulation.
+
+![redo](https://user-images.githubusercontent.com/64481702/176385734-b2bc4b42-5df8-4f17-8deb-1dd444c43bfc.png)
 
 
-*MAComponentCreationMemento* *MAComponentDeletionMemento*
 
 ## Illustrations
 
