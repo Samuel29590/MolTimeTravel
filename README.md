@@ -5,13 +5,13 @@ This repository aims to help the search in Time-Traveling debugging techniques w
 
 ## Getting Started
 
-### Installing MolAntsExperimental
-
-Add the repository directly in Pharo thanks to the Iceberg.
-
 ### Prerequisites
 
 MolAntsExperimental require [Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and [Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
+
+### Installing MolAntsExperimental
+
+Add the repository directly in Pharo thanks to the Iceberg.
 
 ## Documentation
 
