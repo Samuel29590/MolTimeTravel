@@ -9,10 +9,6 @@ This repository aims to help the search in Time-Traveling debugging techniques w
 
 Add the repository directly in Pharo thanks to the Iceberg.
 
-Pharo 8, Pharo 9 and Pharo 10 : 
-
-(https://github.com/OpenSmock/MolAnts)
-
 ### Prerequisites
 
 MolAntsExperimental require [Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and [Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
