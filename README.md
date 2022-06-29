@@ -52,13 +52,13 @@ The component *TimeTravel* is extrenal from the simulation, and all components c
 
 Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
 
-![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176172665-daa4d63c-d399-4443-9677-2f4b1c654f0d.png)
+![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
 
 This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at on step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
 *MAComponentStep* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *creationsAndDeletions*. This two variables are ordered collections of *MAComponentMemento*'subclasses.
 
-![MomentosOrganization](https://user-images.githubusercontent.com/64481702/176172704-74c857e7-15ef-41b9-a028-8ca15bc8be91.png)
+![MomentosOrganization](https://user-images.githubusercontent.com/64481702/176431703-f85eea1b-849e-461a-a1ed-604c971c75d1.png)
 
 So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
 
