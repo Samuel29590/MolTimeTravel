@@ -76,7 +76,7 @@ For saving objects that are instances of component the process is a little diffe
 
 ### How is the data restored ?
 
-The process to restore data is quite simple. The component *TimeTravel* examine the history that was saved during the execution and restore the data by updating all the other components directly. The component *TimeTravel* also restore or remove components that appear or disappear during the simulation. With this two feature it's possible to play backward the simulation and to replay it step-by-step.
+The process to restore data is quite simple. The component *TimeTravel* examine the history that was saved, step-by-step, during the execution and restore the data by updating all the other components directly. The component *TimeTravel* also restore or remove components that appear or disappear during the simulation. With this two feature it's possible to play backward the simulation and to replay it step-by-step.
 
 #### Creation and deletion of components
 
@@ -92,9 +92,9 @@ And in redo on the contrary with undo we interpret the creations and deletions o
 
 ![redo](https://user-images.githubusercontent.com/64481702/176385734-b2bc4b42-5df8-4f17-8deb-1dd444c43bfc.png)
 
-#### Creation and deletion of components
+#### Values of components
 
-
+When we time travel on the simulation, the *TimeTravel* component will execute the *undo* or *redo* methods of the mementos at each restored step. These methods will tell the mementos to restore the variables of their associated component, using the *restorFrom: aMemento* method present in the components. The components receive the mementos and restore their variables using the values saved on the mementos.
 
 <br><br><br>
 
