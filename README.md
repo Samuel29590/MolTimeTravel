@@ -98,7 +98,7 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 
 #### Example of an undo and a restoration from a memento (example non exhaustive)
 
-![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/176443344-2bd3c5b9-82d9-48c5-bb4b-9bf659554b29.png)
+![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/176444784-ee0004cf-9a7b-4bed-8c68-1b073e88570f.png)
 
 <br><br><br>
 
