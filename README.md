@@ -82,13 +82,17 @@ The process to restore data is quite simple. The component *TimeTravel* examine 
 
 #### Creation and deletion of components
 
+During undo, components created and deleted during the simulation are also undo. When we go back, the creations (*MAComponentCreationMemento*) are replayed in deletion, and the deletions (*MAComponentDeletionMemento*) are replayed in creation. With this behavior, when we go back we have the same components present in the simulation. The particularity in the creation and deletion during undo is thatils sont fait un step 
+
+The specificity for creation and deletion during undo is that they are interpreted with a shift step. For example if we undo the step X , we will replay the creation and deletion of the step X+1. This specificity is necessary because if we interpret creation and deletion of the same step, we will create components that were not present during execution and delete components that were present during execution.
+
 ![undo](https://user-images.githubusercontent.com/64481702/176385748-186ad58b-ef82-4dfc-a226-33aaefacfe90.png)
 
-During undo, components created and deleted during the simulation are also replay. When we go back, the creations (*MAComponentCreationMemento*) are replayed in deletion, and the deletions (*MAComponentDeletionMemento*) are replayed in creation. With this behavior, when we go back we have the same components present in the simulation.
+In the case of redo, it's simpler, creations and deletions are replayed as they were recorded. A creation (*MAComponentCreationMemento*) is replayed as a creation, and a deletion (*MAComponentDeletionMemento*) is replayed as a deletion. Futhermore, when a component is recreated, its in-step state is also restored.
+
+And in redo on the contrary with undo we interpret the creations and deletions of the same step which is restored (For example if we redo step X , we will replay the creation and deletion of step X).
 
 ![redo](https://user-images.githubusercontent.com/64481702/176385734-b2bc4b42-5df8-4f17-8deb-1dd444c43bfc.png)
-
-
 
 ## Illustrations
 
