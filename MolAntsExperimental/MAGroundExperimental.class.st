@@ -99,31 +99,34 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding Pause button"
 	buttonPause := BlElement new
-		          background: Color orange;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 @ 10;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           buttonPause isVisible ifTrue: [ 
-							           self isRunning ifTrue: [ 
-									           self isRestoring ifFalse: [ 
-											           MASimulationManagerExperimental pauseSimulation ] ] ].
-					           anEvent consumed: true ]).
+		               background: Color orange;
+		               geometry:
+			               (BlRoundedRectangleGeometry cornerRadius: 2);
+		               padding: (BlInsets
+				                top: 8
+				                right: 16
+				                bottom: 8
+				                left: 16);
+		               layout: BlLinearLayout horizontal;
+		               effect: (BlGaussianShadowEffect
+				                color: (Color black alpha: 0.3)
+				                width: 1
+				                offset: 0 @ 2);
+		               constraintsDo: [ :c | 
+			               c horizontal fitContent.
+			               c vertical fitContent ];
+		               relocate:
+			               MASimulationManagerExperimental simulationWidth / 10
+			               @ 10;
+		               addEventHandler: (BlEventHandler
+				                on: BlClickEvent
+				                do: [ :anEvent | 
+					                buttonPause isVisible ifTrue: [ 
+							                self isRunning ifTrue: [ 
+									                self isRestoring ifFalse: [ 
+											                MASimulationManagerExperimental
+												                pauseSimulation ] ] ].
+					                anEvent consumed: true ]).
 	labelText := 'Pause' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -139,32 +142,33 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding Play button"
 	buttonPlay := BlElement new
-		          background: Color green;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10
-			          * 4.5 @ 10;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           buttonPlay isVisible ifTrue: [ 
-							           self isRunning ifFalse: [ 
-									           self isRestoring ifFalse: [ 
-											           MASimulationManagerExperimental playSimulation ] ] ].
-					           anEvent consumed: true ]).
+		              background: Color green;
+		              geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		              padding: (BlInsets
+				               top: 8
+				               right: 16
+				               bottom: 8
+				               left: 16);
+		              layout: BlLinearLayout horizontal;
+		              effect: (BlGaussianShadowEffect
+				               color: (Color black alpha: 0.3)
+				               width: 1
+				               offset: 0 @ 2);
+		              constraintsDo: [ :c | 
+			              c horizontal fitContent.
+			              c vertical fitContent ];
+		              relocate:
+			              MASimulationManagerExperimental simulationWidth / 10
+			              * 4.5 @ 10;
+		              addEventHandler: (BlEventHandler
+				               on: BlClickEvent
+				               do: [ :anEvent | 
+					               buttonPlay isVisible ifTrue: [ 
+							               self isRunning ifFalse: [ 
+									               self isRestoring ifFalse: [ 
+											               MASimulationManagerExperimental
+												               playSimulation ] ] ].
+					               anEvent consumed: true ]).
 	labelText := 'Play' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -217,7 +221,7 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Ajout de l'heure à l'interface."
+	"Adding steps to the panel."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
 				  MASimulationManagerExperimental simulationWidth / 10 @ 80;
@@ -234,7 +238,7 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Ajout du nombre de proies à l'interface."
+	"Adding the number of insects to the panel."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
 				  MASimulationManagerExperimental simulationWidth / 10 @ 150;
@@ -251,7 +255,7 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Ajout du nombre de fourmis à l'interface."
+	"Adding the number of ants to the panel."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
 				  MASimulationManagerExperimental simulationWidth / 10 * 4 @ 150;
@@ -268,7 +272,7 @@ MAGroundExperimental >> createInfoPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Ajout du storage à l'interface."
+	"Adding storage to the panel."
 	infoPanel addChild: ((BlTextElement new
 			  relocate:
 				  MASimulationManagerExperimental simulationWidth / 10 * 7 @ 150;
@@ -302,7 +306,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Ajout du returningStep à l'interface."
+	"Adding returningStep to the panel."
 	timeTravelPanel addChild: ((BlTextElement new
 			  relocate:
 				  MASimulationManagerExperimental simulationWidth / 10 @ 20;
@@ -315,6 +319,7 @@ MAGroundExperimental >> createTimeTravelPanel [
 		                     background: Color transparent;
 		                     text: '000' asRopedText.
 	timeTravelPanel addChild: returningStepView.
+	
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -706,13 +711,9 @@ MAGroundExperimental >> isRunning [
 	^ self getTMASimulationExperimentalServicesProvider isRunning
 ]
 
-{ #category : #events }
-MAGroundExperimental >> restore: aComponentName values: aMemento [
-]
-
 { #category : #'events - lifecycle' }
 MAGroundExperimental >> startViewLoop [
-
+	"Starting the view loop."
 	viewLoop := [ 
 	            [ true ] whileTrue: [ 
 		            self updateView.
@@ -797,6 +798,5 @@ MAGroundExperimental >> updateTimeTravelPanel [
 MAGroundExperimental >> updateView [
 
 	self updateInfoPanel.
-
 	self updateTimeTravelPanel
 ]

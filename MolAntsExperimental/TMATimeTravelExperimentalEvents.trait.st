@@ -6,7 +6,9 @@ Trait {
 }
 
 { #category : #events }
-TMATimeTravelExperimentalEvents >> restore: aComponentName values: aMemento [
+TMATimeTravelExperimentalEvents >> restoreFrom: aMemento [
+
+	
 ]
 
 { #category : #events }

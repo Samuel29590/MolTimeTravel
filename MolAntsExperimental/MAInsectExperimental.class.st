@@ -16,16 +16,10 @@ MAInsectExperimental >> ageInMs [
 	^ ageInMs
 ]
 
-{ #category : #accessing }
-MAInsectExperimental >> ageInMs: anObject [
-
-	ageInMs := anObject
-]
-
 { #category : #'life cycle' }
 MAInsectExperimental >> componentActivate [
 
-	"Activation of the MAGround component."
+	"Activation of the MAInsect component."
 
 	self getTMASimulationExperimentalToGlobalEventsSubscriber subscribe:
 		self.
@@ -40,7 +34,8 @@ MAInsectExperimental >> componentActivate [
 { #category : #'life cycle' }
 MAInsectExperimental >> componentInitialize [
 
-	"Initialization of the MAAnt component."
+	"Initialization of the MAInsect component."
+
 	self
 		forServices: TMATimeTravelExperimentalServices
 		useProvider: #TimeTravel.
@@ -57,23 +52,23 @@ MAInsectExperimental >> componentInitialize [
 { #category : #'life cycle' }
 MAInsectExperimental >> componentPassivate [
 
-	"Passivating the MAGround component."
+	"Passivating the MAInsect component."
 
 	self getTMASimulationExperimentalToGlobalEventsSubscriber 
 		unsubscribe: self.
-		
+
 	self getTMATimeTravelExperimentalEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
 MAInsectExperimental >> componentRemove [
 
-	"insect notify the remove"
+	"Insect notify its remove"
 
 	self getTMATimeTravelExperimentalServicesProvider isRestoring 
 		ifFalse: [ 
 			self getTMATimeTravelExperimentalServicesProvider
-				removeOf: (self)
+				removeOf: self
 				at: self getTMASimulationExperimentalServicesProvider step ]
 ]
 
@@ -133,6 +128,7 @@ MAInsectExperimental >> getTMATimeTravelExperimentalServicesProvider [
 { #category : #'events - lifecycle' }
 MAInsectExperimental >> move [
 
+	"Random move on the ground."
 	| newPos oldPosition |
 	oldPosition := position.
 	newPos := position
@@ -147,13 +143,13 @@ MAInsectExperimental >> move [
 	newPos y > MASimulationManagerExperimental simulationHeight ifTrue: [ 
 		newPos := newPos x
 		          @ MASimulationManagerExperimental simulationHeight ].
-	
+
 	position := newPos.
-	
-	self getTMAInsectsEventsNotifier positionChangedFor: self oldPos: oldPosition newPos: position.
-	
-	
-	
+
+	self getTMAInsectsEventsNotifier
+		positionChangedFor: self
+		oldPos: oldPosition
+		newPos: position
 ]
 
 { #category : #accessing }
@@ -166,14 +162,6 @@ MAInsectExperimental >> position [
 MAInsectExperimental >> position: anObject [
 
 	position := anObject
-]
-
-{ #category : #events }
-MAInsectExperimental >> restore: aComponentName values: aMemento [
-
-	self componentName = aComponentName ifTrue: [ 
-		position := aMemento position.
-		ageInMs := aMemento ageInMs ]
 ]
 
 { #category : #events }
@@ -197,7 +185,7 @@ MAInsectExperimental >> simulationStepSent: aStep [
 	"insect move"
 	self move.
 
-	"insect save it state"
+	"insect save its state"
 	self getTMATimeTravelExperimentalServicesProvider
 		save: (memento save: self)
 		at: aStep

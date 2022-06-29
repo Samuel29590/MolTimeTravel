@@ -16,12 +16,6 @@ MAAntExperimental >> ageInMs [
 	^ ageInMs
 ]
 
-{ #category : #accessing }
-MAAntExperimental >> ageInMs: anObject [
-
-	ageInMs := anObject
-]
-
 { #category : #'life cycle' }
 MAAntExperimental >> componentActivate [
 
@@ -69,7 +63,8 @@ MAAntExperimental >> componentPassivate [
 { #category : #'life cycle' }
 MAAntExperimental >> componentRemove [
 
-	"ant notify the remove"
+	"Ant notify its remove"
+
 	self getTMATimeTravelExperimentalServicesProvider isRestoring 
 		ifFalse: [ 
 			self getTMATimeTravelExperimentalServicesProvider
@@ -81,7 +76,7 @@ MAAntExperimental >> componentRemove [
 MAAntExperimental >> doSimulationStep: aStep [
 
 	| antRectangle |
-	"age of the ant increase"
+	"Age of the ant increase"
 	ageInMs := aStep
 	           *
 	           MASimulationManagerExperimental simulationStepDurationInMs.
@@ -151,7 +146,7 @@ MAAntExperimental >> getTMATimeTravelExperimentalServicesProvider [
 
 { #category : #'events - lifecycle' }
 MAAntExperimental >> move [
-
+	"Random move on the ground."
 	| newPos |
 	newPos := position
 	          +
@@ -165,7 +160,7 @@ MAAntExperimental >> move [
 	newPos y > MASimulationManagerExperimental simulationHeight ifTrue: [ 
 		newPos := newPos x
 		          @ MASimulationManagerExperimental simulationHeight ].
-	position := newPos.
+	position := newPos
 ]
 
 { #category : #accessing }
@@ -181,18 +176,12 @@ MAAntExperimental >> position: anObject [
 ]
 
 { #category : #events }
-MAAntExperimental >> restore: aComponentName values: aMemento [
-
-	self componentName = aComponentName ifTrue: [ 
-		position := aMemento position.
-		ageInMs := aMemento ageInMs ]
-]
-
-{ #category : #events }
 MAAntExperimental >> restoreFrom: aMemento [
 
-		position := aMemento position.
-		ageInMs := aMemento ageInMs
+	"Restore variables thanks to a memento."
+
+	position := aMemento position.
+	ageInMs := aMemento ageInMs
 ]
 
 { #category : #'events - lifecycle' }
@@ -203,13 +192,12 @@ MAAntExperimental >> simulationStepSent: aStep [
 
 	"ant do actions"
 	self doSimulationStep: aStep.
-	
+
 	"ant move"
 	self move.
 
-	"ant save it state"
+	"ant save its state"
 	self getTMATimeTravelExperimentalServicesProvider
 		save: (memento save: self)
 		at: aStep
-
 ]
