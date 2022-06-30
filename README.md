@@ -101,6 +101,7 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/176444784-ee0004cf-9a7b-4bed-8c68-1b073e88570f.png)
 
 <br><br><br>
+<br><br><br>
 
 ## Illustrations
 
