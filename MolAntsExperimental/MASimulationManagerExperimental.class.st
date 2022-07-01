@@ -240,18 +240,6 @@ MASimulationManagerExperimental >> getTMATimeTravelExperimentalEventsSubscriber 
 	^eventsSubscriber
 ]
 
-{ #category : #'component accessing' }
-MASimulationManagerExperimental >> getTMATimeTravelExperimentalServicesProvider [
-	| servicesSymbol servicesProvider itf |
-	itf := TMATimeTravelExperimentalServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelExperimentalServices named: servicesSymbol]. 
-	^servicesProvider
-]
-
 { #category : #services }
 MASimulationManagerExperimental >> insects [
 
