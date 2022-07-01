@@ -5,7 +5,7 @@ Class {
 		'ageInMs',
 		'position'
 	],
-	#category : #MolAntsExperimental
+	#category : #MolAnts
 }
 
 { #category : #accessing }

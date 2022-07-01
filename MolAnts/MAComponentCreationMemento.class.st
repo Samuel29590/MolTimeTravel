@@ -1,7 +1,7 @@
 Class {
 	#name : #MAComponentCreationMemento,
 	#superclass : #MAComponentMemento,
-	#category : #MolAntsExperimental
+	#category : #MolAnts
 }
 
 { #category : #'undo - undo' }

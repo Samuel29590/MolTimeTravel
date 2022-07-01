@@ -1,6 +1,6 @@
 Class {
-	#name : #MAAntMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MAAntMementoExperimental,
+	#superclass : #MAComponentMementoExperimental,
 	#instVars : [
 		'ageInMs',
 		'position'
@@ -9,25 +9,25 @@ Class {
 }
 
 { #category : #accessing }
-MAAntMemento >> ageInMs [
+MAAntMementoExperimental >> ageInMs [
 
 	^ ageInMs
 ]
 
 { #category : #accessing }
-MAAntMemento >> position [
+MAAntMementoExperimental >> position [
 
 	^ position
 ]
 
 { #category : #'undo - undo' }
-MAAntMemento >> redo [
+MAAntMementoExperimental >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAAntMemento >> save: anAnt [
+MAAntMementoExperimental >> save: anAnt [
 
 	componentClass := anAnt class.
 	componentName := anAnt componentName.
@@ -36,7 +36,7 @@ MAAntMemento >> save: anAnt [
 ]
 
 { #category : #'undo - undo' }
-MAAntMemento >> undo [
+MAAntMementoExperimental >> undo [
 
 	self restoreValues
 ]

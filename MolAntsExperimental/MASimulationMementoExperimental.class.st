@@ -1,6 +1,6 @@
 Class {
-	#name : #MASimulationMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MASimulationMementoExperimental,
+	#superclass : #MAComponentMementoExperimental,
 	#instVars : [
 		'restoringStep',
 		'insects',
@@ -13,43 +13,43 @@ Class {
 }
 
 { #category : #accessing }
-MASimulationMemento >> ants [
+MASimulationMementoExperimental >> ants [
 
 	^ ants
 ]
 
 { #category : #accessing }
-MASimulationMemento >> insects [
+MASimulationMementoExperimental >> insects [
 
 	^ insects
 ]
 
 { #category : #accessing }
-MASimulationMemento >> nbAnts [
+MASimulationMementoExperimental >> nbAnts [
 
 	^ nbAnts
 ]
 
 { #category : #accessing }
-MASimulationMemento >> nbInsects [
+MASimulationMementoExperimental >> nbInsects [
 
 	^ nbInsects
 ]
 
 { #category : #accessing }
-MASimulationMemento >> redo [ 
+MASimulationMementoExperimental >> redo [ 
 	
 	self restoreValues 
 ]
 
 { #category : #accessing }
-MASimulationMemento >> restoringStep [
+MASimulationMementoExperimental >> restoringStep [
 
 	^ restoringStep
 ]
 
 { #category : #actions }
-MASimulationMemento >> save: aSimulationManager [
+MASimulationMementoExperimental >> save: aSimulationManager [
 
 	| dict orderedCollection |
 	dict := Dictionary new.
@@ -77,13 +77,13 @@ MASimulationMemento >> save: aSimulationManager [
 ]
 
 { #category : #accessing }
-MASimulationMemento >> storage [
+MASimulationMementoExperimental >> storage [
 
 	^ storage
 ]
 
 { #category : #accessing }
-MASimulationMemento >> undo [
+MASimulationMementoExperimental >> undo [
 
 	self restoreValues
 ]
