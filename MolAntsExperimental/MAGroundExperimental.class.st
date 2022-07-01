@@ -72,7 +72,6 @@ MAGroundExperimental >> componentRemove [
 
 	"Removing the MAGround component."
 
-	self stopped.
 	mySpace ifNotNil: [ mySpace close ].
 	self stopViewLoop
 ]

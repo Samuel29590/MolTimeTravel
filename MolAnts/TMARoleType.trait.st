@@ -31,5 +31,6 @@ TMARoleType classSide >> providedComponentServices [
 TMARoleType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMATimeTravelServices }
+	^ { 
+		  TMASimulationServices.TMATimeTravelServices }
 ]

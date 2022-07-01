@@ -27,5 +27,5 @@ TMAInsectsType classSide >> producedComponentEvents [
 TMAInsectsType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMATimeTravelServices }
+	^ { TMASimulationServices .TMATimeTravelServices  }
 ]

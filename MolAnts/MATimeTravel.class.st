@@ -230,15 +230,15 @@ MATimeTravel >> startTimeTravel [
 	isRestoring := true.
 	timeTravelIndex := history size.
 	restoringStep := history size - 1.
-	self getTMATimeTravelExperimentalEventsNotifier startTimeTravel
+	self getTMATimeTravelEventsNotifier startTimeTravel
 ]
 
 { #category : #services }
 MATimeTravel >> stopTimeTravel [
 
 	isRestoring ifTrue: [ 
-		self restoreAtStep: (history size - 1).
+		self restoreAtStep: history size - 1.
 		isSaving := true.
 		isRestoring := false.
-		self getTMATimeTravelExperimentalEventsNotifier stopTimeTravel ]
+		self getTMATimeTravelEventsNotifier stopTimeTravel ]
 ]

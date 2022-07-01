@@ -19,15 +19,61 @@ Class {
 	#category : #MolAnts
 }
 
+{ #category : #accessing }
+MAFeedingPoint >> capacity [
+
+	^ capacity 
+]
+
+{ #category : #'life cycle' }
+MAFeedingPoint >> componentActivate [
+
+	"here write the code corresponding to component activation phase"
+
+	.self getTMATimeTravelEventsSubscriber subscribe: self.
+]
+
 { #category : #'life cycle' }
 MAFeedingPoint >> componentInitialize [
 
 	capacity := 10.
 	position := (Random new
-			           nextIntegerBetween: 1
-			           and: MASimulationManager simulationWidth) @ (Random new
-			           nextIntegerBetween: 1
-			           and: MASimulationManager simulationHeight)
+		             nextIntegerBetween: 1
+		             and: MASimulationManager simulationWidth)
+	            @ (Random new
+			             nextIntegerBetween: 1
+			             and: MASimulationManager simulationHeight).
+			
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "feedingPoint notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
+]
+
+{ #category : #'life cycle' }
+MAFeedingPoint >> componentPassivate [
+
+
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
+
+	
+]
+
+{ #category : #'life cycle' }
+MAFeedingPoint >> componentRemove [
+
+
+		"feedingPoint notify its remove"
+	self getTMATimeTravelServicesProvider isRestoring 
+		ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				removeOf: self
+				at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #events }
@@ -35,6 +81,18 @@ MAFeedingPoint >> eated [
 
 	capacity := capacity - 1.
 	^ capacity
+]
+
+{ #category : #'component accessing' }
+MAFeedingPoint >> getTMASimulationServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -65,4 +123,13 @@ MAFeedingPoint >> getTMATimeTravelServicesProvider [
 MAFeedingPoint >> position [
 
 	^position
+]
+
+{ #category : #events }
+MAFeedingPoint >> restoreFrom: aMemento [
+
+	"Restore variables thanks to a memento."
+
+	position := aMemento position.
+	capacity := aMemento capacity.
 ]

@@ -19,12 +19,18 @@ Class {
 	#category : #MolAnts
 }
 
+{ #category : #accessing }
+MAInsect >> ageInMs [
+
+	^ ageInMs
+]
+
 { #category : #'life cycle' }
 MAInsect >> componentActivate [
 
 	"Activation of the MAInsect component."
 
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.self getTMATimeTravelEventsSubscriber subscribe: self.
 ]
 
 { #category : #'life cycle' }
@@ -33,14 +39,36 @@ MAInsect >> componentInitialize [
 	"Initialization of the MAInsect component."
 
 	ageInMs := 0.
+	
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "insect notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #'life cycle' }
 MAInsect >> componentPassivate [
 
-
 	"Passivating the MAInsect component."
+
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
+]
+
+{ #category : #'life cycle' }
+MAInsect >> componentRemove [
+
+	"insect notify its remove"
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #'life cycle' }
@@ -58,6 +86,18 @@ MAInsect >> doSimulationStep [
 { #category : #'component accessing' }
 MAInsect >> getTMAInsectEventsNotifier [
 	^self eventsNotifiers at: TMAInsectEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMAInsectEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MAInsect >> getTMASimulationServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -121,4 +161,13 @@ MAInsect >> position: aPoint [
 		positionChangedFor: self
 		oldPos: oldPos
 		newPos: position
+]
+
+{ #category : #events }
+MAInsect >> restoreFrom: aMemento [
+
+	"Restore variables thanks to a memento."
+
+	position := aMemento position.
+	ageInMs := aMemento ageInMs
 ]

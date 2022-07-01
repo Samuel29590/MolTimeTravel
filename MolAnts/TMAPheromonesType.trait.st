@@ -27,5 +27,5 @@ TMAPheromonesType classSide >> providedComponentServices [
 TMAPheromonesType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMATimeTravelServices }
+	^ { TMASimulationServices .TMATimeTravelServices }
 ]

@@ -8,11 +8,43 @@ Class {
 }
 
 { #category : #'life cycle' }
+MAQueen >> componentActivate [
+
+	self getTMATimeTravelEventsSubscriber subscribe: self
+]
+
+{ #category : #'life cycle' }
 MAQueen >> componentInitialize [
 
 	"Initialization of the MAQueen component."
 
-	roleName := #queen
+	roleName := #queen.
+
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "queen notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
+]
+
+{ #category : #'life cycle' }
+MAQueen >> componentPassivate [
+
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
+]
+
+{ #category : #'life cycle' }
+MAQueen >> componentRemove [
+
+	"Queen notify its remove"
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #role }
@@ -30,4 +62,10 @@ MAQueen >> moveFrom: anAnt [
 	"A queen don't move."
 
 	^ anAnt position
+]
+
+{ #category : #events }
+MAQueen >> restoreFrom: aMemento [
+
+	
 ]

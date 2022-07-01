@@ -26,5 +26,5 @@ TMAFeedingPointType classSide >> providedComponentServices [
 TMAFeedingPointType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMATimeTravelServices }
+	^ { TMASimulationServices .TMATimeTravelServices }
 ]

@@ -19,6 +19,20 @@ Class {
 	#category : #MolAnts
 }
 
+{ #category : #accessing }
+MAStage >> adultStateDurationInMs [
+
+	^ adultStateDurationInMs
+]
+
+{ #category : #'life cycle' }
+MAStage >> componentActivate [
+
+.self getTMATimeTravelEventsSubscriber subscribe: self.
+
+	
+]
+
 { #category : #'life cycle' }
 MAStage >> componentInitialize [
 
@@ -26,7 +40,24 @@ MAStage >> componentInitialize [
 
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
 	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
-	self initializeRole
+	self initializeRole.
+
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "stage notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
+]
+
+{ #category : #'life cycle' }
+MAStage >> componentPassivate [
+
+	
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -38,7 +69,14 @@ MAStage >> componentRemove [
 	eggStateDurationInMs := nil.
 	adultStateDurationInMs := nil.
 	stageName := nil.
-	role := nil
+	role := nil.
+
+	"stage notify its remove"
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #private }
@@ -71,6 +109,12 @@ MAStage >> doSimulationStepFor: anAnt [
 		self getRole doSimulationStepFor: anAnt ]
 ]
 
+{ #category : #accessing }
+MAStage >> eggStateDurationInMs [
+
+	^ eggStateDurationInMs
+]
+
 { #category : #role }
 MAStage >> getRole [
 
@@ -98,6 +142,18 @@ MAStage >> getTMARoleServicesProvider [
 	 	ifTrue: 
 			[servicesProvider := MolComponentManager default locatorServices 
 						searchServicesProviderFor: TMARoleServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
+{ #category : #'component accessing' }
+MAStage >> getTMASimulationServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
 	^servicesProvider
 ]
 
@@ -174,4 +230,13 @@ MAStage >> removeRole [
 
 	role ifNotNil: [ 
 		role class stop: (#role , self componentName asSymbol) asSymbol. role := nil. ]
+]
+
+{ #category : #events }
+MAStage >> restoreFrom: aMemento [
+
+	"Restore variables thanks to a memento."
+
+	eggStateDurationInMs  := aMemento eggStateDurationInMs.
+	adultStateDurationInMs  := aMemento adultStateDurationInMs 
 ]

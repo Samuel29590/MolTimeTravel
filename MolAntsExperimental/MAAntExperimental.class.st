@@ -66,7 +66,6 @@ MAAntExperimental >> componentPassivate [
 MAAntExperimental >> componentRemove [
 
 	"Ant notify its remove"
-
 	self getTMATimeTravelExperimentalServicesProvider isRestoring 
 		ifFalse: [ 
 			self getTMATimeTravelExperimentalServicesProvider

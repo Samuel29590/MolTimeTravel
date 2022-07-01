@@ -76,13 +76,45 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 ]
 
 { #category : #'life cycle' }
+MAWorker >> componentActivate [
+
+	self getTMATimeTravelEventsSubscriber subscribe: self
+]
+
+{ #category : #'life cycle' }
 MAWorker >> componentInitialize [
 
 	"Initialization of the MAWorker component."
 
 	roleName := #worker.
 	phase := #explore.
-	oldPositions := OrderedCollection new
+	oldPositions := OrderedCollection new.
+	
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "worker notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
+]
+
+{ #category : #'life cycle' }
+MAWorker >> componentPassivate [
+
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
+]
+
+{ #category : #'life cycle' }
+MAWorker >> componentRemove [
+
+	"Worker notify its remove"
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #role }
@@ -433,6 +465,18 @@ MAWorker >> newPositionCheckBorder: aPoint [
 	^ newPos
 ]
 
+{ #category : #accessing }
+MAWorker >> oldPositions [
+
+	^ oldPositions
+]
+
+{ #category : #accessing }
+MAWorker >> phase [
+
+	^ phase
+]
+
 { #category : #position }
 MAWorker >> randomMove: anAnt [
 
@@ -441,4 +485,13 @@ MAWorker >> randomMove: anAnt [
 	^ anAnt position
 	  + (((Random new nextIntegerBetween: 0 and: 6) - 3) rounded
 		   @ ((Random new nextIntegerBetween: 0 and: 6) - 3) rounded)
+]
+
+{ #category : #events }
+MAWorker >> restoreFrom: aMemento [
+
+	"Restore variables thanks to a memento."
+
+	phase := aMemento phase.
+	oldPositions := aMemento oldPositions 
 ]

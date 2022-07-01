@@ -9,6 +9,22 @@ Class {
 	#category : #MolAnts
 }
 
+{ #category : #'life cycle' }
+MARole >> componentActivate [
+
+	self getTMATimeTravelEventsSubscriber subscribe: self
+]
+
+{ #category : #'life cycle' }
+MARole >> componentPassivate [
+
+	
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
+
+	
+]
+
 { #category : #accessing }
 MARole >> getRoleName [
 
@@ -18,6 +34,18 @@ MARole >> getRoleName [
 { #category : #'component accessing' }
 MARole >> getTMARoleEventsNotifier [
 	^self eventsNotifiers at: TMARoleEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMARoleEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MARole >> getTMASimulationServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -46,4 +74,8 @@ MARole >> getTMATimeTravelServicesProvider [
 
 { #category : #role }
 MARole >> moveFrom: anAnt [
+]
+
+{ #category : #events }
+MARole >> restoreFrom: aMemento [
 ]

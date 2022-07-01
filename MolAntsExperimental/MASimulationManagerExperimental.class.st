@@ -344,6 +344,7 @@ MASimulationManagerExperimental >> start [
 	self
 		forServices: TMATimeTravelExperimentalServices
 		useProvider: #TimeTravel.
+		
 	isRunning := true.
 	isRestoring := false.
 	simulationThread := nil.

@@ -34,17 +34,31 @@ MAPheromones class >> maxIntensity [
 MAPheromones >> componentActivate [
 
 	"Activation of the MAPheromones component."
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self
+
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.self getTMATimeTravelEventsSubscriber subscribe: self.
 ]
 
 { #category : #'life cycle' }
 MAPheromones >> componentInitialize [
 
-
 	"Initialization of the MAPheromones component."
+
 	maxIntensity := 100.
 	pheromonesDict := Dictionary new.
-	pheromonesReturnDict := Dictionary new
+	pheromonesReturnDict := Dictionary new.
+
+	self
+		forServices: TMATimeTravelServices
+		useProvider: #TimeTravel.
+
+	self
+		forServices: TMASimulationServices
+		useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "pheromones notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #'life cycle' }
@@ -53,6 +67,8 @@ MAPheromones >> componentPassivate [
 	"Passivating the MAPheromones component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -61,7 +77,13 @@ MAPheromones >> componentRemove [
 	"Removing the MAPheromones component."
 
 	pheromonesDict := nil.
-	pheromonesReturnDict := nil
+	pheromonesReturnDict := nil.
+
+	"Pheromones notify its remove"
+"	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider step ]"
 ]
 
 { #category : #'events - lifecycle' }
@@ -96,6 +118,18 @@ MAPheromones >> getPheromonesDict [
 MAPheromones >> getPheromonesReturnDict [
 
 	^ pheromonesReturnDict
+]
+
+{ #category : #'component accessing' }
+MAPheromones >> getTMASimulationServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -166,4 +200,14 @@ MAPheromones >> pheromoneReturnNew: aPoint for: anAnt [
 			pheromonesReturnDict
 				at: aPoint
 				update: [ :v | v - v + maxIntensity ] ]
+]
+
+{ #category : #events }
+MAPheromones >> restoreFrom: aMemento [
+
+	"Restore variables thanks to a memento."
+	
+	maxIntensity := aMemento maxIntensity.
+	pheromonesDict := aMemento pheromonesDict.
+	pheromonesReturnDict := aMemento pheromonesReturnDict.
 ]

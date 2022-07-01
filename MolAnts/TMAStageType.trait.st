@@ -34,6 +34,6 @@ TMAStageType classSide >> usedComponentServices [
 
 	<componentContract>
 	^ { 
-		  TMARoleServices.
-		  TMATimeTravelServices  }
+		  TMARoleServices.TMASimulationServices .
+		  TMATimeTravelServices }
 ]

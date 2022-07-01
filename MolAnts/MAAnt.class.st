@@ -27,10 +27,10 @@ MAAnt >> ageInMs [
 
 { #category : #'life cycle' }
 MAAnt >> componentActivate [
-	
+
 	"Activation of the MAAnt component."
-	
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self
+
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.self getTMATimeTravelEventsSubscriber subscribe: self.
 ]
 
 { #category : #'life cycle' }
@@ -39,19 +39,31 @@ MAAnt >> componentInitialize [
 	"Initialization of the MAAnt component."
 
 	self initializeStage.
+	ageInMs := 0.
 
 	self
 		forServices: TMAStageServices
 		useProvider: (#stage , self componentName asSymbol) asSymbol.
 
-	ageInMs := 0
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "ant notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #'life cycle' }
 MAAnt >> componentPassivate [
 
 	"Passivating the MAAnt component."
+
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
+	
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -62,6 +74,13 @@ MAAnt >> componentRemove [
 	self removeStage.
 	position := nil.
 	ageInMs := nil.
+
+	"Ant notify its remove"
+	self getTMATimeTravelServicesProvider isRestoring 
+		ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				removeOf: self
+				at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #private }
@@ -78,13 +97,13 @@ MAAnt >> doSimulationStep [
 { #category : #services }
 MAAnt >> getFeedingPoints [
 
-	^ self getTMASimulationServicesProvider getFeedingPointsPos
+	^ self getTMASimulationServicesProvider feedingPoints
 ]
 
 { #category : #services }
 MAAnt >> getInsects [
 
-	^ self getTMASimulationServicesProvider getInsectsPos. 
+	^ self getTMASimulationServicesProvider insects
 ]
 
 { #category : #services }
@@ -210,4 +229,13 @@ MAAnt >> removeStage [
 
 	MAStage stop: (#stage , self componentName asSymbol) asSymbol.
 	stage := nil
+]
+
+{ #category : #events }
+MAAnt >> restoreFrom: aMemento [
+
+	"Restore variables thanks to a memento."
+
+	position := aMemento position.
+	ageInMs := aMemento ageInMs
 ]

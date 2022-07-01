@@ -7,11 +7,44 @@ Class {
 	#category : #MolAnts
 }
 
+{ #category : #'life cycle' }
+MAFighter >> componentActivate [
+
+	self getTMATimeTravelEventsSubscriber subscribe: self
+]
+
 { #category : #role }
 MAFighter >> componentInitialize [
 
 	"Initialization of the MAFighter component."
-	roleName := #fighter
+
+	roleName := #fighter.
+
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "fighter notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider step ]
+]
+
+{ #category : #'life cycle' }
+MAFighter >> componentPassivate [
+
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
+]
+
+{ #category : #role }
+MAFighter >> componentRemove [
+
+		"Fighter notify its remove"
+	self getTMATimeTravelServicesProvider isRestoring 
+		ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				removeOf: self
+				at: self getTMASimulationServicesProvider step ]
 ]
 
 { #category : #role }
@@ -51,4 +84,10 @@ MAFighter >> moveFrom: anAnt [
 		newPos := newPos x @ (antHillPos y + 50) ].
 
 	^ newPos
+]
+
+{ #category : #events }
+MAFighter >> restoreFrom: aMemento [
+
+	
 ]

@@ -2,11 +2,9 @@ Class {
 	#name : #MASimulationMemento,
 	#superclass : #MAComponentMemento,
 	#instVars : [
-		'restoringStep',
 		'insects',
-		'nbInsects',
 		'ants',
-		'nbAnts',
+		'feedingPoints',
 		'storage'
 	],
 	#category : #MolAnts
@@ -19,21 +17,15 @@ MASimulationMemento >> ants [
 ]
 
 { #category : #accessing }
+MASimulationMemento >> feedingPoints [
+
+^ feedingPoints
+]
+
+{ #category : #accessing }
 MASimulationMemento >> insects [
 
 	^ insects
-]
-
-{ #category : #accessing }
-MASimulationMemento >> nbAnts [
-
-	^ nbAnts
-]
-
-{ #category : #accessing }
-MASimulationMemento >> nbInsects [
-
-	^ nbInsects
 ]
 
 { #category : #accessing }
@@ -42,16 +34,13 @@ MASimulationMemento >> redo [
 	self restoreValues 
 ]
 
-{ #category : #accessing }
-MASimulationMemento >> restoringStep [
-
-	^ restoringStep
-]
-
 { #category : #actions }
 MASimulationMemento >> save: aSimulationManager [
 
 	| dict orderedCollection |
+	componentClass := aSimulationManager class.
+	componentName := aSimulationManager componentName.
+
 	dict := Dictionary new.
 	aSimulationManager insects isDictionary ifTrue: [ 
 		aSimulationManager insects keysAndValuesDo: [ :k :v | 
@@ -61,10 +50,14 @@ MASimulationMemento >> save: aSimulationManager [
 			dict add: k -> list ] ].
 	insects := dict.
 
-	componentClass := aSimulationManager class.
-	componentName := aSimulationManager componentName.
-	nbInsects := aSimulationManager nbInsects.
-
+	dict := Dictionary new.
+	aSimulationManager feedingPoints isDictionary ifTrue: [ 
+		aSimulationManager feedingPoints keysAndValuesDo: [ :k :v | 
+			| list |
+			list := OrderedCollection new.
+			v do: [ :value | list add: value class -> value componentName ].
+			dict add: k -> list ] ].
+	feedingPoints := dict.
 
 	orderedCollection := OrderedCollection new.
 	aSimulationManager ants isCollection ifTrue: [ 
@@ -72,7 +65,6 @@ MASimulationMemento >> save: aSimulationManager [
 			orderedCollection add: value class -> value componentName ] ].
 	ants := orderedCollection.
 
-	nbAnts := aSimulationManager nbAnts.
 	storage := aSimulationManager storage
 ]
 
