@@ -19,14 +19,16 @@ MAAntExperimental >> ageInMs [
 { #category : #'life cycle' }
 MAAntExperimental >> componentActivate [
 
-	"Activation of the MAGround component."
+	"Activation of the MAAnt component."
 
 	self getTMASimulationExperimentalToGlobalEventsSubscriber subscribe:
 		self.
-
+		
 	self getTMATimeTravelExperimentalEventsSubscriber subscribe: self.
-	
-		self forEvents: TMATimeTravelExperimentalEvents addProducer: 'TimeTravel'.
+
+	self
+		forEvents: TMATimeTravelExperimentalEvents
+		addProducer: 'TimeTravel'
 ]
 
 { #category : #'life cycle' }
