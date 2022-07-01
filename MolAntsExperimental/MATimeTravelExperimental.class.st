@@ -237,18 +237,8 @@ MATimeTravelExperimental >> startTimeTravel [
 MATimeTravelExperimental >> stopTimeTravel [
 
 	isRestoring ifTrue: [ 
-
-
-
-	timeTravelIndex := history size.
-	restoringStep := history size - 1.
-			self restoreAtStep:
-			restoringStep.
+		self restoreAtStep: (history size - 1).
 		isSaving := true.
-	isRestoring := false.
-	self getTMATimeTravelExperimentalEventsNotifier stopTimeTravel].
-	
-
-
-
+		isRestoring := false.
+		self getTMATimeTravelExperimentalEventsNotifier stopTimeTravel ]
 ]
