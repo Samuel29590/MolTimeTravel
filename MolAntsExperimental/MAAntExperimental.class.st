@@ -190,7 +190,7 @@ MAAntExperimental >> restoreFrom: aMemento [
 MAAntExperimental >> simulationStepSent: aStep [
 
 	| memento |
-	memento := MAAntMemento new.
+	memento := MAAntMementoExperimental new.
 
 	"ant do actions"
 	self doSimulationStep: aStep.

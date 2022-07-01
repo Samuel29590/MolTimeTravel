@@ -146,7 +146,7 @@ MASimulationManagerExperimental >> createAnts [
 
 	| name ant memento |
 	1 to: 5 do: [ :e | 
-		memento := MAAntMemento new.
+		memento := MAAntMementoExperimental new.
 		nbAnts := nbAnts + 1.
 		name := ('Ant' , nbAnts printString) asSymbol.
 		ant := MAAntExperimental start: name.
@@ -170,16 +170,14 @@ MASimulationManagerExperimental >> createInsects [
 
 	| name insect memento |
 	1 to: 10 do: [ :e | 
-		memento := MAInsectMemento new.
+		memento := MAInsectMementoExperimental new.
 		nbInsects := nbInsects + 1.
 		name := ('Insect' , nbInsects printString) asSymbol.
 		insect := MAInsectExperimental start: name.
-		insect position: (Random new
-				 nextIntegerBetween: 1
-				 and: self class simulationWidth)
-			@ (Random new
-					 nextIntegerBetween: 1
-					 and: self class simulationHeight).
+		insect position:
+			(Random new nextIntegerBetween: 1 and: self class simulationWidth)
+			@
+			(Random new nextIntegerBetween: 1 and: self class simulationHeight).
 
 		"Adding events producer into SimulationMManager"
 		self forEvents: TMAInsectsEvents addProducer: name.
@@ -340,7 +338,7 @@ MASimulationManagerExperimental >> restoreFrom: aMemento [
 MASimulationManagerExperimental >> start [
 
 	| memento |
-	memento := MASimulationMemento new.
+	memento := MASimulationMementoExperimental new.
 
 	MATimeTravelExperimental start: 'TimeTravel'.
 	self
@@ -376,7 +374,7 @@ MASimulationManagerExperimental >> startSimulationLoop [
 					                    ifTrue: [  ]
 					                    ifFalse: [ 
 						                    | memento |
-						                    memento := MASimulationMemento new.
+						                    memento := MASimulationMementoExperimental new.
 						                    step := step + 1.
 						                    self
 							                    getTMASimulationExperimentalToGlobalEventsNotifier 

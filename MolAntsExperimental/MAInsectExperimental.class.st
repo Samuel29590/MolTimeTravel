@@ -151,7 +151,7 @@ MAInsectExperimental >> restoreFrom: aMemento [
 MAInsectExperimental >> simulationStepSent: aStep [
 
 	| memento |
-	memento := MAInsectMemento new.
+	memento := MAInsectMementoExperimental new.
 
 	"age of the insect increase"
 	ageInMs := aStep

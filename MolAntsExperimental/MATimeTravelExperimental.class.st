@@ -46,9 +46,9 @@ MATimeTravelExperimental >> creationOf: aComponent at: aStep [
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentStep new ].
+		history add: MAComponentStepExperimental new ].
 
-	aComponentMemento := MAComponentCreationMemento new save: aComponent.
+	aComponentMemento := MAComponentCreationMementoExperimental new save: aComponent.
 
 	(history at: stepToIndex) saveCreationOrDeletionOf: aComponentMemento.
 
@@ -115,10 +115,10 @@ MATimeTravelExperimental >> removeOf: aComponent at: aStep [
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentStep new ].
-	
-	aComponentMemento := MAComponentDeletionMemento new save:aComponent.
-	
+		history add: MAComponentStepExperimental new ].
+
+	aComponentMemento := MAComponentDeletionMementoExperimental new save: aComponent.
+
 	(history at: stepToIndex) saveCreationOrDeletionOf: aComponentMemento.
 
 	timeTravelIndex := stepToIndex.
@@ -215,12 +215,12 @@ MATimeTravelExperimental >> save: aComponentMemento at: aStep [
 	stepToIndex := aStep + 1.
 
 	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentStep new ].
+		history add: MAComponentStepExperimental new ].
 
 	(history at: stepToIndex) save: aComponentMemento.
 
 	timeTravelIndex := stepToIndex.
-	restoringStep := aStep.
+	restoringStep := aStep
 ]
 
 { #category : #services }
