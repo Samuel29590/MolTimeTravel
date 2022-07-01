@@ -30,3 +30,10 @@ TMASimulationManagerType classSide >> providedComponentServices [
 	<componentContract>
 	^ {TMASimulationServices} 
 ]
+
+{ #category : #'accessing - services' }
+TMASimulationManagerType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { TMAPheromoneServices . TMAFeedingPointServices }
+]

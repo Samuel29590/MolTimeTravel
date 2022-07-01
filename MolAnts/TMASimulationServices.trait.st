@@ -24,9 +24,29 @@ TMASimulationServices >> getAnts [
 ]
 
 { #category : #services }
+TMASimulationServices >> getFeedingPointsPos [
+
+	
+]
+
+{ #category : #services }
 TMASimulationServices >> getInsectsPos [
 
 	
+]
+
+{ #category : #services }
+TMASimulationServices >> getNbDelivered [
+
+	
+]
+
+{ #category : #services }
+TMASimulationServices >> getPheromonesDict [
+]
+
+{ #category : #services }
+TMASimulationServices >> getPheromonesReturnDict [
 ]
 
 { #category : #services }
