@@ -22,8 +22,8 @@ Variables :
 Class {
 	#name : #MAGround,
 	#superclass : #BlElement,
-	#traits : 'MolComponentImpl + TMAGroundType + TMASimulationToGlobalEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAGroundType classTrait + TMASimulationToGlobalEvents classTrait',
+	#traits : 'MolComponentImpl + TMAGroundType + TMASimulationToGlobalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAGroundType classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'mySpace',
 		'refreshing',
@@ -457,6 +457,30 @@ MAGround >> getTMASimulationToGlobalEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMASimulationToGlobalEvents named: eventsSymbol ]. 
 	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAGround >> getTMATimeTravelEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAGround >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #initialization }

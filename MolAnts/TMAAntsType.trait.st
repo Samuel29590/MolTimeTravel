@@ -12,7 +12,9 @@ Trait {
 TMAAntsType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMASimulationToGlobalEvents }
+	^ { 
+		  TMASimulationToGlobalEvents.
+		  TMATimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }
@@ -23,6 +25,10 @@ TMAAntsType classSide >> providedComponentServices [
 
 { #category : #'accessing - services' }
 TMAAntsType classSide >> usedComponentServices [
+
 	<componentContract>
-	^ {TMAStageServices . TMASimulationServices}
+	^ { 
+		  TMAStageServices.
+		  TMASimulationServices.
+		  TMATimeTravelServices }
 ]

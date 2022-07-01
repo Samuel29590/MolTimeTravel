@@ -4,8 +4,8 @@ The actual implementation of the TMARoleeType: MARole, describe the role of one 
 Class {
 	#name : #MARole,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMARoleType + TMARoleServices',
-	#classTraits : 'MolComponentImpl classTrait + TMARoleType classTrait + TMARoleServices classTrait',
+	#traits : 'MolComponentImpl + TMARoleType + TMARoleServices + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMARoleType classTrait + TMARoleServices classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
 	#category : #MolAnts
 }
 
@@ -18,6 +18,30 @@ MARole >> getRoleName [
 { #category : #'component accessing' }
 MARole >> getTMARoleEventsNotifier [
 	^self eventsNotifiers at: TMARoleEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMARoleEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MARole >> getTMATimeTravelEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MARole >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #role }

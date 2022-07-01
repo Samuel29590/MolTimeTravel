@@ -9,10 +9,18 @@ Trait {
 }
 
 { #category : #'accessing - events' }
+TMAStageType classSide >> consumedComponentEvents [
+
+	<componentContract>
+	^ { TMATimeTravelEvents }
+]
+
+{ #category : #'accessing - events' }
 TMAStageType classSide >> producedComponentEvents [
 
 	<componentContract>
-	^ { TMAStageEvents }
+	^ { 
+		  TMAStageEvents }
 ]
 
 { #category : #'accessing - services' }
@@ -23,6 +31,9 @@ TMAStageType classSide >> providedComponentServices [
 
 { #category : #'accessing - services' }
 TMAStageType classSide >> usedComponentServices [
+
 	<componentContract>
-	^ {TMARoleServices}
+	^ { 
+		  TMARoleServices.
+		  TMATimeTravelServices  }
 ]

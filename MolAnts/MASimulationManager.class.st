@@ -379,6 +379,18 @@ MASimulationManager >> getTMAStageEventsSubscriber [
 	^eventsSubscriber
 ]
 
+{ #category : #'component accessing' }
+MASimulationManager >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
 { #category : #events }
 MASimulationManager >> insectDelivered [
 

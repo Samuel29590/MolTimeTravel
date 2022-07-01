@@ -14,8 +14,8 @@ Variables :
 Class {
 	#name : #MAPheromones,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAPheromonesType + TMAPheromoneServices + TMASimulationToGlobalEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAPheromonesType classTrait + TMAPheromoneServices classTrait + TMASimulationToGlobalEvents classTrait',
+	#traits : 'MolComponentImpl + TMAPheromonesType + TMAPheromoneServices + TMASimulationToGlobalEvents + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAPheromonesType classTrait + TMAPheromoneServices classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'maxIntensity',
 		'pheromonesDict',
@@ -108,6 +108,30 @@ MAPheromones >> getTMASimulationToGlobalEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMASimulationToGlobalEvents named: eventsSymbol ]. 
 	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAPheromones >> getTMATimeTravelEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAPheromones >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #events }

@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAStage,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAStageType + TMAStageServices',
-	#classTraits : 'MolComponentImpl classTrait + TMAStageType classTrait + TMAStageServices classTrait',
+	#traits : 'MolComponentImpl + TMAStageType + TMAStageServices + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAStageType classTrait + TMAStageServices classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'eggStateDurationInMs',
 		'adultStateDurationInMs'
@@ -104,6 +104,30 @@ MAStage >> getTMARoleServicesProvider [
 { #category : #'component accessing' }
 MAStage >> getTMAStageEventsNotifier [
 	^self eventsNotifiers at: TMAStageEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMAStageEvents name: nil].
+]
+
+{ #category : #'component accessing' }
+MAStage >> getTMATimeTravelEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAStage >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #initialization }

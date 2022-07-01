@@ -8,9 +8,23 @@ Trait {
 	#category : #MolAnts
 }
 
+{ #category : #'accessing - events' }
+TMAFeedingPointType classSide >> consumedComponentEvents [
+
+	<componentContract>
+	^ { TMATimeTravelEvents }
+]
+
 { #category : #'accessing - services' }
 TMAFeedingPointType classSide >> providedComponentServices [
 
 	<componentContract>
 	^ { TMAFeedingPointServices }
+]
+
+{ #category : #'accessing - services' }
+TMAFeedingPointType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { TMATimeTravelServices }
 ]
