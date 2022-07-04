@@ -95,9 +95,9 @@ MATimeTravel >> playBackward [
 			isPlayingBackward := true.
 			timeTravelLoop := [ 
 			                  [ restoringStep > 0 ] whileTrue: [ 
-				                  self restoreAtStep: (restoringStep-1).
+				                  self restoreAtStep: restoringStep - 1.
 				                  (Delay forMilliseconds:
-					                   MASimulationManagerExperimental
+					                   MASimulationManager
 						                   simulationStepDurationInMs) wait ].
 			                  isPlayingBackward := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
@@ -142,9 +142,9 @@ MATimeTravel >> replay [
 			timeTravelLoop := [ 
 			                  [ restoringStep < (history size - 1) ] 
 				                  whileTrue: [ 
-					                  self restoreAtStep: (restoringStep+1).
+					                  self restoreAtStep: restoringStep + 1.
 					                  (Delay forMilliseconds:
-						                   MASimulationManagerExperimental
+						                   MASimulationManager
 							                   simulationStepDurationInMs) wait ].
 			                  isReplaying := false.
 			                  timeTravelLoop ifNil: [ ^ self ].

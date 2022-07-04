@@ -5,11 +5,10 @@ Class {
 }
 
 { #category : #'undo - undo' }
-MAComponentDeletionMemento >> redo [ 
+MAComponentDeletionMemento >> redo [
 	
-	self componentClass stop: self componentName.
-	
-
+	(MolUtils instanceOf: self componentClass named: self componentName) 
+		ifNotNil: [ self componentClass stop: self componentName ]
 ]
 
 { #category : #actions }
@@ -21,5 +20,6 @@ MAComponentDeletionMemento >> save: aComponent [
 
 { #category : #'undo - undo' }
 MAComponentDeletionMemento >> undo [
-	self componentClass start: self componentName
+	(MolUtils instanceOf: self componentClass named: self componentName) 
+		ifNil: [ self componentClass start: self componentName ]
 ]

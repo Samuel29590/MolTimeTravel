@@ -26,7 +26,7 @@ TMAAntServices >> getStage [
 ]
 
 { #category : #services }
-TMAAntServices >> getStageName [
+TMAAntServices >> stageName [
 
 	
 ]

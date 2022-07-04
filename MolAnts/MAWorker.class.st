@@ -111,10 +111,12 @@ MAWorker >> componentRemove [
 
 	"Worker notify its remove"
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider step ]]
+
+	
 ]
 
 { #category : #role }

@@ -4,8 +4,8 @@ The actual implementation of the TMARoleeType: MARole, describe the role of one 
 Class {
 	#name : #MARole,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMARoleType + TMARoleServices + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMARoleType classTrait + TMARoleServices classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMARoleType + TMARoleServices + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMARoleType classTrait + TMARoleServices classTrait + TMATimeTravelEvents classTrait',
 	#category : #MolAnts
 }
 

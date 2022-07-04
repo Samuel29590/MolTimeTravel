@@ -14,8 +14,8 @@ Variables :
 Class {
 	#name : #MAPheromones,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAPheromonesType + TMAPheromoneServices + TMASimulationToGlobalEvents + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAPheromonesType classTrait + TMAPheromoneServices classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAPheromonesType + TMAPheromoneServices + TMASimulationToGlobalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAPheromonesType classTrait + TMAPheromoneServices classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'maxIntensity',
 		'pheromonesDict',
@@ -80,10 +80,12 @@ MAPheromones >> componentRemove [
 	pheromonesReturnDict := nil.
 
 	"Pheromones notify its remove"
-"	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+	
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]"
+			at: self getTMASimulationServicesProvider step ]].
 ]
 
 { #category : #'events - lifecycle' }
@@ -206,8 +208,32 @@ MAPheromones >> pheromoneReturnNew: aPoint for: anAnt [
 MAPheromones >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
-	
+
 	maxIntensity := aMemento maxIntensity.
-	pheromonesDict := aMemento pheromonesDict.
-	pheromonesReturnDict := aMemento pheromonesReturnDict.
+
+
+	pheromonesDict := Dictionary new.
+	aMemento pheromonesDict keysAndValuesDo: [ :k :v | 
+		pheromonesDict
+			at: k
+			put: (MolUtils instanceOf: v key key named: v key value) -> v value ].
+
+	pheromonesReturnDict := Dictionary new.
+	aMemento pheromonesReturnDict keysAndValuesDo: [ :k :v | 
+		pheromonesReturnDict
+			at: k
+			put:v ]
+]
+
+{ #category : #'events - lifecycle' }
+MAPheromones >> simulationStepSent: aStep [
+
+	| memento |
+	memento := MAPheromonesMemento new.
+
+	self doSimulationStep.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]

@@ -23,9 +23,9 @@ TMASimulationToGlobalEvents >> pheromoneReturnNew: aPoint for: anAnt [
 ]
 
 { #category : #'events - lifecycle' }
-TMASimulationToGlobalEvents >> simulationStepSent [
+TMASimulationToGlobalEvents >> simulationStepSent: aStep [
 
-	self doSimulationStep 
+	self doSimulationStep
 ]
 
 { #category : #'events - control' }

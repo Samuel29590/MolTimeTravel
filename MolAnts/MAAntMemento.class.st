@@ -3,7 +3,8 @@ Class {
 	#superclass : #MAComponentMemento,
 	#instVars : [
 		'ageInMs',
-		'position'
+		'position',
+		'stage'
 	],
 	#category : #MolAnts
 }
@@ -32,7 +33,14 @@ MAAntMemento >> save: anAnt [
 	componentClass := anAnt class.
 	componentName := anAnt componentName.
 	position := anAnt position.
-	ageInMs := anAnt ageInMs
+	ageInMs := anAnt ageInMs.
+	stage := (anAnt getStage class)->(anAnt getStage componentName)
+]
+
+{ #category : #accessing }
+MAAntMemento >> stage [
+
+	^ stage
 ]
 
 { #category : #'undo - undo' }

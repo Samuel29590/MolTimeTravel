@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAFeedingPoint,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAFeedingPointType + TMAFeedingPointServices + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAFeedingPointType classTrait + TMAFeedingPointServices classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAFeedingPointType + TMAFeedingPointServices + TMATimeTravelEvents + TMASimulationToGlobalEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAFeedingPointType classTrait + TMAFeedingPointServices classTrait + TMATimeTravelEvents classTrait + TMASimulationToGlobalEvents classTrait',
 	#instVars : [
 		'position',
 		'capacity'
@@ -28,9 +28,9 @@ MAFeedingPoint >> capacity [
 { #category : #'life cycle' }
 MAFeedingPoint >> componentActivate [
 
-	"here write the code corresponding to component activation phase"
 
-	.self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
+	self getTMATimeTravelEventsSubscriber subscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -57,23 +57,20 @@ MAFeedingPoint >> componentInitialize [
 { #category : #'life cycle' }
 MAFeedingPoint >> componentPassivate [
 
-
-.
+	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
 	self getTMATimeTravelEventsSubscriber unsubscribe: self
-
-	
 ]
 
 { #category : #'life cycle' }
 MAFeedingPoint >> componentRemove [
 
+	"feedingPoint notify its remove"
 
-		"feedingPoint notify its remove"
-	self getTMATimeTravelServicesProvider isRestoring 
-		ifFalse: [ 
-			self getTMATimeTravelServicesProvider
-				removeOf: self
-				at: self getTMASimulationServicesProvider step ]
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider step ]].
 ]
 
 { #category : #events }
@@ -93,6 +90,18 @@ MAFeedingPoint >> getTMASimulationServicesProvider [
 			[servicesProvider := MolComponentManager default locatorServices 
 						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
 	^servicesProvider
+]
+
+{ #category : #'component accessing' }
+MAFeedingPoint >> getTMASimulationToGlobalEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMASimulationToGlobalEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMASimulationToGlobalEvents named: eventsSymbol ]. 
+	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
@@ -132,4 +141,16 @@ MAFeedingPoint >> restoreFrom: aMemento [
 
 	position := aMemento position.
 	capacity := aMemento capacity.
+]
+
+{ #category : #'events - lifecycle' }
+MAFeedingPoint >> simulationStepSent: aStep [
+
+	
+	| memento |
+	memento := MAFeedingPointMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]

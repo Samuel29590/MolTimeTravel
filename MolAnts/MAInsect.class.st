@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAInsect,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAInsectsType + TMASimulationToGlobalEvents + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAInsectsType classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAInsectsType + TMASimulationToGlobalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAInsectsType classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'position',
 		'ageInMs'
@@ -65,10 +65,11 @@ MAInsect >> componentRemove [
 
 	"insect notify its remove"
 
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider step ]].
 ]
 
 { #category : #'life cycle' }
@@ -170,4 +171,17 @@ MAInsect >> restoreFrom: aMemento [
 
 	position := aMemento position.
 	ageInMs := aMemento ageInMs
+]
+
+{ #category : #'events - lifecycle' }
+MAInsect >> simulationStepSent: aStep [
+
+	| memento |
+	memento := MAInsectMemento new.
+
+	self doSimulationStep.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]

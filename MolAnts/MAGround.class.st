@@ -135,7 +135,7 @@ MAGround >> createInfoPanel [
 			               c horizontal fitContent.
 			               c vertical fitContent ];
 		               relocate:
-			               MASimulationManagerExperimental simulationWidth / 10
+			               MASimulationManager simulationWidth / 10
 			               @ 10;
 		               addEventHandler: (BlEventHandler
 				                on: BlClickEvent
@@ -144,8 +144,7 @@ MAGround >> createInfoPanel [
 							                self isRunning ifTrue: [ 
 									                self getTMATimeTravelServicesProvider
 										                isRestoring ifFalse: [ 
-											                MASimulationManager
-												                pauseSimulation ] ] ].
+											                MASimulationManager pauseSimulation ] ] ].
 					                anEvent consumed: true ]).
 	labelText := 'Pause' asRopedText
 		             foreground: Color black;
@@ -178,7 +177,7 @@ MAGround >> createInfoPanel [
 			              c horizontal fitContent.
 			              c vertical fitContent ];
 		              relocate:
-			              MASimulationManagerExperimental simulationWidth / 10
+			              MASimulationManager simulationWidth / 10
 			              * 4.5 @ 10;
 		              addEventHandler: (BlEventHandler
 				               on: BlClickEvent
@@ -187,8 +186,7 @@ MAGround >> createInfoPanel [
 							               self isRunning ifFalse: [ 
 									               self getTMATimeTravelServicesProvider
 										               isRestoring ifFalse: [ 
-											               MASimulationManager
-												               playSimulation ] ] ].
+											               MASimulationManager playSimulation ] ] ].
 					               anEvent consumed: true ]).
 	labelText := 'Play' asRopedText
 		             foreground: Color black;
@@ -221,7 +219,7 @@ MAGround >> createInfoPanel [
 			          c horizontal fitContent.
 			          c vertical fitContent ];
 		          relocate:
-			          MASimulationManagerExperimental simulationWidth / 10 * 8
+			          MASimulationManager simulationWidth / 10 * 8
 			          @ 10;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
@@ -421,8 +419,7 @@ MAGround >> createTimeTravelPanel [
 	timeTravelPanel background: Color gray.
 	timeTravelPanel relocate:
 		0 @ (MASimulationManager simulationHeight + 300).
-	timeTravelPanel size:
-		MASimulationManager simulationWidth @ 200.
+	timeTravelPanel size: MASimulationManager simulationWidth @ 200.
 	timeTravelPanel constraintsDo: [ :c | 
 		c maxHeight: 200.
 		c maxWidth: MASimulationManager simulationWidth ].
@@ -434,13 +431,12 @@ MAGround >> createTimeTravelPanel [
 	"Adding returningStep to the panel."
 	timeTravelPanel addChild: ((BlTextElement new
 			  relocate:
-				  MASimulationManagerExperimental simulationWidth / 10 @ 20;
+				  MASimulationManager simulationWidth / 10 @ 20;
 			  background: Color transparent) text:
 			 'Returning Step :' asRopedText).
 	returningStepView := BlTextElement new
 		                     relocate:
-			                     MASimulationManager
-				                     simulationWidth / 10 @ 40;
+			                     MASimulationManager simulationWidth / 10 @ 40;
 		                     background: Color transparent;
 		                     text: '000' asRopedText.
 	timeTravelPanel addChild: returningStepView.
@@ -468,8 +464,8 @@ MAGround >> createTimeTravelPanel [
 			                         c horizontal fitContent.
 			                         c vertical fitContent ];
 		                         relocate:
-			                         MASimulationManager
-				                         simulationWidth / 10 @ 80;
+			                         MASimulationManager simulationWidth / 10
+			                         @ 80;
 		                         addEventHandler: (BlEventHandler
 				                          on: BlClickEvent
 				                          do: [ :anEvent | 
@@ -527,8 +523,8 @@ MAGround >> createTimeTravelPanel [
 			                        c horizontal fitContent.
 			                        c vertical fitContent ];
 		                        relocate:
-			                        MASimulationManager
-				                        simulationWidth / 10 * 3 @ 80;
+			                        MASimulationManager simulationWidth / 10
+			                        * 3 @ 80;
 		                        addEventHandler: (BlEventHandler
 				                         on: BlClickEvent
 				                         do: [ :anEvent | 
@@ -574,8 +570,8 @@ MAGround >> createTimeTravelPanel [
 			                       c horizontal fitContent.
 			                       c vertical fitContent ];
 		                       relocate:
-			                       MASimulationManager
-				                       simulationWidth / 10 * 5 @ 80;
+			                       MASimulationManager simulationWidth / 10 * 5
+			                       @ 80;
 		                       addEventHandler: (BlEventHandler
 				                        on: BlClickEvent
 				                        do: [ :anEvent | 
@@ -616,8 +612,8 @@ MAGround >> createTimeTravelPanel [
 			                      c horizontal fitContent.
 			                      c vertical fitContent ];
 		                      relocate:
-			                      MASimulationManager
-				                      simulationWidth / 10 * 7 @ 80;
+			                      MASimulationManager simulationWidth / 10 * 7
+			                      @ 80;
 		                      addEventHandler: (BlEventHandler
 				                       on: BlClickEvent
 				                       do: [ :anEvent | 
@@ -659,8 +655,8 @@ MAGround >> createTimeTravelPanel [
 			                      c horizontal fitContent.
 			                      c vertical fitContent ];
 		                      relocate:
-			                      MASimulationManager
-				                      simulationWidth / 10 * 3 @ 130;
+			                      MASimulationManager simulationWidth / 10 * 3
+			                      @ 130;
 		                      addEventHandler: (BlEventHandler
 				                       on: BlClickEvent
 				                       do: [ :anEvent | 
@@ -701,8 +697,7 @@ MAGround >> createTimeTravelPanel [
 			                c horizontal fitContent.
 			                c vertical fitContent ];
 		                relocate:
-			                MASimulationManager simulationWidth
-			                / 10 * 5 @ 130;
+			                MASimulationManager simulationWidth / 10 * 5 @ 130;
 		                addEventHandler: (BlEventHandler
 				                 on: BlClickEvent
 				                 do: [ :anEvent | 
@@ -763,8 +758,8 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 				background: Color black;
 				backgroundAlpha: 1;
 				draw ] ].
-		
-		
+
+
 	self getFeedingPoints ifNotNil: [ 
 		self getFeedingPoints keysAndValuesDo: [ :k :v | 
 			aCanvas figure
@@ -775,32 +770,34 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 
 	self getAnts ifNotNil: [ 
 		self getAnts do: [ :ant | 
-			ant getStageName ~= #egg
-				ifTrue: [ 
-					ant getRoleName = #queen ifTrue: [ 
-						aCanvas figure
-							path: (aCanvas shape circleAt: ant position radius: 5);
-							background: Color pink;
-							backgroundAlpha: 1;
-							draw ].
-					ant getRoleName = #worker ifTrue: [ 
-						aCanvas figure
-							path: (aCanvas shape circleAt: ant position radius: 3);
-							background: Color orange;
-							backgroundAlpha: 1;
-							draw ].
-					ant getRoleName = #fighter ifTrue: [ 
-						aCanvas figure
-							path: (aCanvas shape circleAt: ant position radius: 3);
-							background: Color green;
-							backgroundAlpha: 1;
-							draw ] ]
-				ifFalse: [ 
-					aCanvas figure
-						path: (aCanvas shape circleAt: ant position radius: 2);
-						background: Color gray;
-						backgroundAlpha: 1;
-						draw ] ] ]
+			ant ifNotNil: [ 
+				ant position ifNotNil: [ 
+					ant stageName ~= #egg
+						ifTrue: [ 
+							ant getRoleName = #queen ifTrue: [ 
+								aCanvas figure
+									path: (aCanvas shape circleAt: ant position radius: 5);
+									background: Color pink;
+									backgroundAlpha: 1;
+									draw ].
+							ant getRoleName = #worker ifTrue: [ 
+								aCanvas figure
+									path: (aCanvas shape circleAt: ant position radius: 3);
+									background: Color orange;
+									backgroundAlpha: 1;
+									draw ].
+							ant getRoleName = #fighter ifTrue: [ 
+								aCanvas figure
+									path: (aCanvas shape circleAt: ant position radius: 3);
+									background: Color green;
+									backgroundAlpha: 1;
+									draw ] ]
+						ifFalse: [ 
+							aCanvas figure
+								path: (aCanvas shape circleAt: ant position radius: 2);
+								background: Color gray;
+								backgroundAlpha: 1;
+								draw ] ] ] ] ]
 ]
 
 { #category : #services }
@@ -912,7 +909,8 @@ MAGround >> setRefreshingTo: anInteger [
 ]
 
 { #category : #'events - lifecycle' }
-MAGround >> simulationStepSent [
+MAGround >> simulationStepSent: aStep [
+
 
 ]
 
@@ -925,9 +923,9 @@ MAGround >> startViewLoop [
 	            [ true ] whileTrue: [ 
 		            self updateView.
 		            (Delay forMilliseconds:
-			             MASimulationManagerExperimental
-				             simulationStepDurationInMs*refreshing)  wait ] ] forkAt:
-		            Processor userBackgroundPriority.
+			             MASimulationManager
+				             simulationStepDurationInMs * refreshing) wait ] ] 
+		            forkAt: Processor userBackgroundPriority.
 	viewLoop name: 'Molecule ViewLoop Process'.
 	viewLoop resume
 ]
@@ -959,7 +957,7 @@ MAGround >> updateInfoPanel [
 
 	eggs := 0.
 	self getAnts do: [ :ant | 
-		ant getStageName = #egg ifTrue: [ eggs := eggs + 1 ] ].
+		ant stageName = #egg ifTrue: [ eggs := eggs + 1 ] ].
 	nbEggsView text: eggs asRopedText.
 	nbAntsView text: (self getAnts size - eggs) asRopedText.
 

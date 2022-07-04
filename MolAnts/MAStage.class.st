@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAStage,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAStageType + TMAStageServices + TMATimeTravelExperimentalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAStageType classTrait + TMAStageServices classTrait + TMATimeTravelExperimentalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAStageType + TMAStageServices + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAStageType classTrait + TMAStageServices classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'eggStateDurationInMs',
 		'adultStateDurationInMs'
@@ -38,13 +38,13 @@ MAStage >> componentInitialize [
 
 	"Initialization of the MAStage component."
 
-	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
-	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
-	self initializeRole.
-
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
 	self forServices: TMASimulationServices useProvider: #default.
+	
+	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
+	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
+	self initializeRole.
 
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "stage notify the creation"
 		self getTMATimeTravelServicesProvider
@@ -65,7 +65,6 @@ MAStage >> componentRemove [
 
 	"Removing of the MAStage component."
 
-	self removeRole.
 	eggStateDurationInMs := nil.
 	adultStateDurationInMs := nil.
 	stageName := nil.
@@ -73,10 +72,10 @@ MAStage >> componentRemove [
 
 	"stage notify its remove"
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider step ]]
 ]
 
 { #category : #private }
@@ -84,7 +83,7 @@ MAStage >> computeStageFor: anAnt [
 
 	"Checking if an egg hatch."
 
-	self getStageName = #egg ifTrue: [ 
+	self stageName = #egg ifTrue: [ 
 		anAnt ageInMs > eggStateDurationInMs ifTrue: [ "If the egg hatch, adding the role as a producer of TMARoleService associate to this MAStage."
 			stageName := #adult.
 			self
@@ -94,7 +93,7 @@ MAStage >> computeStageFor: anAnt [
 
 	"Checking if an adult is dead."
 
-	self getStageName = #adult ifTrue: [ 
+	self stageName = #adult ifTrue: [ 
 		anAnt ageInMs > adultStateDurationInMs ifTrue: [ "If the adult is dead, notify the MASimulationManager."
 			stageName := #dead.
 			self getTMAStageEventsNotifier stageChanged: stageName for: anAnt ].
@@ -104,9 +103,16 @@ MAStage >> computeStageFor: anAnt [
 { #category : #private }
 MAStage >> doSimulationStepFor: anAnt [
 
+	| memento |
+	memento := MAStageMemento new.
+
 	self computeStageFor: anAnt.
-	self getStageName = #adult ifTrue: [ 
-		self getRole doSimulationStepFor: anAnt ]
+	self stageName = #adult ifTrue: [ 
+		self getRole doSimulationStepFor: anAnt ].
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: self getTMASimulationServicesProvider step
 ]
 
 { #category : #accessing }
@@ -125,12 +131,6 @@ MAStage >> getRole [
 MAStage >> getRoleName [
 
 	^ role getRoleName
-]
-
-{ #category : #role }
-MAStage >> getStageName [
-
-	^ stageName ifNil: [ stageName := #egg ].
 ]
 
 { #category : #'component accessing' }
@@ -192,20 +192,27 @@ MAStage >> initializeRole [
 	"Initialization of the role of an ant."
 
 	| x |
+	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ].
+
+
 	"The first ant is always a queen."
 	componentName = #stageAnt1 ifTrue: [ 
-		role := MAQueen start: (#role , self componentName asSymbol) asSymbol.
+		role := MAQueen start:
+			        (#role , self componentName asSymbol) asSymbol.
 		^ self ].
 
 	x := Random new nextIntegerBetween: 1 and: 100.
 	x = 1 ifTrue: [ 
-		role := MAQueen start: (#role , self componentName asSymbol) asSymbol.
+		role := MAQueen start:
+			        (#role , self componentName asSymbol) asSymbol.
 		^ self ].
 	x < 26 ifTrue: [ 
-		role := MAFighter start: (#role , self componentName asSymbol) asSymbol.
+		role := MAFighter start:
+			        (#role , self componentName asSymbol) asSymbol.
 		^ self ].
 	x <= 100 ifTrue: [ 
-		role := MAWorker start: (#role , self componentName asSymbol) asSymbol.
+		role := MAWorker start:
+			        (#role , self componentName asSymbol) asSymbol.
 		^ self ]
 ]
 
@@ -219,17 +226,8 @@ MAStage >> moveFrom: anAnt [
 
 	"Perform the moving action of the role."
 
-	self getStageName ~= #adult ifTrue: [ ^ anAnt position ].
+	self stageName ~= #adult ifTrue: [ ^ anAnt position ].
 	^ self getTMARoleServicesProvider moveFrom: anAnt
-]
-
-{ #category : #'life cycle' }
-MAStage >> removeRole [
-
-	"Deleting the role associate to the stage."
-
-	role ifNotNil: [ 
-		role class stop: (#role , self componentName asSymbol) asSymbol. role := nil. ]
 ]
 
 { #category : #events }
@@ -237,6 +235,10 @@ MAStage >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	eggStateDurationInMs  := aMemento eggStateDurationInMs.
-	adultStateDurationInMs  := aMemento adultStateDurationInMs 
+	eggStateDurationInMs := aMemento eggStateDurationInMs.
+	adultStateDurationInMs := aMemento adultStateDurationInMs.
+	stageName := aMemento stageName .
+	role := MolUtils
+		        instanceOf: aMemento role key
+		        named: aMemento role value
 ]

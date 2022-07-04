@@ -32,14 +32,15 @@ TMAStageServices >> getRoleName [
 	^ self getTMARoleServicesProvider getRoleName
 ]
 
-{ #category : #role }
-TMAStageServices >> getStageName [
-]
-
 { #category : #testing }
 TMAStageServices >> isAlive [
 ]
 
 { #category : #role }
 TMAStageServices >> moveFrom: anAnt [
+]
+
+{ #category : #role }
+TMAStageServices >> stageName [
+	^ stageName ifNil: [ stageName := #egg ]
 ]

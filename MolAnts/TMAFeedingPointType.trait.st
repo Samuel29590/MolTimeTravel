@@ -12,7 +12,9 @@ Trait {
 TMAFeedingPointType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMATimeTravelEvents }
+	^ { 
+		  TMASimulationToGlobalEvents .
+		  TMATimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }

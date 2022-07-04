@@ -394,13 +394,14 @@ MASimulationManager >> queenLaid [
 ]
 
 { #category : #private }
-MASimulationManager >> removeAntHill [
+MASimulationManager >> removeAnts [
 
 	"Delete nbAnt ants"
 
-	ants do: [ :e | MAAnt stop: e componentName ].
+	ants do: [ :e | 
+		MAAnt stop: e componentName.].
 	ants := nil.
-	nbAnts := 0.
+	nbAnts := 0
 ]
 
 { #category : #private }
@@ -484,12 +485,11 @@ MASimulationManager >> stageChanged: aSymbol for: anAnt [
 MASimulationManager >> start [
 
 	| pheromones ground memento |
-	memento := MASimulationMementoExperimental new.
+	memento := MASimulationMemento new.
 
 	MATimeTravel start: 'TimeTravel'.
-	self
-		forServices: TMATimeTravelServices
-		useProvider: #TimeTravel.
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+	self forEvents: TMATimeTravelEvents addProducer: #TimeTravel.
 	isRunning := true.
 	isRestoring := false.
 	simulationThread := nil.
@@ -507,7 +507,6 @@ MASimulationManager >> start [
 	ground
 		forServices: TMAPheromoneServices
 		useProvider: pheromones componentName asSymbol.
-	self isRunning ifTrue: [ ^ self ].
 
 	self createAnt.
 	self createInsects.
@@ -526,21 +525,34 @@ MASimulationManager >> startSimulationLoop [
 		simulationThread := [ 
 		                    [ true ] whileTrue: [ 
 			                    isRunning ifTrue: [ 
-				                    | memento |
-				                    memento := MASimulationMemento new.
-				                    step := step + 1.
-				                    self getTMASimulationToGlobalEventsNotifier
-					                    simulationStepSent.
-				                    self
-					                    getTMATimeTravelServicesProvider
-					                    save: (memento save: self)
-					                    at: step.
-				                    (Delay forMilliseconds:
-					                     self class simulationStepDurationInMs) wait ] ] ]
-			                    newProcess priority:
+				                    isRestoring
+					                    ifTrue: [  ]
+					                    ifFalse: [ 
+						                    | memento |
+						                    memento := MASimulationMemento
+							                               new.
+						                    step := step + 1.
+						                    self
+							                    getTMASimulationToGlobalEventsNotifier 
+							                    simulationStepSent: step.
+						                    self
+							                    getTMATimeTravelServicesProvider
+							                    save: (memento save: self)
+							                    at: step.
+						                    (Delay forMilliseconds:
+							                     self class simulationStepDurationInMs)
+							                    wait ] ] ] ] newProcess priority:
 			                    Processor userBackgroundPriority.
-		simulationThread name: 'Molecule SimulationManager Process' ].
+		simulationThread name:
+			'Molecule SimulationManager Process' ].
 	simulationThread resume
+]
+
+{ #category : #events }
+MASimulationManager >> startTimeTravel [
+
+	isRunning := false.
+	isRestoring := true
 ]
 
 { #category : #services }
@@ -554,12 +566,13 @@ MASimulationManager >> stop [
 
 	self stopSimulationLoop.
 	MAGround stop: 'Ground'.
-	self removeAntHill.
+	self removeAnts.
 	self removeInsects.
 	self removeFeedingPoints.
 	self removePheromones.
 	isRunning := false.
-	self getTMASimulationToGlobalEventsNotifier stopped
+	self getTMASimulationToGlobalEventsNotifier stopped.
+	MATimeTravel stop: 'TimeTravel'
 ]
 
 { #category : #private }
@@ -568,6 +581,13 @@ MASimulationManager >> stopSimulationLoop [
 	simulationThread ifNil: [ ^ self ].
 	simulationThread terminate.
 	simulationThread := nil
+]
+
+{ #category : #events }
+MASimulationManager >> stopTimeTravel [
+
+	isRestoring := false.
+	isRunning := true
 ]
 
 { #category : #services }
