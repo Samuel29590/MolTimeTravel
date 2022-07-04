@@ -18,13 +18,19 @@ Trait {
 }
 
 { #category : #services }
-TMASimulationServices >> ants [
+TMASimulationServices >> getAnts [
 
 	
 ]
 
 { #category : #services }
-TMASimulationServices >> feedingPoints [
+TMASimulationServices >> getFeedingPoints [
+
+	
+]
+
+{ #category : #services }
+TMASimulationServices >> getInsects [
 
 	
 ]
@@ -38,7 +44,13 @@ TMASimulationServices >> getPheromonesReturnDict [
 ]
 
 { #category : #services }
-TMASimulationServices >> insects [
+TMASimulationServices >> getStep [
+
+	
+]
+
+{ #category : #services }
+TMASimulationServices >> getStorage [
 
 	
 ]
@@ -55,17 +67,5 @@ TMASimulationServices >> start [
 ]
 
 { #category : #services }
-TMASimulationServices >> step [
-
-	
-]
-
-{ #category : #services }
 TMASimulationServices >> stop [
-]
-
-{ #category : #services }
-TMASimulationServices >> storage [
-
-	
 ]

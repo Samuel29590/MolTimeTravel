@@ -24,12 +24,12 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 
 	| newPos onTop onLeft onRight onBottom |
 	"Detecting where is the pheromone around the ant."
-	(anAnt position - aPoint) x = 0
+	(anAnt getPosition - aPoint) x = 0
 		ifTrue: [ 
 			onLeft := false.
 			onRight := false ]
 		ifFalse: [ 
-			(anAnt position - aPoint) x < 0
+			(anAnt getPosition - aPoint) x < 0
 				ifTrue: [ 
 					onLeft := false.
 					onRight := true ]
@@ -37,12 +37,12 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 					onLeft := true.
 					onRight := false ] ].
 
-	(anAnt position - aPoint) y = 0
+	(anAnt getPosition - aPoint) y = 0
 		ifTrue: [ 
 			onTop := false.
 			onBottom := false ]
 		ifFalse: [ 
-			(anAnt position - aPoint) y < 0
+			(anAnt getPosition - aPoint) y < 0
 				ifTrue: [ 
 					onTop := false.
 					onBottom := true ]
@@ -51,7 +51,7 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 					onBottom := false ] ].
 
 	"Choosing the new position to avoid the highest pheromone."
-	newPos := anAnt position.
+	newPos := anAnt getPosition.
 	onLeft
 		ifTrue: [ 
 		newPos := newPos + ((Random new nextIntegerBetween: 1 and: 3) @ 0) ]
@@ -97,7 +97,7 @@ MAWorker >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "worker notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -114,7 +114,7 @@ MAWorker >> componentRemove [
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]]
+			at: self getTMASimulationServicesProvider getStep ]]
 
 	
 ]
@@ -126,7 +126,7 @@ MAWorker >> doSimulationStepExplore: anAnt [
 
 	| antRectangle |
 	antRectangle := BlBounds
-		                origin: anAnt position - (5 @ 5)
+		                origin: anAnt getPosition - (5 @ 5)
 		                extent: 10 @ 10.
 
 	anAnt getInsects keysDo: [ :each | 
@@ -136,7 +136,7 @@ MAWorker >> doSimulationStepExplore: anAnt [
 			self getTMARoleEventsNotifier ant: anAnt killAt: each.
 			phase := #return.
 			oldPositions := OrderedCollection new.
-			oldPositions add: anAnt position.
+			oldPositions add: anAnt getPosition.
 			^ self ] ].
 
 	anAnt getFeedingPoints keysDo: [ :each | 
@@ -148,7 +148,7 @@ MAWorker >> doSimulationStepExplore: anAnt [
 			self getTMARoleEventsNotifier worker: anAnt eatAt: each.
 			phase := #return.
 			oldPositions := OrderedCollection new.
-			oldPositions add: anAnt position.
+			oldPositions add: anAnt getPosition.
 			^ self ] ]
 ]
 
@@ -166,7 +166,7 @@ MAWorker >> doSimulationStepReturn: anAnt [
 
 	| antRectangle antHillRectangle |
 	antRectangle := BlBounds
-		                origin: anAnt position - (20 @ 20)
+		                origin: anAnt getPosition - (20 @ 20)
 		                extent: 40 @ 40.
 	antHillRectangle := BlBounds
 		                    origin:
@@ -176,7 +176,7 @@ MAWorker >> doSimulationStepReturn: anAnt [
 		phase := #explore.
 		self getTMARoleEventsNotifier insectDelivered.
 		oldPositions := OrderedCollection new.
-		oldPositions add: anAnt position ]
+		oldPositions add: anAnt getPosition ]
 ]
 
 { #category : #position }
@@ -200,7 +200,7 @@ MAWorker >> getMyHightPheromoneAround: anAnt [
 
 	| antRectangle maxIntensity bestPheromonePos |
 	antRectangle := BlBounds
-		                origin: anAnt position - (5 @ 5)
+		                origin: anAnt getPosition - (5 @ 5)
 		                extent: 10 @ 10.
 
 	maxIntensity := 0.
@@ -208,7 +208,7 @@ MAWorker >> getMyHightPheromoneAround: anAnt [
 
 	anAnt getPheromonesDict keysAndValuesDo: [ :k :v | 
 		| pheromoneRectangle |
-		k = anAnt position ifFalse: [ 
+		k = anAnt getPosition ifFalse: [ 
 			pheromoneRectangle := BlBounds origin: k extent: 0 @ 0.
 			(antRectangle intersects: pheromoneRectangle) ifTrue: [ 
 				v key = anAnt ifTrue: [ 
@@ -218,6 +218,12 @@ MAWorker >> getMyHightPheromoneAround: anAnt [
 	^ bestPheromonePos
 ]
 
+{ #category : #accessing }
+MAWorker >> getOldPositions [
+
+	^ oldPositions
+]
+
 { #category : #position }
 MAWorker >> getOthersPheromonesAround: anAnt [
 
@@ -225,7 +231,7 @@ MAWorker >> getOthersPheromonesAround: anAnt [
 
 	| antRectangle othersPheromonesVisibles |
 	antRectangle := BlBounds
-		                origin: anAnt position - (5 @ 5)
+		                origin: anAnt getPosition - (5 @ 5)
 		                extent: 10 @ 10.
 	othersPheromonesVisibles := OrderedCollection new.
 	anAnt getPheromonesDict keysDo: [ :each | 
@@ -236,10 +242,16 @@ MAWorker >> getOthersPheromonesAround: anAnt [
 			= anAnt componentName ifFalse: [ 
 				othersPheromonesVisibles add: each ] ] ].
 
-		othersPheromonesVisibles remove: anAnt position ifAbsent: [  ].
+		othersPheromonesVisibles remove: anAnt getPosition ifAbsent: [  ].
 	oldPositions do: [ :each | 
 		othersPheromonesVisibles remove: each ifAbsent: [  ] ].
 	^ othersPheromonesVisibles
+]
+
+{ #category : #accessing }
+MAWorker >> getPhase [
+
+	^ phase
 ]
 
 { #category : #position }
@@ -249,7 +261,7 @@ MAWorker >> getPheromonesAround: anAnt [
 
 	| antRectangle pheromonesDict pheromonesVisibles |
 	antRectangle := BlBounds
-		                origin: anAnt position - (5 @ 5)
+		                origin: anAnt getPosition - (5 @ 5)
 		                extent: 10 @ 10.
 
 	pheromonesDict := anAnt getPheromonesDict.
@@ -260,7 +272,7 @@ MAWorker >> getPheromonesAround: anAnt [
 					pheromoneRectangle := BlBounds origin: each extent: 0 @ 0.
 					(antRectangle intersects: pheromoneRectangle) ifTrue: [ 
 						pheromonesVisibles add: each ] ] .
-				pheromonesVisibles remove: anAnt position ifAbsent: [  ].
+				pheromonesVisibles remove: anAnt getPosition ifAbsent: [  ].
 	oldPositions do: [ :each | 
 		pheromonesVisibles remove: each ifAbsent: [  ] ].	
 				
@@ -274,7 +286,7 @@ MAWorker >> getPheromonesOfReturnAround: anAnt [
 
 	| antRectangle pheromonesVisibles |
 	antRectangle := BlBounds
-		                origin: anAnt position - (5 @ 5)
+		                origin: anAnt getPosition - (5 @ 5)
 		                extent: 10 @ 10.
 	pheromonesVisibles := OrderedCollection new.
 	anAnt getPheromonesReturnDict keysDo: [ :each | 
@@ -283,7 +295,7 @@ MAWorker >> getPheromonesOfReturnAround: anAnt [
 		(antRectangle intersects: pheromoneRectangle) ifTrue: [ 
 			pheromonesVisibles add: each ] ].
 
-	pheromonesVisibles remove: (anAnt position) ifAbsent: [  ].
+	pheromonesVisibles remove: (anAnt getPosition) ifAbsent: [  ].
 	oldPositions do:[ :each | 
 	pheromonesVisibles remove: each ifAbsent: [  ].].
 	^ pheromonesVisibles
@@ -328,7 +340,7 @@ MAWorker >> moveFromExplore: anAnt [
 
 	newPos := self newPositionCheckBorder: newPos.
 
-	oldPositions add: anAnt position.
+	oldPositions add: anAnt getPosition.
 	oldPositions size > 10 ifTrue: [ oldPositions removeFirst ].
 
 	self getTMARoleEventsNotifier
@@ -349,7 +361,7 @@ MAWorker >> moveFromRandom: anAnt [
 
 		newPos := self newPositionCheckBorder: newPos.
 
-		oldPositions add: anAnt position.
+		oldPositions add: anAnt getPosition.
 		oldPositions size > 5 ifTrue: [ oldPositions removeFirst ].
 
 		self getTMARoleEventsNotifier
@@ -361,7 +373,7 @@ MAWorker >> moveFromRandom: anAnt [
 
 		newPos := self newPositionCheckBorder: newPos.
 
-		oldPositions add: anAnt position.
+		oldPositions add: anAnt getPosition.
 		oldPositions size > 5 ifTrue: [ oldPositions removeFirst ].
 
 		self getTMARoleEventsNotifier
@@ -393,7 +405,7 @@ MAWorker >> moveFromReturn: anAnt [
 
 	newPos := self newPositionCheckBorder: newPos.
 
-	oldPositions add: anAnt position.
+	oldPositions add: anAnt getPosition.
 	oldPositions size > 10 ifTrue: [ oldPositions removeFirst ].
 
 	self getTMARoleEventsNotifier
@@ -434,7 +446,7 @@ MAWorker >> movingWithOldPositions: anAnt [
 		        - (oldPositions at: oldPositions size - 2)).
 		res := res + ((oldPositions at: oldPositions size - 2)
 		        - (oldPositions at: oldPositions size - 3)) ].
-	res := res + (anAnt position - (oldPositions at: oldPositions size)).
+	res := res + (anAnt getPosition - (oldPositions at: oldPositions size)).
 	res := (res x / 4) rounded
 	       + (Random new nextIntegerBetween: 1 and: 5) - 3
 	       @
@@ -446,7 +458,7 @@ MAWorker >> movingWithOldPositions: anAnt [
 	res y > 3 ifTrue: [ res := res x @ 3 ].
 	res y < -3 ifTrue: [ res := res x @ -3 ].
 
-	res := anAnt position + res.
+	res := anAnt getPosition + res.
 	^ res
 ]
 
@@ -467,24 +479,12 @@ MAWorker >> newPositionCheckBorder: aPoint [
 	^ newPos
 ]
 
-{ #category : #accessing }
-MAWorker >> oldPositions [
-
-	^ oldPositions
-]
-
-{ #category : #accessing }
-MAWorker >> phase [
-
-	^ phase
-]
-
 { #category : #position }
 MAWorker >> randomMove: anAnt [
 
 	"This method return a random move."
 
-	^ anAnt position
+	^ anAnt getPosition
 	  + (((Random new nextIntegerBetween: 0 and: 6) - 3) rounded
 		   @ ((Random new nextIntegerBetween: 0 and: 6) - 3) rounded)
 ]
@@ -494,6 +494,6 @@ MAWorker >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	phase := aMemento phase.
-	oldPositions := aMemento oldPositions 
+	phase := aMemento getPhase.
+	oldPositions := aMemento getOldPositions 
 ]

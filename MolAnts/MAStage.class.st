@@ -19,12 +19,6 @@ Class {
 	#category : #MolAnts
 }
 
-{ #category : #accessing }
-MAStage >> adultStateDurationInMs [
-
-	^ adultStateDurationInMs
-]
-
 { #category : #'life cycle' }
 MAStage >> componentActivate [
 
@@ -49,7 +43,7 @@ MAStage >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "stage notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -75,7 +69,7 @@ MAStage >> componentRemove [
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]]
+			at: self getTMASimulationServicesProvider getStep ]]
 ]
 
 { #category : #private }
@@ -83,8 +77,8 @@ MAStage >> computeStageFor: anAnt [
 
 	"Checking if an egg hatch."
 
-	self stageName = #egg ifTrue: [ 
-		anAnt ageInMs > eggStateDurationInMs ifTrue: [ "If the egg hatch, adding the role as a producer of TMARoleService associate to this MAStage."
+	self getStageName = #egg ifTrue: [ 
+		anAnt getAgeInMs > eggStateDurationInMs ifTrue: [ "If the egg hatch, adding the role as a producer of TMARoleService associate to this MAStage."
 			stageName := #adult.
 			self
 				forServices: TMARoleServices
@@ -93,8 +87,8 @@ MAStage >> computeStageFor: anAnt [
 
 	"Checking if an adult is dead."
 
-	self stageName = #adult ifTrue: [ 
-		anAnt ageInMs > adultStateDurationInMs ifTrue: [ "If the adult is dead, notify the MASimulationManager."
+	self getStageName = #adult ifTrue: [ 
+		anAnt getAgeInMs > adultStateDurationInMs ifTrue: [ "If the adult is dead, notify the MASimulationManager."
 			stageName := #dead.
 			self getTMAStageEventsNotifier stageChanged: stageName for: anAnt ].
 		^ self ]
@@ -107,16 +101,22 @@ MAStage >> doSimulationStepFor: anAnt [
 	memento := MAStageMemento new.
 
 	self computeStageFor: anAnt.
-	self stageName = #adult ifTrue: [ 
+	self getStageName = #adult ifTrue: [ 
 		self getRole doSimulationStepFor: anAnt ].
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: self getTMASimulationServicesProvider step
+		at: self getTMASimulationServicesProvider getStep
 ]
 
 { #category : #accessing }
-MAStage >> eggStateDurationInMs [
+MAStage >> getAdultStateDurationInMs [
+
+	^ adultStateDurationInMs
+]
+
+{ #category : #accessing }
+MAStage >> getEggStateDurationInMs [
 
 	^ eggStateDurationInMs
 ]
@@ -226,7 +226,7 @@ MAStage >> moveFrom: anAnt [
 
 	"Perform the moving action of the role."
 
-	self stageName ~= #adult ifTrue: [ ^ anAnt position ].
+	self getStageName ~= #adult ifTrue: [ ^ anAnt getPosition ].
 	^ self getTMARoleServicesProvider moveFrom: anAnt
 ]
 
@@ -235,10 +235,10 @@ MAStage >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	eggStateDurationInMs := aMemento eggStateDurationInMs.
-	adultStateDurationInMs := aMemento adultStateDurationInMs.
-	stageName := aMemento stageName .
+	eggStateDurationInMs := aMemento getEggStateDurationInMs.
+	adultStateDurationInMs := aMemento getAdultStateDurationInMs.
+	stageName := aMemento getStageName .
 	role := MolUtils
-		        instanceOf: aMemento role key
-		        named: aMemento role value
+		        instanceOf: aMemento getRole key
+		        named: aMemento getRole value
 ]

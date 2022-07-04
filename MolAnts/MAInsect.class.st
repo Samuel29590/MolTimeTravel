@@ -19,12 +19,6 @@ Class {
 	#category : #MolAnts
 }
 
-{ #category : #accessing }
-MAInsect >> ageInMs [
-
-	^ ageInMs
-]
-
 { #category : #'life cycle' }
 MAInsect >> componentActivate [
 
@@ -47,7 +41,7 @@ MAInsect >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "insect notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -69,7 +63,7 @@ MAInsect >> componentRemove [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]].
+			at: self getTMASimulationServicesProvider getStep ]].
 ]
 
 { #category : #'life cycle' }
@@ -82,6 +76,18 @@ MAInsect >> doSimulationStep [
 			+
 			((Random new next * 2 - 1) rounded
 			 @ (Random new next * 2 - 1) rounded) 
+]
+
+{ #category : #accessing }
+MAInsect >> getAgeInMs [
+
+	^ ageInMs
+]
+
+{ #category : #'life cycle' }
+MAInsect >> getPosition [
+
+	^ position
 ]
 
 { #category : #'component accessing' }
@@ -138,12 +144,6 @@ MAInsect >> getTMATimeTravelServicesProvider [
 ]
 
 { #category : #'life cycle' }
-MAInsect >> position [
-
-	^ position
-]
-
-{ #category : #'life cycle' }
 MAInsect >> position: aPoint [
 
 	| oldPos |
@@ -169,8 +169,8 @@ MAInsect >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	position := aMemento position.
-	ageInMs := aMemento ageInMs
+	position := aMemento getPosition.
+	ageInMs := aMemento getAgeInMs
 ]
 
 { #category : #'events - lifecycle' }

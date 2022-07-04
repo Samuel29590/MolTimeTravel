@@ -25,7 +25,7 @@ Class {
 }
 
 { #category : #accessing }
-MAPheromones class >> maxIntensity [
+MAPheromones class >> getMaxIntensity [
 
 	^ 200
 ]
@@ -58,7 +58,7 @@ MAPheromones >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "pheromones notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -85,7 +85,7 @@ MAPheromones >> componentRemove [
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]].
+			at: self getTMASimulationServicesProvider getStep ]].
 ]
 
 { #category : #'events - lifecycle' }
@@ -179,7 +179,7 @@ MAPheromones >> pheromoneNew: aPoint for: anAnt [
 		ifFalse: [ "The following code permit to not create pheromones in the ant hill. In order to keep the ant hill clear."
 			| pointRectangle antHillRectangle |
 			pointRectangle := BlBounds
-				                  origin: anAnt position - (20 @ 20)
+				                  origin: anAnt getPosition - (20 @ 20)
 				                  extent: 40 @ 40.
 
 			antHillRectangle := BlBounds
@@ -209,7 +209,7 @@ MAPheromones >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	maxIntensity := aMemento maxIntensity.
+	maxIntensity := aMemento getMaxIntensity.
 
 
 	pheromonesDict := Dictionary new.

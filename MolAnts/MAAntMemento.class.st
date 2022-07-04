@@ -10,13 +10,13 @@ Class {
 }
 
 { #category : #accessing }
-MAAntMemento >> ageInMs [
+MAAntMemento >> getAgeInMs [
 
 	^ ageInMs
 ]
 
 { #category : #accessing }
-MAAntMemento >> position [
+MAAntMemento >> getPosition [
 
 	^ position
 ]
@@ -32,8 +32,8 @@ MAAntMemento >> save: anAnt [
 
 	componentClass := anAnt class.
 	componentName := anAnt componentName.
-	position := anAnt position.
-	ageInMs := anAnt ageInMs.
+	position := anAnt getPosition.
+	ageInMs := anAnt getAgeInMs.
 	stage := (anAnt getStage class)->(anAnt getStage componentName)
 ]
 

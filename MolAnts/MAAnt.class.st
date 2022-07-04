@@ -19,12 +19,6 @@ Class {
 	#category : #MolAnts
 }
 
-{ #category : #accessing }
-MAAnt >> ageInMs [
-
-	^ ageInMs
-]
-
 { #category : #'life cycle' }
 MAAnt >> componentActivate [
 
@@ -52,7 +46,7 @@ MAAnt >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "ant notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -79,7 +73,7 @@ MAAnt >> componentRemove [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]].
+			at: self getTMASimulationServicesProvider getStep ]].
 ]
 
 { #category : #private }
@@ -93,16 +87,22 @@ MAAnt >> doSimulationStep [
 		self position: (self getStage moveFrom: self) ]
 ]
 
+{ #category : #accessing }
+MAAnt >> getAgeInMs [
+
+	^ ageInMs
+]
+
 { #category : #services }
 MAAnt >> getFeedingPoints [
 
-	^ self getTMASimulationServicesProvider feedingPoints
+	^ self getTMASimulationServicesProvider getFeedingPoints
 ]
 
 { #category : #services }
 MAAnt >> getInsects [
 
-	^ self getTMASimulationServicesProvider insects
+	^ self getTMASimulationServicesProvider getInsects
 ]
 
 { #category : #services }
@@ -115,6 +115,12 @@ MAAnt >> getPheromonesDict [
 MAAnt >> getPheromonesReturnDict [ 
 
 	^ self getTMASimulationServicesProvider getPheromonesReturnDict
+]
+
+{ #category : #accessing }
+MAAnt >> getPosition [
+
+	^ position
 ]
 
 { #category : #services }
@@ -138,6 +144,13 @@ MAAnt >> getStage [
 	"Returning the MAStage associate to this ant."
 
 	^ stage
+]
+
+{ #category : #accessing }
+MAAnt >> getStageName [
+
+	stage ifNil: [ ^ nil ].
+	^ stage getStageName
 ]
 
 { #category : #'component accessing' }
@@ -210,12 +223,6 @@ MAAnt >> initializeStage [
 ]
 
 { #category : #accessing }
-MAAnt >> position [
-
-	^ position
-]
-
-{ #category : #accessing }
 MAAnt >> position: aPoint [
 
 	position := aPoint.
@@ -226,8 +233,8 @@ MAAnt >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	position := aMemento position.
-	ageInMs := aMemento ageInMs.
+	position := aMemento getPosition.
+	ageInMs := aMemento getAgeInMs.
 	stage := MolUtils instanceOf: aMemento stage key named: aMemento stage value
 ]
 
@@ -242,11 +249,4 @@ MAAnt >> simulationStepSent: aStep [
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
 		at: aStep
-]
-
-{ #category : #accessing }
-MAAnt >> stageName [
-
-	stage ifNil: [ ^ nil ].
-	^ stage stageName
 ]

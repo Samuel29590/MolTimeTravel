@@ -13,5 +13,5 @@ TMAFeedingPointServices >> eated [
 ]
 
 { #category : #accessing }
-TMAFeedingPointServices >> position [
+TMAFeedingPointServices >> getPosition [
 ]

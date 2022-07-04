@@ -114,14 +114,6 @@ MASimulationManager >> ant: anAnt killAt: aPoint [
 	MAInsect stop: insect componentName
 ]
 
-{ #category : #services }
-MASimulationManager >> ants [
-
-	"Returning an OrderedCollection of all the ant currently alive in the system."
-
-	^ ants
-]
-
 { #category : #'component life cycle' }
 MASimulationManager >> componentActivate [
 
@@ -195,7 +187,7 @@ MASimulationManager >> createFeedingPoints [
 		| feed name newPos |
 		name := ('Feed' , e printString) asSymbol.
 		feed := MAFeedingPoint start: name.
-		newPos := feed position.
+		newPos := feed getPosition.
 
 		"Add the insect to the dictionary of insects positions."
 		(feedingPoints includesKey: newPos)
@@ -237,11 +229,27 @@ MASimulationManager >> createInsects [
 ]
 
 { #category : #services }
-MASimulationManager >> feedingPoints [
+MASimulationManager >> getAnts [
+
+	"Returning an OrderedCollection of all the ant currently alive in the system."
+
+	^ ants
+]
+
+{ #category : #services }
+MASimulationManager >> getFeedingPoints [
 
 	"Returning a Dictionary of the feeding point positions (key: a Point / value: an OrderedCollection of MAFeedingPoint instances"
 
 	^ feedingPoints
+]
+
+{ #category : #services }
+MASimulationManager >> getInsects [
+
+	"Returning a Dictionary of the insects positions (key: a Point / value: an OrderedCollection of MAInsect instances"
+
+	^ insects
 ]
 
 { #category : #services }
@@ -258,6 +266,20 @@ MASimulationManager >> getPheromonesReturnDict [
 	"Returning a Dictionary of all pheromone of return in the system (key: position / value: (the ant that create it -> intensity))"
 
 	^ self getTMAPheromoneServicesProvider getPheromonesReturnDict
+]
+
+{ #category : #services }
+MASimulationManager >> getStep [
+
+	^step
+]
+
+{ #category : #services }
+MASimulationManager >> getStorage [
+
+	"Returning the number of insects delivered to the ant hill."
+
+	^ storage
 ]
 
 { #category : #'component accessing' }
@@ -355,14 +377,6 @@ MASimulationManager >> insectDelivered [
 	storage := storage + 1.
 ]
 
-{ #category : #services }
-MASimulationManager >> insects [
-
-	"Returning a Dictionary of the insects positions (key: a Point / value: an OrderedCollection of MAInsect instances"
-
-	^ insects
-]
-
 { #category : #events }
 MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anotherPoint [
 
@@ -443,11 +457,11 @@ MASimulationManager >> restoreFrom: aMemento [
 
 	| dict orderedCollection |
 	componentName := aMemento componentName.
-	storage := aMemento storage.
+	storage := aMemento getStorage.
 
-	aMemento insects isDictionary ifTrue: [ 
+	aMemento getInsects isDictionary ifTrue: [ 
 		dict := Dictionary new.
-		aMemento insects keysAndValuesDo: [ :k :v | 
+		aMemento getInsects keysAndValuesDo: [ :k :v | 
 			| list |
 			list := OrderedCollection new.
 			v do: [ :value | 
@@ -455,9 +469,9 @@ MASimulationManager >> restoreFrom: aMemento [
 			dict add: k -> list ] ].
 	insects := dict.
 	
-		aMemento feedingPoints  isDictionary ifTrue: [ 
+		aMemento getFeedingPoints  isDictionary ifTrue: [ 
 		dict := Dictionary new.
-		aMemento feedingPoints keysAndValuesDo: [ :k :v | 
+		aMemento getFeedingPoints keysAndValuesDo: [ :k :v | 
 			| list |
 			list := OrderedCollection new.
 			v do: [ :value | 
@@ -466,8 +480,8 @@ MASimulationManager >> restoreFrom: aMemento [
 	feedingPoints := dict.
 
 	orderedCollection := OrderedCollection new.
-	aMemento ants isCollection ifTrue: [ 
-		aMemento ants do: [ :value | 
+	aMemento getAnts isCollection ifTrue: [ 
+		aMemento getAnts do: [ :value | 
 			orderedCollection add:
 				(MolUtils instanceOf: value key named: value value) ] ].
 	ants := orderedCollection
@@ -556,12 +570,6 @@ MASimulationManager >> startTimeTravel [
 ]
 
 { #category : #services }
-MASimulationManager >> step [
-
-	^step
-]
-
-{ #category : #services }
 MASimulationManager >> stop [
 
 	self stopSimulationLoop.
@@ -588,14 +596,6 @@ MASimulationManager >> stopTimeTravel [
 
 	isRestoring := false.
 	isRunning := true
-]
-
-{ #category : #services }
-MASimulationManager >> storage [
-
-	"Returning the number of insects delivered to the ant hill."
-
-	^ storage
 ]
 
 { #category : #events }

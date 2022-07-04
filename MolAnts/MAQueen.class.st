@@ -27,7 +27,7 @@ MAQueen >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "queen notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -44,7 +44,7 @@ MAQueen >> componentRemove [
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]]
+			at: self getTMASimulationServicesProvider getStep ]]
 
 	
 ]
@@ -63,7 +63,7 @@ MAQueen >> moveFrom: anAnt [
 
 	"A queen don't move."
 
-	^ anAnt position
+	^ anAnt getPosition
 ]
 
 { #category : #events }

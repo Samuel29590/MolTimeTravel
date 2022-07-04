@@ -9,13 +9,13 @@ Class {
 }
 
 { #category : #accessing }
-MAWorkerMemento >> oldPositions [
+MAWorkerMemento >> getOldPositions [
 
 	^ oldPositions
 ]
 
 { #category : #accessing }
-MAWorkerMemento >> phase [
+MAWorkerMemento >> getPhase [
 
 	^ phase
 ]
@@ -31,8 +31,8 @@ MAWorkerMemento >> save: aWorker [
 
 	componentClass := aWorker class.
 	componentName := aWorker componentName.
-	phase := aWorker phase.
-	oldPositions := aWorker oldPositions
+	phase := aWorker getPhase.
+	oldPositions := aWorker getOldPositions
 ]
 
 { #category : #'undo - undo' }

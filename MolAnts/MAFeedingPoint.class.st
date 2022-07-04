@@ -19,12 +19,6 @@ Class {
 	#category : #MolAnts
 }
 
-{ #category : #accessing }
-MAFeedingPoint >> capacity [
-
-	^ capacity 
-]
-
 { #category : #'life cycle' }
 MAFeedingPoint >> componentActivate [
 
@@ -51,7 +45,7 @@ MAFeedingPoint >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "feedingPoint notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -70,7 +64,7 @@ MAFeedingPoint >> componentRemove [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
-			at: self getTMASimulationServicesProvider step ]].
+			at: self getTMASimulationServicesProvider getStep ]].
 ]
 
 { #category : #events }
@@ -78,6 +72,18 @@ MAFeedingPoint >> eated [
 
 	capacity := capacity - 1.
 	^ capacity
+]
+
+{ #category : #accessing }
+MAFeedingPoint >> getCapacity [
+
+	^ capacity 
+]
+
+{ #category : #accessing }
+MAFeedingPoint >> getPosition [
+
+	^position
 ]
 
 { #category : #'component accessing' }
@@ -128,19 +134,13 @@ MAFeedingPoint >> getTMATimeTravelServicesProvider [
 	^servicesProvider
 ]
 
-{ #category : #accessing }
-MAFeedingPoint >> position [
-
-	^position
-]
-
 { #category : #events }
 MAFeedingPoint >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	position := aMemento position.
-	capacity := aMemento capacity.
+	position := aMemento getPosition.
+	capacity := aMemento getCapacity.
 ]
 
 { #category : #'events - lifecycle' }

@@ -11,15 +11,27 @@ Class {
 }
 
 { #category : #accessing }
-MAStageMemento >> adultStateDurationInMs [
+MAStageMemento >> getAdultStateDurationInMs [
 
 	^ adultStateDurationInMs
 ]
 
 { #category : #accessing }
-MAStageMemento >> eggStateDurationInMs [
+MAStageMemento >> getEggStateDurationInMs [
 
 	^ eggStateDurationInMs
+]
+
+{ #category : #accessing }
+MAStageMemento >> getRole [
+
+	^ role
+]
+
+{ #category : #accessing }
+MAStageMemento >> getStageName [ 
+
+	^ stageName 
 ]
 
 { #category : #'undo - undo' }
@@ -28,27 +40,15 @@ MAStageMemento >> redo [
 	self restoreValues.
 ]
 
-{ #category : #accessing }
-MAStageMemento >> role [
-
-	^ role
-]
-
 { #category : #actions }
 MAStageMemento >> save: aStage [
 
 	componentClass := aStage class.
 	componentName := aStage componentName.
-	eggStateDurationInMs := aStage eggStateDurationInMs.
-	adultStateDurationInMs := aStage adultStateDurationInMs.
-	stageName := aStage stageName.
+	eggStateDurationInMs := aStage getEggStateDurationInMs.
+	adultStateDurationInMs := aStage getAdultStateDurationInMs.
+	stageName := aStage getStageName.
 	role := aStage getRole class -> aStage getRole componentName
-]
-
-{ #category : #accessing }
-MAStageMemento >> stageName [ 
-
-	^ stageName 
 ]
 
 { #category : #'undo - undo' }

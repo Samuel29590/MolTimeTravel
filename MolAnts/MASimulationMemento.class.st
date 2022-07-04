@@ -11,21 +11,27 @@ Class {
 }
 
 { #category : #accessing }
-MASimulationMemento >> ants [
+MASimulationMemento >> getAnts [
 
 	^ ants
 ]
 
 { #category : #accessing }
-MASimulationMemento >> feedingPoints [
+MASimulationMemento >> getFeedingPoints [
 
 ^ feedingPoints
 ]
 
 { #category : #accessing }
-MASimulationMemento >> insects [
+MASimulationMemento >> getInsects [
 
 	^ insects
+]
+
+{ #category : #accessing }
+MASimulationMemento >> getStorage [
+
+	^ storage
 ]
 
 { #category : #accessing }
@@ -42,8 +48,8 @@ MASimulationMemento >> save: aSimulationManager [
 	componentName := aSimulationManager componentName.
 
 	dict := Dictionary new.
-	aSimulationManager insects isDictionary ifTrue: [ 
-		aSimulationManager insects keysAndValuesDo: [ :k :v | 
+	aSimulationManager getInsects isDictionary ifTrue: [ 
+		aSimulationManager getInsects keysAndValuesDo: [ :k :v | 
 			| list |
 			list := OrderedCollection new.
 			v do: [ :value | list add: value class -> value componentName ].
@@ -51,8 +57,8 @@ MASimulationMemento >> save: aSimulationManager [
 	insects := dict.
 
 	dict := Dictionary new.
-	aSimulationManager feedingPoints isDictionary ifTrue: [ 
-		aSimulationManager feedingPoints keysAndValuesDo: [ :k :v | 
+	aSimulationManager getFeedingPoints isDictionary ifTrue: [ 
+		aSimulationManager getFeedingPoints keysAndValuesDo: [ :k :v | 
 			| list |
 			list := OrderedCollection new.
 			v do: [ :value | list add: value class -> value componentName ].
@@ -60,18 +66,12 @@ MASimulationMemento >> save: aSimulationManager [
 	feedingPoints := dict.
 
 	orderedCollection := OrderedCollection new.
-	aSimulationManager ants isCollection ifTrue: [ 
-		aSimulationManager ants do: [ :value | 
+	aSimulationManager getAnts isCollection ifTrue: [ 
+		aSimulationManager getAnts do: [ :value | 
 			orderedCollection add: value class -> value componentName ] ].
 	ants := orderedCollection.
 
-	storage := aSimulationManager storage
-]
-
-{ #category : #accessing }
-MASimulationMemento >> storage [
-
-	^ storage
+	storage := aSimulationManager getStorage
 ]
 
 { #category : #accessing }

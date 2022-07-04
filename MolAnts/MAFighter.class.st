@@ -27,7 +27,7 @@ MAFighter >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "fighter notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider step ]
+			at: self getTMASimulationServicesProvider getStep ]
 ]
 
 { #category : #'life cycle' }
@@ -45,7 +45,7 @@ MAFighter >> componentRemove [
 		ifFalse: [ 
 			self getTMATimeTravelServicesProvider
 				removeOf: self
-				at: self getTMASimulationServicesProvider step ]].
+				at: self getTMASimulationServicesProvider getStep ]].
 
 	
 ]
@@ -57,7 +57,7 @@ MAFighter >> doSimulationStepFor: anAnt [
 
 	| antRectangle |
 	antRectangle := BlBounds
-		                origin: anAnt position - (6 @ 6)
+		                origin: anAnt getPosition - (6 @ 6)
 		                extent: 12 @ 12.
 
 	anAnt getInsects keysDo: [ :each | 
@@ -73,7 +73,7 @@ MAFighter >> moveFrom: anAnt [
 	"A Fighter move randomly around the ant hill."
 
 	| newPos antHillPos |
-	newPos := anAnt position + ((Random new next * 10 - 5) rounded
+	newPos := anAnt getPosition + ((Random new next * 10 - 5) rounded
 	           @ (Random new next * 10 - 5) rounded).
 	antHillPos := MASimulationManager simulationAntHillPosition.
 

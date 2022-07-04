@@ -66,8 +66,8 @@ MAGround >> componentInitialize [
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
 	self forServices: TMASimulationServices useProvider: #default.
-	
-	refreshing := 5.
+
+	refreshing := 1.
 	mySpace := self openInNewSpace extent:
 		           MASimulationManager simulationWidth
 		           @ (MASimulationManager simulationHeight + 500).
@@ -771,30 +771,30 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 	self getAnts ifNotNil: [ 
 		self getAnts do: [ :ant | 
 			ant ifNotNil: [ 
-				ant position ifNotNil: [ 
-					ant stageName ~= #egg
+				ant getPosition ifNotNil: [ 
+					ant getStageName ~= #egg
 						ifTrue: [ 
 							ant getRoleName = #queen ifTrue: [ 
 								aCanvas figure
-									path: (aCanvas shape circleAt: ant position radius: 5);
+									path: (aCanvas shape circleAt: ant getPosition radius: 5);
 									background: Color pink;
 									backgroundAlpha: 1;
 									draw ].
 							ant getRoleName = #worker ifTrue: [ 
 								aCanvas figure
-									path: (aCanvas shape circleAt: ant position radius: 3);
+									path: (aCanvas shape circleAt: ant getPosition radius: 3);
 									background: Color orange;
 									backgroundAlpha: 1;
 									draw ].
 							ant getRoleName = #fighter ifTrue: [ 
 								aCanvas figure
-									path: (aCanvas shape circleAt: ant position radius: 3);
+									path: (aCanvas shape circleAt: ant getPosition radius: 3);
 									background: Color green;
 									backgroundAlpha: 1;
 									draw ] ]
 						ifFalse: [ 
 							aCanvas figure
-								path: (aCanvas shape circleAt: ant position radius: 2);
+								path: (aCanvas shape circleAt: ant getPosition radius: 2);
 								background: Color gray;
 								backgroundAlpha: 1;
 								draw ] ] ] ] ]
@@ -805,7 +805,7 @@ MAGround >> getAnts [
 
 	"Get all the MAAnt instances, in order to draw them on the canvas."
 
-	^ self getTMASimulationServicesProvider ants
+	^ self getTMASimulationServicesProvider getAnts
 ]
 
 { #category : #services }
@@ -813,7 +813,7 @@ MAGround >> getFeedingPoints [
 
 	"Get all the MAFeedingPoint instances, in order to draw them on the canvas."
 
-	^ self getTMASimulationServicesProvider feedingPoints
+	^ self getTMASimulationServicesProvider getFeedingPoints
 ]
 
 { #category : #services }
@@ -821,7 +821,7 @@ MAGround >> getInsects [
 
 	"Get all the MAInesct instances, in order to draw them on the canvas."
 
-	^ self getTMASimulationServicesProvider insects
+	^ self getTMASimulationServicesProvider getInsects
 ]
 
 { #category : #'component accessing' }
@@ -944,10 +944,10 @@ MAGround >> updateInfoPanel [
 	"Modify each elements of the info panel. It permit to keep the view up to date with the simulation."
 
 	| eggs |
-	stepView text: self getTMASimulationServicesProvider step asRopedText.
+	stepView text: self getTMASimulationServicesProvider getStep asRopedText.
 	nbInsectsView text: self getInsects size asRopedText.
 	nbDeliveredView text:
-		self getTMASimulationServicesProvider storage asRopedText.
+		self getTMASimulationServicesProvider getStorage asRopedText.
 	nbPheromonesView text:
 		(self getTMAPheromoneServicesProvider getPheromonesDict size
 		 + self getTMAPheromoneServicesProvider getPheromonesReturnDict size)
@@ -957,7 +957,7 @@ MAGround >> updateInfoPanel [
 
 	eggs := 0.
 	self getAnts do: [ :ant | 
-		ant stageName = #egg ifTrue: [ eggs := eggs + 1 ] ].
+		ant getStageName = #egg ifTrue: [ eggs := eggs + 1 ] ].
 	nbEggsView text: eggs asRopedText.
 	nbAntsView text: (self getAnts size - eggs) asRopedText.
 

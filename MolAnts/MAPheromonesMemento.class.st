@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : #accessing }
-MAPheromonesMemento >> maxIntensity [
+MAPheromonesMemento >> getMaxIntensity [
 
 	^ maxIntensity
 ]

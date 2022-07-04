@@ -237,8 +237,16 @@ MATimeTravel >> startTimeTravel [
 MATimeTravel >> stopTimeTravel [
 
 	isRestoring ifTrue: [ 
+		isReplaying ifFalse: [ 
+			isReplaying := true.
+			                  [ restoringStep < (history size - 1) ] 
+				                  whileTrue: [ 
+				                  self restoreAtStep: restoringStep + 1 ].
+			                  isReplaying := false.
+			                  
+
 		self restoreAtStep: history size - 1.
 		isSaving := true.
 		isRestoring := false.
-		self getTMATimeTravelEventsNotifier stopTimeTravel ]
+		self getTMATimeTravelEventsNotifier stopTimeTravel ]]
 ]

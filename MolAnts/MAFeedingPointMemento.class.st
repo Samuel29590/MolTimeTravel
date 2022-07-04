@@ -9,13 +9,13 @@ Class {
 }
 
 { #category : #accessing }
-MAFeedingPointMemento >> capacity [
+MAFeedingPointMemento >> getCapacity [
 
 	^ capacity 
 ]
 
 { #category : #accessing }
-MAFeedingPointMemento >> position [
+MAFeedingPointMemento >> getPosition [
 
 	^ position
 ]
@@ -31,8 +31,8 @@ MAFeedingPointMemento >> save: aFeedingPoint [
 
 	componentClass := aFeedingPoint class.
 	componentName := aFeedingPoint componentName.
-	position := aFeedingPoint position.
-	capacity  := aFeedingPoint capacity.
+	position := aFeedingPoint getPosition.
+	capacity  := aFeedingPoint getCapacity.
 ]
 
 { #category : #'undo - undo' }
