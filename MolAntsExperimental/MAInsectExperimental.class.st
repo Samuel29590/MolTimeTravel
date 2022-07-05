@@ -78,6 +78,18 @@ MAInsectExperimental >> getTMAInsectsEventsNotifier [
 ]
 
 { #category : #'component accessing' }
+MAInsectExperimental >> getTMASimulationExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMASimulationExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMASimulationExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
+{ #category : #'component accessing' }
 MAInsectExperimental >> getTMASimulationExperimentalToGlobalEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
 	itf := TMASimulationExperimentalToGlobalEvents.
@@ -99,6 +111,18 @@ MAInsectExperimental >> getTMATimeTravelExperimentalEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMATimeTravelExperimentalEvents named: eventsSymbol ]. 
 	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAInsectExperimental >> getTMATimeTravelExperimentalServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelExperimentalServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelExperimentalServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'events - lifecycle' }
