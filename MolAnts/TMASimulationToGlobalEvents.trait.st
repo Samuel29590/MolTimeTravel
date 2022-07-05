@@ -11,9 +11,21 @@ Trait {
 }
 
 { #category : #'events - lifecycle' }
-TMASimulationToGlobalEvents >> simulationStepSent [
+TMASimulationToGlobalEvents >> pheromoneNew: aPoint for: anAnt [
 
-	self doSimulationStep 
+	
+]
+
+{ #category : #'events - lifecycle' }
+TMASimulationToGlobalEvents >> pheromoneReturnNew: aPoint for: anAnt [
+
+	
+]
+
+{ #category : #'events - lifecycle' }
+TMASimulationToGlobalEvents >> simulationStepSent: aStep [
+
+	self doSimulationStep
 ]
 
 { #category : #'events - control' }

@@ -1,5 +1,5 @@
 Class {
-	#name : #MAComponentStep,
+	#name : #MAComponentStepExperimental,
 	#superclass : #Object,
 	#instVars : [
 		'mementos',
@@ -9,13 +9,13 @@ Class {
 }
 
 { #category : #accessing }
-MAComponentStep >> creationsAndDeletions [
+MAComponentStepExperimental >> creationsAndDeletions [
 
 	^ creationsAndDeletions
 ]
 
 { #category : #initialization }
-MAComponentStep >> initialize [
+MAComponentStepExperimental >> initialize [
 
 	super initialize.
 	mementos := OrderedCollection new.
@@ -23,19 +23,19 @@ MAComponentStep >> initialize [
 ]
 
 { #category : #accessing }
-MAComponentStep >> mementos [
+MAComponentStepExperimental >> mementos [
 
 	^ mementos
 ]
 
 { #category : #initialization }
-MAComponentStep >> save: aComponentMemento [
+MAComponentStepExperimental >> save: aComponentMemento [
 
 	mementos add: aComponentMemento 
 ]
 
 { #category : #initialization }
-MAComponentStep >> saveCreationOrDeletionOf: aComponentMemento [
+MAComponentStepExperimental >> saveCreationOrDeletionOf: aComponentMemento [
 
 	creationsAndDeletions add: aComponentMemento
 ]

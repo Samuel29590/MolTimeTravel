@@ -12,11 +12,16 @@ Trait {
 TMAGroundType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMASimulationToGlobalEvents }
+	^ { TMASimulationToGlobalEvents.
+	TMATimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }
 TMAGroundType classSide >> usedComponentServices [
+
 	<componentContract>
-	^ {TMAPheromoneServices . TMASimulationServices}
+	^ { 
+		  TMAPheromoneServices.
+		  TMASimulationServices.
+		  TMATimeTravelServices }
 ]

@@ -28,25 +28,20 @@ Finally this implementation provides *start / pause / play / stop* methods on th
 Class {
 	#name : #MASimulationManager,
 	#superclass : #MolAbstractComponentImpl,
-	#traits : 'TMASimulationManagerType + TMASimulationServices + TMARoleEvents + TMAInsectEvents + TMAStageEvents',
-	#classTraits : 'TMASimulationManagerType classTrait + TMASimulationServices classTrait + TMARoleEvents classTrait + TMAInsectEvents classTrait + TMAStageEvents classTrait',
+	#traits : 'TMASimulationManagerType + TMASimulationServices + TMARoleEvents + TMAInsectEvents + TMAStageEvents + TMATimeTravelEvents',
+	#classTraits : 'TMASimulationManagerType classTrait + TMASimulationServices classTrait + TMARoleEvents classTrait + TMAInsectEvents classTrait + TMAStageEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'simulationThread',
 		'step',
-		'isAntHillCreated',
 		'ants',
 		'nbAnts',
-		'insectsPos',
-		'nbDelivered'
+		'insects',
+		'storage',
+		'feedingPoints',
+		'isRestoring'
 	],
 	#category : #MolAnts
 }
-
-{ #category : #'accessing - events' }
-MASimulationManager class >> consumedComponentEvents [
-	<componentContract>
-	^ {TMAStageEvents . TMARoleEvents . TMAInsectEvents}
-]
 
 { #category : #scripts }
 MASimulationManager class >> pauseSimulation [
@@ -77,7 +72,7 @@ MASimulationManager class >> simulationHeight [
 { #category : #properties }
 MASimulationManager class >> simulationStepDurationInMs [
 
-	^ 100
+	^ 30
 ]
 
 { #category : #properties }
@@ -105,6 +100,20 @@ MASimulationManager class >> stopSimulation [
 	
 ]
 
+{ #category : #events }
+MASimulationManager >> ant: anAnt killAt: aPoint [
+
+	| insect |
+	"Removing the insect in the dictionary."
+	(insects includesKey: aPoint) ifTrue: [ 
+		insect := (insects at: aPoint) removeFirst.
+		(insects at: aPoint) isEmpty ifTrue: [ 
+			insects removeKey: aPoint ] ].
+
+	"Stoping the insect's component instance."
+	MAInsect stop: insect componentName
+]
+
 { #category : #'component life cycle' }
 MASimulationManager >> componentActivate [
 
@@ -113,7 +122,7 @@ MASimulationManager >> componentActivate [
 	super componentActivate.
 	self getTMAStageEventsSubscriber subscribe: self.
 	self getTMARoleEventsSubscriber subscribe: self.
-	self getTMAInsectEventsSubscriber subscribe: self.
+	self getTMAInsectEventsSubscriber subscribe: self..self getTMATimeTravelEventsSubscriber subscribe: self.
 	isRunning := true
 ]
 
@@ -123,14 +132,7 @@ MASimulationManager >> componentInitialize [
 	"Initialization of the MASimulationManager component."
 
 	super componentInitialize.
-	simulationThread := nil.
-	step := 0.
-	isAntHillCreated := false.
-	ants := OrderedCollection new.
-	nbAnts := 0.
-	nbDelivered := 0.
-	insectsPos := Dictionary new.
-	MAGround start: 'Ground'.
+
 	self start
 ]
 
@@ -140,10 +142,12 @@ MASimulationManager >> componentPassivate [
 	"Passivating the MASimulationManager component."
 
 	super componentPassivate.
-	
+
 	self getTMAStageEventsSubscriber unsubscribe: self.
 	self getTMARoleEventsSubscriber unsubscribe: self.
 	self getTMAInsectEventsSubscriber unsubscribe: self.
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
 	isRunning := false
 ]
 
@@ -160,7 +164,6 @@ MASimulationManager >> createAnt [
 	"Creation of a new ant"
 
 	| name ant |
-	isAntHillCreated ifTrue: [ 
 		nbAnts := nbAnts + 1.
 		name := ('Ant' , nbAnts printString) asSymbol.
 		ant := MAAnt start: name.
@@ -172,16 +175,28 @@ MASimulationManager >> createAnt [
 
 		"Adding the ant to the OrderedCollection of ants"
 
-		ants add: ant ]
+		ants add: ant 
 ]
 
 { #category : #private }
-MASimulationManager >> createAntHill [
+MASimulationManager >> createFeedingPoints [
 
-	"Creation of the first ant hill and the first ant of this ant hill."
+	"Creation of the 5 first feeding points"
 
-	self isAntHillCreated: true.
-	self createAnt
+	1 to: 5 do: [ :e | 
+		| feed name newPos |
+		name := ('Feed' , e printString) asSymbol.
+		feed := MAFeedingPoint start: name.
+		newPos := feed getPosition.
+
+		"Add the insect to the dictionary of insects positions."
+		(feedingPoints includesKey: newPos)
+			ifFalse: [ 
+				| collection |
+				collection := OrderedCollection new.
+				collection add: feed.
+				feedingPoints add: newPos -> collection ]
+			ifTrue: [ (feedingPoints at: newPos) addLast: feed ] ]
 ]
 
 { #category : #private }
@@ -189,7 +204,7 @@ MASimulationManager >> createInsects [
 
 	"Creation of the 50 firt insects"
 
-	1 to: 2 do: [ :e | 
+	1 to: 50 do: [ :e | 
 		| insect name newPos |
 		name := ('Insect' , e printString) asSymbol.
 		insect := MAInsect start: name.
@@ -204,13 +219,13 @@ MASimulationManager >> createInsects [
 		self forEvents: TMAInsectEvents addProducer: name.
 
 		"Add the insect to the dictionary of insects positions."
-		(insectsPos includesKey: newPos)
+		(insects includesKey: newPos)
 			ifFalse: [ 
 				| collection |
 				collection := OrderedCollection new.
 				collection add: insect.
-				insectsPos add: newPos -> collection ]
-			ifTrue: [ (insectsPos at: newPos) addLast: insect ] ]
+				insects add: newPos -> collection ]
+			ifTrue: [ (insects at: newPos) addLast: insect ] ]
 ]
 
 { #category : #services }
@@ -222,19 +237,61 @@ MASimulationManager >> getAnts [
 ]
 
 { #category : #services }
-MASimulationManager >> getInsectsPos [
+MASimulationManager >> getFeedingPoints [
+
+	"Returning a Dictionary of the feeding point positions (key: a Point / value: an OrderedCollection of MAFeedingPoint instances"
+
+	^ feedingPoints
+]
+
+{ #category : #services }
+MASimulationManager >> getInsects [
 
 	"Returning a Dictionary of the insects positions (key: a Point / value: an OrderedCollection of MAInsect instances"
 
-	^ insectsPos
+	^ insects
+]
+
+{ #category : #services }
+MASimulationManager >> getPheromonesDict [
+
+	"Returning a Dictionary of all pheromone of exploration in the system (key: position / value: (the ant that create it -> intensity))"
+
+	^ self getTMAPheromoneServicesProvider getPheromonesDict
+]
+
+{ #category : #services }
+MASimulationManager >> getPheromonesReturnDict [
+
+	"Returning a Dictionary of all pheromone of return in the system (key: position / value: (the ant that create it -> intensity))"
+
+	^ self getTMAPheromoneServicesProvider getPheromonesReturnDict
 ]
 
 { #category : #services }
 MASimulationManager >> getStep [
 
-	"Returning the current step."
+	^step
+]
 
-	^ step
+{ #category : #services }
+MASimulationManager >> getStorage [
+
+	"Returning the number of insects delivered to the ant hill."
+
+	^ storage
+]
+
+{ #category : #'component accessing' }
+MASimulationManager >> getTMAFeedingPointServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMAFeedingPointServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMAFeedingPointServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -247,6 +304,18 @@ MASimulationManager >> getTMAInsectEventsSubscriber [
 			[eventsSubscriber := MolComponentManager default locatorServices 
 						searchEventsSubscriberFor: TMAInsectEvents named: eventsSymbol ]. 
 	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MASimulationManager >> getTMAPheromoneServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMAPheromoneServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol]. 
+	^servicesProvider
 ]
 
 { #category : #'component accessing' }
@@ -278,16 +347,34 @@ MASimulationManager >> getTMAStageEventsSubscriber [
 	^eventsSubscriber
 ]
 
-{ #category : #accessing }
-MASimulationManager >> isAntHillCreated [
-
-	^ isAntHillCreated ifNil:[ isAntHillCreated := false ]
+{ #category : #'component accessing' }
+MASimulationManager >> getTMATimeTravelEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+	^eventsSubscriber
 ]
 
-{ #category : #accessing }
-MASimulationManager >> isAntHillCreated: anObject [
+{ #category : #'component accessing' }
+MASimulationManager >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
+]
 
-	isAntHillCreated := anObject
+{ #category : #events }
+MASimulationManager >> insectDelivered [
+
+	storage := storage + 1.
 ]
 
 { #category : #events }
@@ -297,19 +384,19 @@ MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anoth
 
 	"remove the old position."
 
-	(insectsPos includesKey: aPoint) ifTrue: [ 
-		(insectsPos at: aPoint) remove: anInsect ifAbsent: [  ].
-		(insectsPos at: aPoint) isEmpty ifTrue: [ 
-			insectsPos removeKey: aPoint ] ].
+	(insects includesKey: aPoint) ifTrue: [ 
+		(insects at: aPoint) remove: anInsect ifAbsent: [  ].
+		(insects at: aPoint) isEmpty ifTrue: [ 
+			insects removeKey: aPoint ] ].
 
 	"Add to the new position."
-	(insectsPos includesKey: anotherPoint)
+	(insects includesKey: anotherPoint)
 		ifFalse: [ 
 			| collection |
 			collection := OrderedCollection new.
 			collection add: anInsect.
-			insectsPos add: anotherPoint -> collection ]
-		ifTrue: [ (insectsPos at: anotherPoint) addLast: anInsect ]
+			insects add: anotherPoint -> collection ]
+		ifTrue: [ (insects at: anotherPoint) addLast: anInsect ]
 ]
 
 { #category : #events }
@@ -321,14 +408,27 @@ MASimulationManager >> queenLaid [
 ]
 
 { #category : #private }
-MASimulationManager >> removeAntHill [
+MASimulationManager >> removeAnts [
 
 	"Delete nbAnt ants"
 
-	ants do: [ :e | MAAnt stop: e componentName ].
+	ants do: [ :e | 
+		MAAnt stop: e componentName.].
 	ants := nil.
-	nbAnts := 0.
-	self isAntHillCreated: false
+	nbAnts := 0
+]
+
+{ #category : #private }
+MASimulationManager >> removeFeedingPoints [
+
+	"Delete feeding points"
+
+	feedingPoints do: [ :each | 
+		| name |
+		each do: [ :feedingPoint | "Delete a feeding point"
+			name := feedingPoint componentName.
+			MAFeedingPoint stop: name ] ].
+	feedingPoints := nil
 ]
 
 { #category : #private }
@@ -336,12 +436,66 @@ MASimulationManager >> removeInsects [
 
 	"Delete insects"
 
-	insectsPos do: [ :each | 
+	insects do: [ :each | 
 		| name |
 		each do: [ :insect | "Delete insect"
 			name := insect componentName.
 			MAInsect stop: name ] ].
-	insectsPos := nil.
+	insects := nil
+]
+
+{ #category : #private }
+MASimulationManager >> removePheromones [
+
+	"delete all pheromones of the system."
+
+	MAPheromones stop: 'Pheromones'
+]
+
+{ #category : #events }
+MASimulationManager >> restoreFrom: aMemento [
+
+	| dict orderedCollection |
+	componentName := aMemento componentName.
+	storage := aMemento getStorage.
+
+	aMemento getInsects isDictionary ifTrue: [ 
+		dict := Dictionary new.
+		aMemento getInsects keysAndValuesDo: [ :k :v | 
+			| list |
+			list := OrderedCollection new.
+			v do: [ :value | 
+				list add: (MolUtils instanceOf: value key named: value value) ].
+			dict add: k -> list ] ].
+	insects := dict.
+	
+		aMemento getFeedingPoints  isDictionary ifTrue: [ 
+		dict := Dictionary new.
+		aMemento getFeedingPoints keysAndValuesDo: [ :k :v | 
+			| list |
+			list := OrderedCollection new.
+			v do: [ :value | 
+				list add: (MolUtils instanceOf: value key named: value value) ].
+			dict add: k -> list ] ].
+	feedingPoints := dict.
+
+	orderedCollection := OrderedCollection new.
+	aMemento getAnts isCollection ifTrue: [ 
+		aMemento getAnts do: [ :value | 
+			orderedCollection add:
+				(MolUtils instanceOf: value key named: value value) ] ].
+	ants := orderedCollection
+]
+
+{ #category : #events }
+MASimulationManager >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MASimulationMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]
 
 { #category : #events }
@@ -355,11 +509,37 @@ MASimulationManager >> stageChanged: aSymbol for: anAnt [
 { #category : #services }
 MASimulationManager >> start [
 
-	self isRunning ifTrue: [ ^ self ].
-	self isAntHillCreated ifFalse: [ self createAntHill ].
-	self createInsects.
-	self startSimulationLoop.
+	| pheromones ground memento |
+	memento := MASimulationMemento new.
+
+	MATimeTravel start: 'TimeTravel'.
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+	self forEvents: TMATimeTravelEvents addProducer: #TimeTravel.
 	isRunning := true.
+	isRestoring := false.
+	simulationThread := nil.
+	step := 0.
+	ants := OrderedCollection new.
+	nbAnts := 0.
+	storage := 0.
+	insects := Dictionary new.
+	feedingPoints := Dictionary new.
+	pheromones := MAPheromones start: 'Pheromones'.
+	self
+		forServices: TMAPheromoneServices
+		useProvider: pheromones componentName asSymbol.
+	ground := MAGround start: 'Ground'.
+	ground
+		forServices: TMAPheromoneServices
+		useProvider: pheromones componentName asSymbol.
+
+	self createAnt.
+	self createInsects.
+	self createFeedingPoints.
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: 0.
+	self startSimulationLoop.
 	self getTMASimulationToGlobalEventsNotifier started
 ]
 
@@ -368,17 +548,32 @@ MASimulationManager >> startSimulationLoop [
 
 	simulationThread ifNil: [ 
 		simulationThread := [ 
-		                    [ true ] whileTrue: [
-									isRunning ifTrue:[ 
-			                    step := step + 1.
-			                    self getTMASimulationToGlobalEventsNotifier
-				                    simulationStepSent.
-			                    (Delay forMilliseconds:
-				                     self class simulationStepDurationInMs) wait ] ] ]
-			                    newProcess priority:
+		                    [ true ] whileTrue: [ 
+			                    isRunning ifTrue: [ 
+				                    isRestoring
+					                    ifTrue: [  ]
+					                    ifFalse: [ 
+						                    | memento |
+						                    memento := MASimulationMemento new.
+						                    step := step + 1.
+						                    self getTMASimulationToGlobalEventsNotifier 
+							                    simulationStepSent: step.
+						
+						                    self getTMATimeTravelServicesProvider saveTheSimulationAt: step.
+						
+						                    (Delay forMilliseconds:
+							                     self class simulationStepDurationInMs)
+							                    wait ] ] ] ] newProcess priority:
 			                    Processor userBackgroundPriority.
 		simulationThread name: 'Molecule SimulationManager Process' ].
 	simulationThread resume
+]
+
+{ #category : #events }
+MASimulationManager >> startTimeTravel [
+
+	isRunning := false.
+	isRestoring := true
 ]
 
 { #category : #services }
@@ -386,10 +581,13 @@ MASimulationManager >> stop [
 
 	self stopSimulationLoop.
 	MAGround stop: 'Ground'.
-	self isAntHillCreated ifTrue: [ self removeAntHill ].
+	self removeAnts.
 	self removeInsects.
+	self removeFeedingPoints.
+	self removePheromones.
 	isRunning := false.
-	self getTMASimulationToGlobalEventsNotifier stopped
+	self getTMASimulationToGlobalEventsNotifier stopped.
+	MATimeTravel stop: 'TimeTravel'
 ]
 
 { #category : #private }
@@ -398,4 +596,45 @@ MASimulationManager >> stopSimulationLoop [
 	simulationThread ifNil: [ ^ self ].
 	simulationThread terminate.
 	simulationThread := nil
+]
+
+{ #category : #events }
+MASimulationManager >> stopTimeTravel [
+
+	isRestoring := false.
+	isRunning := true
+]
+
+{ #category : #events }
+MASimulationManager >> worker: anAnt eatAt: aPoint [
+
+	"Deacreasing the capacity of the feedingPoint."
+
+	(feedingPoints includesKey: aPoint) ifTrue: [ 
+		(feedingPoints at: aPoint) first eated = 0 ifTrue: [ 
+			| feedingPoint |
+			feedingPoint := (feedingPoints at: aPoint) removeFirst.
+			(feedingPoints at: aPoint) isEmpty ifTrue: [ 
+				feedingPoints removeKey: aPoint ].
+			MAFeedingPoint stop: feedingPoint componentName ] ]
+]
+
+{ #category : #events }
+MASimulationManager >> workerExploringPositionChanged: aPoint for: anAnt [
+
+	"Creation or update of a new pheromone of exploration."
+
+	self getTMASimulationToGlobalEventsNotifier
+		pheromoneNew: aPoint
+		for: anAnt
+]
+
+{ #category : #events }
+MASimulationManager >> workerReturningPositionChanged: aPoint for: anAnt [
+
+	"Creation or update of a new pheromone of return."
+
+	self getTMASimulationToGlobalEventsNotifier
+		pheromoneReturnNew: aPoint
+		for: anAnt
 ]

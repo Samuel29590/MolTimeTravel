@@ -1,0 +1,32 @@
+"
+I'm the feeding points type trait.
+"
+Trait {
+	#name : #TMAFeedingPointType,
+	#traits : 'MolComponentType',
+	#classTraits : 'MolComponentType classTrait',
+	#category : #MolAnts
+}
+
+{ #category : #'accessing - events' }
+TMAFeedingPointType classSide >> consumedComponentEvents [
+
+	<componentContract>
+	^ { 
+		  TMASimulationToGlobalEvents .
+		  TMATimeTravelEvents }
+]
+
+{ #category : #'accessing - services' }
+TMAFeedingPointType classSide >> providedComponentServices [
+
+	<componentContract>
+	^ { TMAFeedingPointServices }
+]
+
+{ #category : #'accessing - services' }
+TMAFeedingPointType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { TMASimulationServices .TMATimeTravelServices }
+]

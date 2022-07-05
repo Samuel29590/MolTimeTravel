@@ -9,6 +9,13 @@ Trait {
 }
 
 { #category : #'accessing - events' }
+TMARoleType classSide >> consumedComponentEvents [
+
+	<componentContract>
+	^ { TMATimeTravelEvents }
+]
+
+{ #category : #'accessing - events' }
 TMARoleType classSide >> producedComponentEvents [
 	<componentContract>
 	^ {TMARoleEvents} 
@@ -18,4 +25,12 @@ TMARoleType classSide >> producedComponentEvents [
 TMARoleType classSide >> providedComponentServices [
 	<componentContract>
 	^ {TMARoleServices} 
+]
+
+{ #category : #'accessing - services' }
+TMARoleType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { 
+		  TMASimulationServices.TMATimeTravelServices }
 ]

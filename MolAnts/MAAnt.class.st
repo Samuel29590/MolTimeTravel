@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAAnt,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAAntsType + TMAAntServices + TMASimulationToGlobalEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAAntsType classTrait + TMAAntServices classTrait + TMASimulationToGlobalEvents classTrait',
+	#traits : 'MolComponentImpl + TMAAntsType + TMAAntServices + TMASimulationToGlobalEvents + TMATimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAAntsType classTrait + TMAAntServices classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
 		'position',
 		'ageInMs'
@@ -19,18 +19,12 @@ Class {
 	#category : #MolAnts
 }
 
-{ #category : #accessing }
-MAAnt >> ageInMs [
-
-	^ ageInMs
-]
-
 { #category : #'life cycle' }
 MAAnt >> componentActivate [
-	
+
 	"Activation of the MAAnt component."
-	
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self
+
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.self getTMATimeTravelEventsSubscriber subscribe: self.
 ]
 
 { #category : #'life cycle' }
@@ -38,20 +32,32 @@ MAAnt >> componentInitialize [
 
 	"Initialization of the MAAnt component."
 
-	self initializeStage.
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
+
+	self forServices: TMASimulationServices useProvider: #default.
 
 	self
 		forServices: TMAStageServices
 		useProvider: (#stage , self componentName asSymbol) asSymbol.
 
-	ageInMs := 0
+	self initializeStage.
+	ageInMs := 0.
+
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "ant notify the creation"
+		self getTMATimeTravelServicesProvider
+			creationOf: self
+			at: self getTMASimulationServicesProvider getStep.]
 ]
 
 { #category : #'life cycle' }
 MAAnt >> componentPassivate [
 
 	"Passivating the MAAnt component."
+
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
+	
+.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
 ]
 
 { #category : #'life cycle' }
@@ -59,9 +65,15 @@ MAAnt >> componentRemove [
 
 	"Removing the MAAnt component."
 
-	self removeStage.
 	position := nil.
 	ageInMs := nil.
+
+	"Ant notify its remove"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider
+			removeOf: self
+			at: self getTMASimulationServicesProvider getStep ]].
 ]
 
 { #category : #private }
@@ -75,10 +87,40 @@ MAAnt >> doSimulationStep [
 		self position: (self getStage moveFrom: self) ]
 ]
 
+{ #category : #accessing }
+MAAnt >> getAgeInMs [
+
+	^ ageInMs
+]
+
+{ #category : #services }
+MAAnt >> getFeedingPoints [
+
+	^ self getTMASimulationServicesProvider getFeedingPoints
+]
+
 { #category : #services }
 MAAnt >> getInsects [
 
-	^ self getTMASimulationServicesProvider getInsectsPos. 
+	^ self getTMASimulationServicesProvider getInsects
+]
+
+{ #category : #services }
+MAAnt >> getPheromonesDict [
+
+	^ self getTMASimulationServicesProvider getPheromonesDict.
+]
+
+{ #category : #services }
+MAAnt >> getPheromonesReturnDict [ 
+
+	^ self getTMASimulationServicesProvider getPheromonesReturnDict
+]
+
+{ #category : #accessing }
+MAAnt >> getPosition [
+
+	^ position
 ]
 
 { #category : #services }
@@ -92,6 +134,7 @@ MAAnt >> getRole [
 { #category : #accessing }
 MAAnt >> getRoleName [
 
+	stage ifNil: [ ^ nil ].
 	^ stage getRoleName
 ]
 
@@ -106,6 +149,7 @@ MAAnt >> getStage [
 { #category : #accessing }
 MAAnt >> getStageName [
 
+	stage ifNil: [ ^ nil ].
 	^ stage getStageName
 ]
 
@@ -145,27 +189,73 @@ MAAnt >> getTMAStageServicesProvider [
 	^servicesProvider
 ]
 
+{ #category : #'component accessing' }
+MAAnt >> getTMATimeTravelEventsSubscriber [
+	| eventsSymbol eventsSubscriber itf |
+	itf := TMATimeTravelEvents.
+	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
+	eventsSymbol isCollection
+	 	ifTrue: 
+			[eventsSubscriber := MolComponentManager default locatorServices 
+						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+	^eventsSubscriber
+]
+
+{ #category : #'component accessing' }
+MAAnt >> getTMATimeTravelServicesProvider [
+	| servicesSymbol servicesProvider itf |
+	itf := TMATimeTravelServices.
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
+	servicesSymbol isSymbol
+	 	ifTrue: 
+			[servicesProvider := MolComponentManager default locatorServices 
+						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	^servicesProvider
+]
+
 { #category : #stage }
 MAAnt >> initializeStage [
 
-	stage := MAStage start: (#stage , self componentName asSymbol) asSymbol
-]
+	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ].
 
-{ #category : #accessing }
-MAAnt >> position [
-
-	^ position
+	stage := MAStage start:
+		         (#stage , self componentName asSymbol) asSymbol
 ]
 
 { #category : #accessing }
 MAAnt >> position: aPoint [
 
-	position := aPoint.
+	position := aPoint
 ]
 
-{ #category : #stage }
-MAAnt >> removeStage [
+{ #category : #events }
+MAAnt >> restoreFrom: aMemento [
 
-	MAStage stop: (#stage , self componentName asSymbol) asSymbol.
-	stage := nil
+	"Restore variables thanks to a memento."
+
+	position := aMemento getPosition.
+	ageInMs := aMemento getAgeInMs.
+	stage := MolUtils instanceOf: aMemento stage key named: aMemento stage value
+]
+
+{ #category : #events }
+MAAnt >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MAAntMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
+]
+
+{ #category : #'events - lifecycle' }
+MAAnt >> simulationStepSent: aStep [
+
+	self doSimulationStep.
+
+
+	"self getRole saveForTimeTravel: aStep.
+	self getStage saveForTimeTravel: aStep.
+	self saveForTimeTravel: aStep"
 ]

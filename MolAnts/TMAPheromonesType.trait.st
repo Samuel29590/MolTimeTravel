@@ -1,15 +1,15 @@
 "
-I'm the ant type trait.
+I'm the pheromone type trait.
 "
 Trait {
-	#name : #TMAAntsType,
+	#name : #TMAPheromonesType,
 	#traits : 'MolComponentType',
 	#classTraits : 'MolComponentType classTrait',
 	#category : #MolAnts
 }
 
 { #category : #'accessing - events' }
-TMAAntsType classSide >> consumedComponentEvents [
+TMAPheromonesType classSide >> consumedComponentEvents [
 
 	<componentContract>
 	^ { 
@@ -18,17 +18,14 @@ TMAAntsType classSide >> consumedComponentEvents [
 ]
 
 { #category : #'accessing - services' }
-TMAAntsType classSide >> providedComponentServices [
+TMAPheromonesType classSide >> providedComponentServices [
 	<componentContract>
-	^ {TMAAntServices } 
+	^ {TMAPheromoneServices} 
 ]
 
 { #category : #'accessing - services' }
-TMAAntsType classSide >> usedComponentServices [
+TMAPheromonesType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { 
-		  TMAStageServices.
-		  TMASimulationServices.
-		  TMATimeTravelServices }
+	^ { TMASimulationServices .TMATimeTravelServices }
 ]

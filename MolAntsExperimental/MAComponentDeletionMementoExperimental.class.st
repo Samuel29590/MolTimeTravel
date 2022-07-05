@@ -1,11 +1,11 @@
 Class {
-	#name : #MAComponentDeletionMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MAComponentDeletionMementoExperimental,
+	#superclass : #MAComponentMementoExperimental,
 	#category : #MolAntsExperimental
 }
 
 { #category : #'undo - undo' }
-MAComponentDeletionMemento >> redo [ 
+MAComponentDeletionMementoExperimental >> redo [ 
 	
 	self componentClass stop: self componentName.
 	
@@ -13,13 +13,13 @@ MAComponentDeletionMemento >> redo [
 ]
 
 { #category : #actions }
-MAComponentDeletionMemento >> save: aComponent [
+MAComponentDeletionMementoExperimental >> save: aComponent [
 
 	componentClass := aComponent class.
 	componentName := aComponent componentName.
 ]
 
 { #category : #'undo - undo' }
-MAComponentDeletionMemento >> undo [
+MAComponentDeletionMementoExperimental >> undo [
 	self componentClass start: self componentName
 ]

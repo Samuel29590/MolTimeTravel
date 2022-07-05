@@ -5,17 +5,17 @@ Class {
 		'ageInMs',
 		'position'
 	],
-	#category : #MolAntsExperimental
+	#category : #MolAnts
 }
 
 { #category : #accessing }
-MAInsectMemento >> ageInMs [
+MAInsectMemento >> getAgeInMs [
 
 	^ ageInMs
 ]
 
 { #category : #accessing }
-MAInsectMemento >> position [
+MAInsectMemento >> getPosition [
 
 	^ position
 ]
@@ -31,8 +31,8 @@ MAInsectMemento >> save: anInsect [
 
 	componentClass := anInsect class.
 	componentName := anInsect componentName.
-	position := anInsect position.
-	ageInMs := anInsect ageInMs
+	position := anInsect getPosition.
+	ageInMs := anInsect getAgeInMs
 ]
 
 { #category : #accessing }

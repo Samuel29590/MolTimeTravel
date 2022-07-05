@@ -12,11 +12,20 @@ Trait {
 TMAInsectsType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMASimulationToGlobalEvents }
+	^ { 
+		  TMASimulationToGlobalEvents.
+		  TMATimeTravelEvents }
 ]
 
 { #category : #'accessing - events' }
 TMAInsectsType classSide >> producedComponentEvents [
 	<componentContract>
 	^ {TMAInsectEvents} 
+]
+
+{ #category : #'accessing - services' }
+TMAInsectsType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { TMASimulationServices .TMATimeTravelServices  }
 ]

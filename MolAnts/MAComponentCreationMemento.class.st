@@ -1,13 +1,16 @@
 Class {
 	#name : #MAComponentCreationMemento,
 	#superclass : #MAComponentMemento,
-	#category : #MolAntsExperimental
+	#category : #MolAnts
 }
 
 { #category : #'undo - undo' }
 MAComponentCreationMemento >> redo [
 
-	self componentClass start: self componentName.
+	(MolUtils
+		 instanceOf: self componentClass
+		 named: self componentName) ifNil: [ 
+		self componentClass start: self componentName ]
 ]
 
 { #category : #'undo - undo' }
@@ -20,5 +23,6 @@ MAComponentCreationMemento >> save: aComponent [
 { #category : #'undo - undo' }
 MAComponentCreationMemento >> undo [
 
-	self componentClass stop: self componentName
+		(MolUtils instanceOf: self componentClass named: self componentName) 
+		ifNotNil: [ self componentClass stop: self componentName ]
 ]

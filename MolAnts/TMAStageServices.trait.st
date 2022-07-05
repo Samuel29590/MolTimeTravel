@@ -34,6 +34,7 @@ TMAStageServices >> getRoleName [
 
 { #category : #role }
 TMAStageServices >> getStageName [
+	^ stageName ifNil: [ stageName := #egg ]
 ]
 
 { #category : #testing }

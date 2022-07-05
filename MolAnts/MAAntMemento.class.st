@@ -3,19 +3,20 @@ Class {
 	#superclass : #MAComponentMemento,
 	#instVars : [
 		'ageInMs',
-		'position'
+		'position',
+		'stage'
 	],
-	#category : #MolAntsExperimental
+	#category : #MolAnts
 }
 
 { #category : #accessing }
-MAAntMemento >> ageInMs [
+MAAntMemento >> getAgeInMs [
 
 	^ ageInMs
 ]
 
 { #category : #accessing }
-MAAntMemento >> position [
+MAAntMemento >> getPosition [
 
 	^ position
 ]
@@ -31,8 +32,21 @@ MAAntMemento >> save: anAnt [
 
 	componentClass := anAnt class.
 	componentName := anAnt componentName.
-	position := anAnt position.
-	ageInMs := anAnt ageInMs
+	
+	anAnt getPosition ifNil:[
+		
+	Transcript show: 'An ant save a nil position !!!';cr.
+		].
+	
+	position := anAnt getPosition.
+	ageInMs := anAnt getAgeInMs.
+	stage := anAnt getStage class -> anAnt getStage componentName
+]
+
+{ #category : #accessing }
+MAAntMemento >> stage [
+
+	^ stage
 ]
 
 { #category : #'undo - undo' }

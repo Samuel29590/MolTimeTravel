@@ -13,9 +13,10 @@ TMASimulationManagerType classSide >> consumedComponentEvents [
 
 	<componentContract>
 	^ { 
-			TMAStageEvents .
+		  TMAStageEvents.
 		  TMARoleEvents.
-		  TMAInsectEvents }
+		  TMAInsectEvents.
+		  TMATimeTravelEvents }
 ]
 
 { #category : #'accessing - events' }
@@ -29,4 +30,14 @@ TMASimulationManagerType classSide >> producedComponentEvents [
 TMASimulationManagerType classSide >> providedComponentServices [
 	<componentContract>
 	^ {TMASimulationServices} 
+]
+
+{ #category : #'accessing - services' }
+TMASimulationManagerType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { 
+		  TMAPheromoneServices.
+		  TMAFeedingPointServices.
+		  TMATimeTravelServices }
 ]

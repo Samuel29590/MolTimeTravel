@@ -24,13 +24,34 @@ TMASimulationServices >> getAnts [
 ]
 
 { #category : #services }
-TMASimulationServices >> getInsectsPos [
+TMASimulationServices >> getFeedingPoints [
 
 	
 ]
 
 { #category : #services }
+TMASimulationServices >> getInsects [
+
+	
+]
+
+{ #category : #services }
+TMASimulationServices >> getPheromonesDict [
+]
+
+{ #category : #services }
+TMASimulationServices >> getPheromonesReturnDict [
+]
+
+{ #category : #services }
 TMASimulationServices >> getStep [
+
+	
+]
+
+{ #category : #services }
+TMASimulationServices >> getStorage [
+
 	
 ]
 
