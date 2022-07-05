@@ -37,7 +37,7 @@ MAFeedingPoint >> componentInitialize [
 	            @ (Random new
 			             nextIntegerBetween: 1
 			             and: MASimulationManager simulationHeight).
-			
+
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -45,7 +45,7 @@ MAFeedingPoint >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "feedingPoint notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep.]
 ]
 
 { #category : #'life cycle' }
@@ -143,14 +143,19 @@ MAFeedingPoint >> restoreFrom: aMemento [
 	capacity := aMemento getCapacity.
 ]
 
-{ #category : #'events - lifecycle' }
-MAFeedingPoint >> simulationStepSent: aStep [
+{ #category : #events }
+MAFeedingPoint >> saveForTimeTravel: aStep [
 
-	
 	| memento |
-	memento := MAFeedingPointMemento new.
+	memento := MAFeedingPointMemento  new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
 		at: aStep
+]
+
+{ #category : #'events - lifecycle' }
+MAFeedingPoint >> simulationStepSent: aStep [
+
+	"self saveForTimeTravel: aStep"
 ]

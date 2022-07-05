@@ -488,6 +488,17 @@ MASimulationManager >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
+MASimulationManager >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MASimulationMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
+]
+
+{ #category : #events }
 MASimulationManager >> stageChanged: aSymbol for: anAnt [
 
 	"Removing an ant"
@@ -543,22 +554,18 @@ MASimulationManager >> startSimulationLoop [
 					                    ifTrue: [  ]
 					                    ifFalse: [ 
 						                    | memento |
-						                    memento := MASimulationMemento
-							                               new.
+						                    memento := MASimulationMemento new.
 						                    step := step + 1.
-						                    self
-							                    getTMASimulationToGlobalEventsNotifier 
+						                    self getTMASimulationToGlobalEventsNotifier 
 							                    simulationStepSent: step.
-						                    self
-							                    getTMATimeTravelServicesProvider
-							                    save: (memento save: self)
-							                    at: step.
+						
+						                    self getTMATimeTravelServicesProvider saveTheSimulationAt: step.
+						
 						                    (Delay forMilliseconds:
 							                     self class simulationStepDurationInMs)
 							                    wait ] ] ] ] newProcess priority:
 			                    Processor userBackgroundPriority.
-		simulationThread name:
-			'Molecule SimulationManager Process' ].
+		simulationThread name: 'Molecule SimulationManager Process' ].
 	simulationThread resume
 ]
 

@@ -63,11 +63,23 @@ MAQueen >> moveFrom: anAnt [
 
 	"A queen don't move."
 
-	^ anAnt getPosition
+		^ anAnt getPosition.
+
 ]
 
 { #category : #events }
 MAQueen >> restoreFrom: aMemento [
 
 	
+]
+
+{ #category : #role }
+MAQueen >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MAQueenMemento  new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]

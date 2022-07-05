@@ -86,11 +86,23 @@ MAFighter >> moveFrom: anAnt [
 	newPos y > (antHillPos y + 50) ifTrue: [ 
 		newPos := newPos x @ (antHillPos y + 50) ].
 
-	^ newPos
+	^ newPos.
+
 ]
 
 { #category : #events }
 MAFighter >> restoreFrom: aMemento [
 
 	
+]
+
+{ #category : #events }
+MAFighter >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MAFighterMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]

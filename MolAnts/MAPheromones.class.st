@@ -225,15 +225,21 @@ MAPheromones >> restoreFrom: aMemento [
 			put:v ]
 ]
 
-{ #category : #'events - lifecycle' }
-MAPheromones >> simulationStepSent: aStep [
+{ #category : #events }
+MAPheromones >> saveForTimeTravel: aStep [
 
 	| memento |
-	memento := MAPheromonesMemento new.
-
-	self doSimulationStep.
+	memento := MAPheromonesMemento  new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
 		at: aStep
+]
+
+{ #category : #'events - lifecycle' }
+MAPheromones >> simulationStepSent: aStep [
+
+	self doSimulationStep.
+
+	"self saveForTimeTravel: aStep"
 ]

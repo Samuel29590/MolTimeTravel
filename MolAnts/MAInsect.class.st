@@ -33,7 +33,7 @@ MAInsect >> componentInitialize [
 	"Initialization of the MAInsect component."
 
 	ageInMs := 0.
-	
+
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -41,7 +41,7 @@ MAInsect >> componentInitialize [
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "insect notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep. ]
 ]
 
 { #category : #'life cycle' }
@@ -173,15 +173,21 @@ MAInsect >> restoreFrom: aMemento [
 	ageInMs := aMemento getAgeInMs
 ]
 
-{ #category : #'events - lifecycle' }
-MAInsect >> simulationStepSent: aStep [
+{ #category : #events }
+MAInsect >> saveForTimeTravel: aStep [
 
 	| memento |
-	memento := MAInsectMemento new.
-
-	self doSimulationStep.
+	memento := MAInsectMemento  new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
 		at: aStep
+]
+
+{ #category : #'events - lifecycle' }
+MAInsect >> simulationStepSent: aStep [
+
+	self doSimulationStep.
+
+	"self saveForTimeTravel: aStep"
 ]

@@ -36,6 +36,8 @@ MAStage >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 	
+	self forServices: TMARoleServices useProvider: ((#role , self componentName asSymbol) asSymbol).
+
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
 	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
 	self initializeRole.
@@ -97,16 +99,11 @@ MAStage >> computeStageFor: anAnt [
 { #category : #private }
 MAStage >> doSimulationStepFor: anAnt [
 
-	| memento |
-	memento := MAStageMemento new.
 
 	self computeStageFor: anAnt.
 	self getStageName = #adult ifTrue: [ 
 		self getRole doSimulationStepFor: anAnt ].
 
-	self getTMATimeTravelServicesProvider
-		save: (memento save: self)
-		at: self getTMASimulationServicesProvider getStep
 ]
 
 { #category : #accessing }
@@ -227,7 +224,9 @@ MAStage >> moveFrom: anAnt [
 	"Perform the moving action of the role."
 
 	self getStageName ~= #adult ifTrue: [ ^ anAnt getPosition ].
-	^ self getTMARoleServicesProvider moveFrom: anAnt
+
+	^ self getTMARoleServicesProvider moveFrom: anAnt.
+
 ]
 
 { #category : #events }
@@ -241,4 +240,16 @@ MAStage >> restoreFrom: aMemento [
 	role := MolUtils
 		        instanceOf: aMemento getRole key
 		        named: aMemento getRole value
+]
+
+{ #category : #events }
+MAStage >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MAStageMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
+	
 ]

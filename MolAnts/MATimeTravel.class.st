@@ -61,6 +61,18 @@ MATimeTravel >> getTMATimeTravelEventsNotifier [
 	^self eventsNotifiers at: TMATimeTravelEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMATimeTravelEvents name: nil].
 ]
 
+{ #category : #testing }
+MATimeTravel >> isOnTheFirstStep [ 
+
+	^ restoringStep = 0
+]
+
+{ #category : #testing }
+MATimeTravel >> isOnTheLastStep [
+
+	^ restoringStep = (history size - 1)
+]
+
 { #category : #services }
 MATimeTravel >> isPlayingBackward [
 
@@ -174,6 +186,7 @@ MATimeTravel >> restoreAtStep: aStep [
 		"Restoration of the state of components"
 		mementos := (history at: stepToIndex) mementos.
 		mementos do: [ :memento | memento undo ] ].
+
 	"Redo"
 	restoringStep < aStep ifTrue: [ "Remove or create components"
 		componentsLifeCycles := (history at: stepToIndex)
@@ -224,8 +237,14 @@ MATimeTravel >> save: aComponentMemento at: aStep [
 ]
 
 { #category : #services }
-MATimeTravel >> startTimeTravel [
+MATimeTravel >> saveTheSimulationAt: aStep [
 
+	
+	self getTMATimeTravelEventsNotifier saveForTimeTravel: aStep.
+]
+
+{ #category : #services }
+MATimeTravel >> startTimeTravel [
 	isSaving := false.
 	isRestoring := true.
 	timeTravelIndex := history size.
@@ -238,15 +257,12 @@ MATimeTravel >> stopTimeTravel [
 
 	isRestoring ifTrue: [ 
 		isReplaying ifFalse: [ 
+		
 			isReplaying := true.
-			                  [ restoringStep < (history size - 1) ] 
-				                  whileTrue: [ 
-				                  self restoreAtStep: restoringStep + 1 ].
-			                  isReplaying := false.
-			                  
-
-		self restoreAtStep: history size - 1.
-		isSaving := true.
-		isRestoring := false.
-		self getTMATimeTravelEventsNotifier stopTimeTravel ]]
+			[ restoringStep < (history size - 1) ] whileTrue: [ 
+				self restoreAtStep: restoringStep + 1 ].
+			isReplaying := false.
+			isSaving := true.
+			isRestoring := false.
+			self getTMATimeTravelEventsNotifier stopTimeTravel ] ]
 ]

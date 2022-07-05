@@ -32,7 +32,7 @@ MAWorkerMemento >> save: aWorker [
 	componentClass := aWorker class.
 	componentName := aWorker componentName.
 	phase := aWorker getPhase.
-	oldPositions := aWorker getOldPositions
+	oldPositions := aWorker getOldPositions copy
 ]
 
 { #category : #'undo - undo' }

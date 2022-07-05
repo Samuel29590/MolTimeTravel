@@ -921,10 +921,11 @@ MAGround >> startViewLoop [
 
 	viewLoop := [ 
 	            [ true ] whileTrue: [ 
-		            self updateView.
-		            (Delay forMilliseconds:
-			             MASimulationManager
-				             simulationStepDurationInMs * refreshing) wait ] ] 
+		            (self getTMASimulationServicesProvider getStep
+		            % refreshing = 0 | self getTMATimeTravelServicesProvider isRestoring ) ifTrue: [ 
+			            self updateView.
+			            (Delay forMilliseconds:
+				             MASimulationManager simulationStepDurationInMs) wait ] ] ] 
 		            forkAt: Processor userBackgroundPriority.
 	viewLoop name: 'Molecule ViewLoop Process'.
 	viewLoop resume
@@ -979,8 +980,7 @@ MAGround >> updateTimeTravelPanel [
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
 	returningStepView text:
-		self getTMATimeTravelServicesProvider restoringStep
-			asRopedText.
+		self getTMATimeTravelServicesProvider restoringStep asRopedText.
 
 	self getTMATimeTravelServicesProvider isRestoring
 		ifTrue: [ 
@@ -997,7 +997,13 @@ MAGround >> updateTimeTravelPanel [
 			self getTMATimeTravelServicesProvider isReplaying ifTrue: [ 
 				buttonOneStepBefore background: Color gray.
 				buttonOneStepAfter background: Color gray.
-				buttonPlayBackward background: Color gray ] ]
+				buttonPlayBackward background: Color gray ].
+			self getTMATimeTravelServicesProvider isOnTheFirstStep ifTrue: [ 
+				buttonOneStepBefore background: Color gray.
+				buttonPlayBackward background: Color gray ].
+			self getTMATimeTravelServicesProvider isOnTheLastStep ifTrue: [ 
+				buttonOneStepAfter background: Color gray.
+				buttonReplay background: Color gray ] ]
 		ifFalse: [ 
 			buttonStartTimeTravel background: Color white.
 			buttonStopTimeTravel background: Color gray.

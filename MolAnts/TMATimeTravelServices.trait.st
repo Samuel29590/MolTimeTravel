@@ -11,6 +11,18 @@ TMATimeTravelServices >> creationOf: aComponentMemento at: aStep [
 ]
 
 { #category : #services }
+TMATimeTravelServices >> isOnTheFirstStep [
+
+	
+]
+
+{ #category : #services }
+TMATimeTravelServices >> isOnTheLastStep [
+
+	
+]
+
+{ #category : #services }
 TMATimeTravelServices >> isPlayingBackward [ 
 
 	
@@ -66,6 +78,12 @@ TMATimeTravelServices >> restoringStep [
 
 { #category : #services }
 TMATimeTravelServices >> save: aComponent at: aStep [
+]
+
+{ #category : #services }
+TMATimeTravelServices >> saveTheSimulationAt: aStep [
+
+	
 ]
 
 { #category : #services }

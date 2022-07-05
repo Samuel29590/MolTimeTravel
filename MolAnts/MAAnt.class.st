@@ -36,17 +36,17 @@ MAAnt >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-	self initializeStage.
-	ageInMs := 0.
-
 	self
 		forServices: TMAStageServices
 		useProvider: (#stage , self componentName asSymbol) asSymbol.
-		
+
+	self initializeStage.
+	ageInMs := 0.
+
 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "ant notify the creation"
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep.]
 ]
 
 { #category : #'life cycle' }
@@ -225,7 +225,7 @@ MAAnt >> initializeStage [
 { #category : #accessing }
 MAAnt >> position: aPoint [
 
-	position := aPoint.
+	position := aPoint
 ]
 
 { #category : #events }
@@ -238,15 +238,24 @@ MAAnt >> restoreFrom: aMemento [
 	stage := MolUtils instanceOf: aMemento stage key named: aMemento stage value
 ]
 
-{ #category : #'events - lifecycle' }
-MAAnt >> simulationStepSent: aStep [
+{ #category : #events }
+MAAnt >> saveForTimeTravel: aStep [
 
 	| memento |
 	memento := MAAntMemento new.
 
-	self doSimulationStep.
-
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
 		at: aStep
+]
+
+{ #category : #'events - lifecycle' }
+MAAnt >> simulationStepSent: aStep [
+
+	self doSimulationStep.
+
+
+	"self getRole saveForTimeTravel: aStep.
+	self getStage saveForTimeTravel: aStep.
+	self saveForTimeTravel: aStep"
 ]

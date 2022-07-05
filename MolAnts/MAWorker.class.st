@@ -304,8 +304,10 @@ MAWorker >> getPheromonesOfReturnAround: anAnt [
 { #category : #position }
 MAWorker >> moveFrom: anAnt [
 
+	
 	phase = #explore ifTrue: [ ^ self moveFromExplore: anAnt ].
-	phase = #return ifTrue: [ ^ self moveFromReturn: anAnt ]
+	phase = #return ifTrue: [ ^ self moveFromReturn: anAnt ].
+
 ]
 
 { #category : #position }
@@ -496,4 +498,28 @@ MAWorker >> restoreFrom: aMemento [
 
 	phase := aMemento getPhase.
 	oldPositions := aMemento getOldPositions 
+]
+
+{ #category : #events }
+MAWorker >> saveForTimeTravel [
+
+	| memento step |
+	memento := MAAntMemento new.
+
+	step := self getTMASimulationServicesProvider getStep.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: step
+]
+
+{ #category : #events }
+MAWorker >> saveForTimeTravel: aStep [
+
+	| memento |
+	memento := MAWorkerMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+		at: aStep
 ]
