@@ -87,6 +87,6 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ## Illustrations
 ![2022-07-04 14-31-40](https://user-images.githubusercontent.com/64481702/177515569-c6d831f3-37b2-4d56-8a6c-50dcd4202a7f.gif)
 
-<img src="https://user-images.githubusercontent.com/64481702/176623047-370208e3-1de1-4b2c-ae2e-f9e5339dcbe8.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/176623057-46aca893-9aab-497a-8196-96f67ad9bfc3.png" width="50%">
+<img src="" width="50%"><img src="" width="50%">
 
-<img src="https://user-images.githubusercontent.com/64481702/176623070-bc303704-fc00-4e14-bb00-34ef8a3dd121.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/176623082-51885eb7-3601-4a4e-89d5-9449ef2606cf.png" width="50%">
+<img src="" width="50%"><img src="" width="50%">
