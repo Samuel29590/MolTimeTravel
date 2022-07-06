@@ -19,13 +19,13 @@ MolAntsTimeTravel like [MolAnts](https://github.com/Samuel29590/MolAnts) is a si
 
 If you want to know more about the organization of components in [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md) or [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md), click on the hyperlink.
 
-### How is the data recorded ?
+### How is the data recorded with the *TimeTravel* component ?
 
 Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
 
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
 
-This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at on step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
+This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
 *MAComponentStep* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *creationsAndDeletions*. This two variables are ordered collections of *MAComponentMemento*'subclasses.
 
