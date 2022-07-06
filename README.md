@@ -65,6 +65,8 @@ During undo, components created and deleted during the simulation are also undo.
 
 The specificity for creation and deletion during undo is that they are interpreted with a shift step. For example if we undo the step X , we will replay the creation and deletion of the step X+1. This specificity is necessary because if we interpret creation and deletion of the same step, we will create components that were not present during execution and delete components that were present during execution.
 
+*If you want to know more about this specificity click here : [undoProblem](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/undoProblem.md)*
+
 ![undo](https://user-images.githubusercontent.com/64481702/176385748-186ad58b-ef82-4dfc-a226-33aaefacfe90.png)
 
 In the case of redo, it's simpler, creations and deletions are replayed as they were recorded. A creation (*MAComponentCreationMemento*) is replayed as a creation, and a deletion (*MAComponentDeletionMemento*) is replayed as a deletion. Futhermore, when a component is recreated, its in-step state is also restored.
