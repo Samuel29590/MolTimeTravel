@@ -19,11 +19,11 @@ MolAntsTimeTravel like [MolAnts](https://github.com/Samuel29590/MolAnts) is a si
 
 If you want to know more about the organization of components in [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md) or [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md), click on the hyperlink.
 
-<br><br>
+<br>
 
 **⚠️** The following explanations are adapted for the *MolAnts* version, the full version of the anthill. If you want specific explanations for *MolAntsExperimental*, the lighter anthill implementation, you can find them here : [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md).
 
-<br><br>
+<br>
 
 ### How is the data recorded with the *TimeTravel* component ?
 
