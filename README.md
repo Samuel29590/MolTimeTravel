@@ -27,11 +27,13 @@ If you want to know more about the organization of components in [MolAntExperime
 
 ### How is the data recorded with the *TimeTravel* component ?
 
-Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components.
+Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components. 
+
+Memento is a way of backing up components by backing up only the information that is needed to be able to restore it later. With this method we do not save the components but only their data
 
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
 
-This is the component *TimeTravel* that store the history, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
+This is the component *TimeTravel* that store the history of the simulation, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
 *MAComponentStep* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *creationsAndDeletions*. This two variables are ordered collections of *MAComponentMemento*'subclasses.
 
@@ -39,7 +41,9 @@ This is the component *TimeTravel* that store the history, in the variable *hist
 
 So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
 
-For components state it is almost the same process. When a component is updated it will create a memento. The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *ant* will create a *MAAntMemento*. These three mementos are all subclasses of *MAComponentMemento*. The process to store them is almost the same as *creationsAndDeletions*, the component *TimeTravel* receive the notification to save the memento and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsStep* associate to the step where the *MAComponentMemento* has been created. From there, the state of the component has been saved through its memento.
+For saving components state the process is different. The simulation manager in the execution loop send an event to all components of the simulation to do their action. When it's done the simulation manager call a service provided by the *TimeTravel* component : *saveTheSimulationAt: aStep*. This service will send an event (*saveForTimeTravel: aStep*) to all the components of the simulation to save their state at *aStep*. Each component of the simulation has its own version of *saveForTimeTravel: aStep* but they all has the same behavior. The component will create a memento and use the service : *save: aComponentMemento at: aStep*, provided by the *TimeTravel* component, to store the memento. The process to store them is almost the same as *creationsAndDeletions*, the component *TimeTravel* receive the notification to save the memento and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsStep* associate to the step where the *MAComponentMemento* has been created. From there, the state of the component has been saved through its memento.
+
+The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *pheromones* will create a *MPheromonesMemento*, the component *feedingPoint* will create a *MAFeedingPointMemento*, the component *ant* will create a *MAAntMemento*, the component *stage* will create a *MAStageMemento*, the component *queen* will create a *MAQueenMemento*, the component *fighter* will create a *MAFighterMemento*, the component *worker* will create a *MAWorkerMemento*. All these mementos are all subclasses of *MAComponentMemento*.
 
 #### How to save reference of a component
 
