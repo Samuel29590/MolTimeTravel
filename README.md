@@ -1,4 +1,4 @@
-# MolAntsExperimental
+# MolAntsTimeTravel
 
 This is the experimental version of [MolAnts](https://github.com/Samuel29590/MolAnts) for time-traveling.
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
