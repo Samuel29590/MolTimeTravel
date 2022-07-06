@@ -1,3 +1,5 @@
+This file aims to explain *TimeTravel* in the lighter implementation : ***MolAntsExperimental***
+
 # Components explanation
 
 ![TimeTravel-Component-UML](https://user-images.githubusercontent.com/64481702/176172623-98fdb9da-cf8c-4d1c-911a-a47f8cff7924.png)
@@ -60,7 +62,7 @@ For saving objects that are instances of component the process is a little diffe
 
 <br>
 
-### How is the data restored ?
+# How is the data restored ?
 
 The process to restore data is quite simple. The component *TimeTravel* examine the history that was saved, step-by-step, during the execution and restore the data by updating all the other components directly. The component *TimeTravel* also restore or remove components that appear or disappear during the simulation. With this two feature it's possible to play backward the simulation and to replay it step-by-step.
 
