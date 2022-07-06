@@ -29,7 +29,7 @@ If you want to know more about the organization of components in [MolAntExperime
 
 Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components. 
 
-Memento is a way of backing up components by backing up only the information that is needed to be able to restore it later. With this method we do not save the components but only their data
+Memento is a way of backing up components by backing up only the information that is needed to be able to restore it later. With this method we do not save the components but only their data.
 
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
 
