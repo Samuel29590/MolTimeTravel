@@ -81,7 +81,7 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 
 #### Example of an undo and a restoration from a memento (example non exhaustive)
 
-![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/176444784-ee0004cf-9a7b-4bed-8c68-1b073e88570f.png)
+![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/177521067-61e1f0ad-5454-4f1e-a0cc-2d5e12de7874.png)
 
 <br><br><br>
 <br><br><br>
@@ -89,6 +89,6 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ## Illustrations
 ![2022-07-04 14-31-40](https://user-images.githubusercontent.com/64481702/177515569-c6d831f3-37b2-4d56-8a6c-50dcd4202a7f.gif)
 
-<img src="" width="50%"><img src="" width="50%">
+<img src="https://user-images.githubusercontent.com/64481702/177521614-b9164631-fa88-4443-a9ae-7ddeada802ee.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/177521618-870a8ecf-80ac-4603-9e6e-568d4093b30a.png" width="50%">
 
-<img src="" width="50%"><img src="" width="50%">
+<img src="https://user-images.githubusercontent.com/64481702/177521621-71a7afbf-6a48-4176-b09f-3f381be41443.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/177521626-1eec8360-b0d8-4fb4-ad48-96f04be32189.png" width="50%">
