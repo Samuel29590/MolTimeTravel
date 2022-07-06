@@ -21,7 +21,7 @@ If you want to know more about the organization of components in [MolAntExperime
 
 <br><br>
 
-**⚠️** The following explanations are adapted for the *MolAnts* version, the complet version of the anthill. If you want specific explanations for *MolAntsExperimental*, the lighter implementation of the anthill, you can find them here : [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md).
+**⚠️** The following explanations are adapted for the *MolAnts* version, the full version of the anthill. If you want specific explanations for *MolAntsExperimental*, the lighter anthill implementation, you can find them here : [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md).
 
 <br><br>
 
