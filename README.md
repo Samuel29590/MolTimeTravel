@@ -37,7 +37,7 @@ This is the component *TimeTravel* that store the history of the simulation, in 
 
 *MAComponentStep* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *creationsAndDeletions*. This two variables are ordered collections of *MAComponentMemento*'subclasses.
 
-![MomentosOrganization](https://user-images.githubusercontent.com/64481702/176432080-bb5198c5-7f3d-4ffc-9040-adb59833ab8b.png)
+![MomentosOrganization drawio](https://user-images.githubusercontent.com/64481702/177515528-54842cc5-8aac-43e9-bcb5-112513b9003c.png)
 
 So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
 
@@ -85,6 +85,7 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 <br><br><br>
 
 ## Illustrations
+![2022-07-04 14-31-40](https://user-images.githubusercontent.com/64481702/177515569-c6d831f3-37b2-4d56-8a6c-50dcd4202a7f.gif)
 
 <img src="https://user-images.githubusercontent.com/64481702/176623047-370208e3-1de1-4b2c-ae2e-f9e5339dcbe8.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/176623057-46aca893-9aab-497a-8196-96f67ad9bfc3.png" width="50%">
 
