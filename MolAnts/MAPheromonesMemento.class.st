@@ -16,13 +16,13 @@ MAPheromonesMemento >> getMaxIntensity [
 ]
 
 { #category : #accessing }
-MAPheromonesMemento >> pheromonesDict [
+MAPheromonesMemento >> getPheromonesDict [
 
 	^ pheromonesDict
 ]
 
 { #category : #accessing }
-MAPheromonesMemento >> pheromonesReturnDict [
+MAPheromonesMemento >> getPheromonesReturnDict [
 
 	^ pheromonesReturnDict
 ]
