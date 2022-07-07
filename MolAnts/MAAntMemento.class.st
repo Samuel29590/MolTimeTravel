@@ -21,6 +21,12 @@ MAAntMemento >> getPosition [
 	^ position
 ]
 
+{ #category : #accessing }
+MAAntMemento >> getStage [
+
+	^ stage
+]
+
 { #category : #'undo - undo' }
 MAAntMemento >> redo [
 
@@ -41,12 +47,6 @@ MAAntMemento >> save: anAnt [
 	position := anAnt getPosition.
 	ageInMs := anAnt getAgeInMs.
 	stage := anAnt getStage class -> anAnt getStage componentName
-]
-
-{ #category : #accessing }
-MAAntMemento >> stage [
-
-	^ stage
 ]
 
 { #category : #'undo - undo' }

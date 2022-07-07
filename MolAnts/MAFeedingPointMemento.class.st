@@ -2,8 +2,8 @@ Class {
 	#name : #MAFeedingPointMemento,
 	#superclass : #MAComponentMemento,
 	#instVars : [
-		'position',
-		'capacity'
+		'capacity',
+		'position'
 	],
 	#category : #MolAnts
 }

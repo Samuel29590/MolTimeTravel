@@ -213,13 +213,13 @@ MAPheromones >> restoreFrom: aMemento [
 
 
 	pheromonesDict := Dictionary new.
-	aMemento pheromonesDict keysAndValuesDo: [ :k :v | 
+	aMemento getPheromonesDict keysAndValuesDo: [ :k :v | 
 		pheromonesDict
 			at: k
 			put: (MolUtils instanceOf: v key key named: v key value) -> v value ].
 
 	pheromonesReturnDict := Dictionary new.
-	aMemento pheromonesReturnDict keysAndValuesDo: [ :k :v | 
+	aMemento getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
 		pheromonesReturnDict
 			at: k
 			put:v ]

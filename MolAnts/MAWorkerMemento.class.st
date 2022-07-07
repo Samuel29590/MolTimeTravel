@@ -2,8 +2,8 @@ Class {
 	#name : #MAWorkerMemento,
 	#superclass : #MAComponentMemento,
 	#instVars : [
-		'phase',
-		'oldPositions'
+		'oldPositions',
+		'phase'
 	],
 	#category : #MolAnts
 }

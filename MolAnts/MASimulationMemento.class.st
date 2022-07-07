@@ -2,9 +2,9 @@ Class {
 	#name : #MASimulationMemento,
 	#superclass : #MAComponentMemento,
 	#instVars : [
-		'insects',
 		'ants',
 		'feedingPoints',
+		'insects',
 		'storage'
 	],
 	#category : #MolAnts
