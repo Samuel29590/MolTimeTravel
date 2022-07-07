@@ -11,7 +11,12 @@ MolAntsTimeTravel require [Molecule](https://github.com/OpenSmock/Molecule) for 
 
 ### Installing MolAntsTimeTravel
 
-Add the repository directly in Pharo thanks to the Iceberg.
+```smalltalk
+Metacello new
+        baseline: 'MolAntsTimeTravel';
+        repository: 'github://Samuel29590/MolAntsTimeTravel';
+        load.
+```
 
 ## Documentation
 
