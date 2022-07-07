@@ -30,6 +30,12 @@ If you want to know more about the organization of components in [MolAntExperime
 
 <br>
 
+### Start the simulation
+
+To start the simulation, go to the *MolAnts* package, on the class side of the MASimulationManager class and launch the start method.
+
+![Screenshot from 2022-07-07 14-48-12](https://user-images.githubusercontent.com/64481702/177777229-fa0a1e0e-b613-44bf-b083-ac8aeafb1914.png)
+
 ### How is the data recorded with the *TimeTravel* component ?
 
 Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components. 
