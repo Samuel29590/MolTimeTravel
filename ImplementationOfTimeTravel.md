@@ -39,6 +39,10 @@ In MolAnts this call is placed in the main execution loop, at the end of each it
 
 Knowing where the simulation breakpoints must be placed so that when the time travel begins, the simulation is paused. And when we stop the time travel the simulation play.
 
+In MolAnts the management of the pause is carried out in the main loop, thanks to a condition on a variable of the *TimeTravel* component.
+
 ### 10 : Add the Time Travel panel
 
 Added time travel buttons to the UI and made them work.
+
+In MolAnts the interface is added to that of the simulation, but it could be separated.
