@@ -40,11 +40,15 @@ Know where to put the call to the method *saveTheSimulationAt: aStep* which allo
 
 In MolAnts this call is placed in the main execution loop, at the end of each iteration.
 
+![saveTheSimulation](https://user-images.githubusercontent.com/64481702/177966768-cd36972c-4d5a-4cb1-8883-17a384365b4c.png)
+
 ### 9 : Know where to pause and play 
 
 Knowing where the simulation breakpoints must be placed so that when the time travel begins, the simulation is paused. And when we stop the time travel the simulation play.
 
 In MolAnts the management of the pause is carried out in the main loop, thanks to a condition on a variable of the *TimeTravel* component.
+
+![PausePlay](https://user-images.githubusercontent.com/64481702/177967001-f4effbec-1174-4f72-9362-8c1dfb0a212f.png)
 
 ### 10 : Add the Time Travel panel
 
