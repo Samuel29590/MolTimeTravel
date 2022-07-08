@@ -5,6 +5,9 @@
 
 Every component of the simulation needs to be connected to the *TimeTravel* component and to do this, every component need to be added as consumer of the ***MATimeTravelEvent*** and user of the ***MATimeTravelService***.
 
+![eventAdd](https://user-images.githubusercontent.com/64481702/177966390-88d9a005-b82b-4749-bac3-d3694ba84971.png)
+![serviceADD](https://user-images.githubusercontent.com/64481702/177966403-d8b9d18f-9c2d-4aa9-be10-b49894e59d60.png)
+
 ### 2 : Accessors
 
 Each variable that is going to be saved must have an accessor. This accessor will be used by the memento associated to the component.
@@ -12,6 +15,8 @@ Each variable that is going to be saved must have an accessor. This accessor wil
 ### 3 : Creation of the mementos
 
 For each component that will be saved, you must create the memento that will be associated with it. This memento will describe the variables that will be saved and how they are saved.
+
+![mementoADD](https://user-images.githubusercontent.com/64481702/177966359-60fd8272-072d-4ec2-9783-51ee0b14daf3.png)
 
 ### 4 : Recording method
 
@@ -46,3 +51,5 @@ In MolAnts the management of the pause is carried out in the main loop, thanks t
 Added time travel buttons to the UI and made them work.
 
 In MolAnts the interface is added to that of the simulation, but it could be separated.
+
+![TimeTravelPanelADD](https://user-images.githubusercontent.com/64481702/177966439-15ac7a56-ff53-4056-bdf0-7913547b48d6.png)
