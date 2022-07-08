@@ -30,7 +30,7 @@ If you want to know more about the organization of components in [MolAntExperime
 
 <br>
 
-### Start the simulation
+### How to start the simulation ?
 
 To start the simulation, go to the *MolAnts* package, on the class side of the MASimulationManager class and launch the start method.
 
