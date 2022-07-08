@@ -5,6 +5,7 @@
 
 Every component of the simulation needs to be connected to the *TimeTravel* component and to do this, every component need to be added as consumer of the ***MATimeTravelEvent*** and user of the ***MATimeTravelService***.
 
+###### Example:
 <img src="https://user-images.githubusercontent.com/64481702/177966390-88d9a005-b82b-4749-bac3-d3694ba84971.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/177966403-d8b9d18f-9c2d-4aa9-be10-b49894e59d60.png" width="50%">
 
 ### 2 : Accessors
@@ -21,24 +22,28 @@ For each component that will be saved, you must create the memento that will be 
 
 Each component must describe the *saveForTimeTravel: aStep* method, which is a method of the ***MATimeTravelEvent*** event. This method is similar for all components. This is the creation of the memento and its save.
 
+###### Example:
 <img src="https://user-images.githubusercontent.com/64481702/177968018-e3dfc60a-dd21-43ce-863b-69665ed344d1.png" width="75%">
 
 ### 5 : Restoration method
 
 Each component must describe the *restoreFrom: aMemento* method, which is a method of the ***MATimeTravelEvent*** event. This method is similar for all components. This involves restoring the state of a component for a step thanks to its memento for this step.
 
+###### Example:
 <img src="https://user-images.githubusercontent.com/64481702/177967447-50cf701c-6964-4f51-98ef-da7964203726.png" width="75%">
 
 ### 6 : Creation of components
 
 In the methods *componentInitialize* of each component, it is necessary to add the sends to the component *TimeTravel* of the creation of the component.
 
+###### Example:
 <img src="https://user-images.githubusercontent.com/64481702/177967312-c99015e4-21dd-4c8c-8717-26726d22c942.png" width="75%">
 
 ### 7 : Deletion of components
 
 In the methods *componentRemove* of each component, it is necessary to add the sends to the component *TimeTravel* of the deletion of the component.
 
+###### Example:
 <img src="https://user-images.githubusercontent.com/64481702/177967762-95569d21-7c59-4855-855a-33a6a8246af0.png" width="75%">
 
 ### 8 : Know where to save the simulation at a step
