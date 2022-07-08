@@ -31,7 +31,9 @@ In the methods *componentRemove* of each component, it is necessary to add the s
 
 ### 8 : Know where to save the simulation at a step
 
-Know where to put the method *saveTheSimulationAt: aStep* which allows to tell all the components to save themselves for this step.
+Know where to put the call to the method *saveTheSimulationAt: aStep* which allows to tell all the components to save themselves for this step.
+
+In MolAnts this call is placed in the main execution loop, at the end of each iteration.
 
 ### 9 : Know where to pause and play 
 
