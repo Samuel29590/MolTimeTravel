@@ -3,7 +3,7 @@
 
 ### 1 : Connect the component TimeTravel to all the other components
 
-Every component of the simulation needs to be connected to the TimeTravel component and to do this every component need to be added as consumer of the ***MATimeTravelEvent*** and user of the ***MATimeTravelService***.
+Every component of the simulation needs to be connected to the *TimeTravel* component and to do this every component need to be added as consumer of the ***MATimeTravelEvent*** and user of the ***MATimeTravelService***.
 
 ### 2 : Accessors
 
