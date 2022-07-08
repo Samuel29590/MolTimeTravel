@@ -1,4 +1,4 @@
-# This is the 10 steps to implement TimeTravel in MolAnts
+#10 steps to implement TimeTravel in MolAnts
 
 
 ### 1 : Connect the component TimeTravel to all the other components
