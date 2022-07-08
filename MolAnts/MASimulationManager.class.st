@@ -37,8 +37,7 @@ Class {
 		'nbAnts',
 		'insects',
 		'storage',
-		'feedingPoints',
-		'isRestoring'
+		'feedingPoints'
 	],
 	#category : #MolAnts
 }
@@ -516,7 +515,6 @@ MASimulationManager >> start [
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 	self forEvents: TMATimeTravelEvents addProducer: #TimeTravel.
 	isRunning := true.
-	isRestoring := false.
 	simulationThread := nil.
 	step := 0.
 	ants := OrderedCollection new.
@@ -550,7 +548,7 @@ MASimulationManager >> startSimulationLoop [
 		simulationThread := [ 
 		                    [ true ] whileTrue: [ 
 			                    isRunning ifTrue: [ 
-				                    isRestoring
+				                    self getTMATimeTravelServicesProvider isRestoring
 					                    ifTrue: [  ]
 					                    ifFalse: [ 
 						                    | memento |
@@ -558,9 +556,10 @@ MASimulationManager >> startSimulationLoop [
 						                    step := step + 1.
 						                    self getTMASimulationToGlobalEventsNotifier 
 							                    simulationStepSent: step.
-						
-						                    self getTMATimeTravelServicesProvider saveTheSimulationAt: step.
-						
+
+						                    self getTMATimeTravelServicesProvider 
+							                    saveTheSimulationAt: step.
+
 						                    (Delay forMilliseconds:
 							                     self class simulationStepDurationInMs)
 							                    wait ] ] ] ] newProcess priority:
@@ -573,7 +572,6 @@ MASimulationManager >> startSimulationLoop [
 MASimulationManager >> startTimeTravel [
 
 	isRunning := false.
-	isRestoring := true
 ]
 
 { #category : #services }
@@ -601,7 +599,6 @@ MASimulationManager >> stopSimulationLoop [
 { #category : #events }
 MASimulationManager >> stopTimeTravel [
 
-	isRestoring := false.
 	isRunning := true
 ]
 
