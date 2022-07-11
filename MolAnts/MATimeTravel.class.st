@@ -11,7 +11,18 @@ Class {
 		'isReplaying',
 		'isPlayingBackward',
 		'timeTravelLoop',
-		'timeTravelIndex'
+		'timeTravelIndex',
+		'mySpace',
+		'returningStepView',
+		'buttonStartTimeTravel',
+		'buttonStopTimeTravel',
+		'buttonOneStepBefore',
+		'buttonOneStepAfter',
+		'buttonPlayBackward',
+		'buttonReplay',
+		'timeTravelPanel',
+		'panelLoop',
+		'insepctor'
 	],
 	#category : #MolAnts
 }
@@ -28,7 +39,19 @@ MATimeTravel >> componentInitialize [
 	isPlayingBackward := false.
 	timeTravelLoop := nil.
 	timeTravelIndex := 0.
-	restoringStep := 0
+	restoringStep := 0.
+
+	mySpace := BlSpace new.
+	mySpace extent: 800 @ 200.
+	mySpace title: 'TimeTravel Panel'.
+	self createTimeTravelPanel.
+
+	insepctor := MolComponentManager default homeServices
+		             deployedComponents inspect.
+	mySpace show.
+
+
+	
 ]
 
 { #category : #'life cycle' }
@@ -37,6 +60,268 @@ MATimeTravel >> componentRemove [
 	"here write the code corresponding to component remove phase"
 
 	history := nil.
+
+	self stopTimeTravelPanelLoop.
+	insepctor ifNotNil: [ insepctor close.].
+	mySpace ifNotNil: [mySpace close].
+]
+
+{ #category : #'life cycle' }
+MATimeTravel >> createTimeTravelPanel [
+
+	| labelText label |
+	timeTravelPanel := BlElement new.
+	timeTravelPanel background: Color gray.
+	timeTravelPanel constraintsDo: [ :c | 
+		c horizontal matchParent.
+		c vertical matchParent ].
+	mySpace addChild: timeTravelPanel.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding returningStep to the panel."
+
+	timeTravelPanel addChild: ((BlTextElement new
+			  relocate: mySpace width / 10 @ 20;
+			  background: Color transparent) text:
+			 'Returning Step :' asRopedText).
+	returningStepView := BlTextElement new
+		                     relocate: mySpace width / 10 @ 40;
+		                     background: Color transparent;
+		                     text: '000' asRopedText.
+	timeTravelPanel addChild: returningStepView.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding the Start time trave button"
+	buttonStartTimeTravel := BlElement new
+		                         background: Color white;
+		                         geometry:
+			                         (BlRoundedRectangleGeometry cornerRadius:
+					                          2);
+		                         padding: (BlInsets
+				                          top: 8
+				                          right: 16
+				                          bottom: 8
+				                          left: 16);
+		                         layout: BlLinearLayout horizontal;
+		                         effect: (BlGaussianShadowEffect
+				                          color: (Color black alpha: 0.3)
+				                          width: 1
+				                          offset: 0 @ 2);
+		                         constraintsDo: [ :c | 
+			                         c horizontal fitContent.
+			                         c vertical fitContent ];
+		                         relocate: mySpace width / 10 @ 80;
+		                         addEventHandler: (BlEventHandler
+				                          on: BlClickEvent
+				                          do: [ :anEvent | 
+					                          buttonStartTimeTravel isVisible 
+						                          ifTrue: [ self startTimeTravel ].
+					                          anEvent consumed: true ]).
+	labelText := 'Start time travel' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	buttonStartTimeTravel addChild: label.
+	timeTravelPanel addChild: buttonStartTimeTravel.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding the Stop time trave button"
+	buttonStopTimeTravel := BlElement new
+		                        background: Color white;
+		                        geometry:
+			                        (BlRoundedRectangleGeometry cornerRadius: 2);
+		                        padding: (BlInsets
+				                         top: 8
+				                         right: 16
+				                         bottom: 8
+				                         left: 16);
+		                        layout: BlLinearLayout horizontal;
+		                        effect: (BlGaussianShadowEffect
+				                         color: (Color black alpha: 0.3)
+				                         width: 1
+				                         offset: 0 @ 2);
+		                        constraintsDo: [ :c | 
+			                        c horizontal fitContent.
+			                        c vertical fitContent ];
+		                        relocate: mySpace width / 10 * 3 @ 80;
+		                        addEventHandler: (BlEventHandler
+				                         on: BlClickEvent
+				                         do: [ :anEvent | 
+					                         buttonStopTimeTravel isVisible ifTrue: [ 
+							                         self stopTimeTravel ].
+					                         anEvent consumed: true ]).
+	labelText := 'Stop time travel' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	buttonStopTimeTravel addChild: label.
+	timeTravelPanel addChild: buttonStopTimeTravel.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding One Step before button"
+	buttonOneStepBefore := BlElement new
+		                       background: Color white;
+		                       geometry:
+			                       (BlRoundedRectangleGeometry cornerRadius: 2);
+		                       padding: (BlInsets
+				                        top: 8
+				                        right: 16
+				                        bottom: 8
+				                        left: 16);
+		                       layout: BlLinearLayout horizontal;
+		                       effect: (BlGaussianShadowEffect
+				                        color: (Color black alpha: 0.3)
+				                        width: 1
+				                        offset: 0 @ 2);
+		                       constraintsDo: [ :c | 
+			                       c horizontal fitContent.
+			                       c vertical fitContent ];
+		                       relocate: mySpace width / 10 * 5 @ 80;
+		                       addEventHandler: (BlEventHandler
+				                        on: BlClickEvent
+				                        do: [ :anEvent | 
+					                        buttonOneStepBefore isVisible ifTrue: [ 
+							                        self restoreOneStepBefore ].
+					                        anEvent consumed: true ]).
+	labelText := 'One step before' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	buttonOneStepBefore addChild: label.
+	timeTravelPanel addChild: buttonOneStepBefore.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding One Step after button"
+	buttonOneStepAfter := BlElement new
+		                      background: Color white;
+		                      geometry:
+			                      (BlRoundedRectangleGeometry cornerRadius: 2);
+		                      padding: (BlInsets
+				                       top: 8
+				                       right: 16
+				                       bottom: 8
+				                       left: 16);
+		                      layout: BlLinearLayout horizontal;
+		                      effect: (BlGaussianShadowEffect
+				                       color: (Color black alpha: 0.3)
+				                       width: 1
+				                       offset: 0 @ 2);
+		                      constraintsDo: [ :c | 
+			                      c horizontal fitContent.
+			                      c vertical fitContent ];
+		                      relocate: mySpace width / 10 * 7 @ 80;
+		                      addEventHandler: (BlEventHandler
+				                       on: BlClickEvent
+				                       do: [ :anEvent | 
+					                       buttonOneStepAfter isVisible ifTrue: [ 
+							                       self restoreOneStepAfter ].
+					                       anEvent consumed: true ]).
+	labelText := 'One step after' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	buttonOneStepAfter addChild: label.
+	timeTravelPanel addChild: buttonOneStepAfter.
+
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding playing backward button"
+	buttonPlayBackward := BlElement new
+		                      background: Color white;
+		                      geometry:
+			                      (BlRoundedRectangleGeometry cornerRadius: 2);
+		                      padding: (BlInsets
+				                       top: 8
+				                       right: 16
+				                       bottom: 8
+				                       left: 16);
+		                      layout: BlLinearLayout horizontal;
+		                      effect: (BlGaussianShadowEffect
+				                       color: (Color black alpha: 0.3)
+				                       width: 1
+				                       offset: 0 @ 2);
+		                      constraintsDo: [ :c | 
+			                      c horizontal fitContent.
+			                      c vertical fitContent ];
+		                      relocate: mySpace width / 10 * 3 @ 130;
+		                      addEventHandler: (BlEventHandler
+				                       on: BlClickEvent
+				                       do: [ :anEvent | 
+					                       buttonPlayBackward isVisible ifTrue: [ 
+							                       self playBackward ].
+					                       anEvent consumed: true ]).
+	labelText := 'Play Backward' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	buttonPlayBackward addChild: label.
+	timeTravelPanel addChild: buttonPlayBackward.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding replay button"
+	buttonReplay := BlElement new
+		                background: Color white;
+		                geometry:
+			                (BlRoundedRectangleGeometry cornerRadius: 2);
+		                padding: (BlInsets
+				                 top: 8
+				                 right: 16
+				                 bottom: 8
+				                 left: 16);
+		                layout: BlLinearLayout horizontal;
+		                effect: (BlGaussianShadowEffect
+				                 color: (Color black alpha: 0.3)
+				                 width: 1
+				                 offset: 0 @ 2);
+		                constraintsDo: [ :c | 
+			                c horizontal fitContent.
+			                c vertical fitContent ];
+		                relocate: mySpace width / 10 * 5 @ 130;
+		                addEventHandler: (BlEventHandler
+				                 on: BlClickEvent
+				                 do: [ :anEvent | 
+					                 buttonReplay isVisible ifTrue: [ self replay ].
+					                 anEvent consumed: true ]).
+	labelText := 'Relay' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	buttonReplay addChild: label.
+	timeTravelPanel addChild: buttonReplay.
+	
+	self startTimeTravelPanelLoop
 ]
 
 { #category : #services }
@@ -245,24 +530,93 @@ MATimeTravel >> saveTheSimulationAt: aStep [
 
 { #category : #services }
 MATimeTravel >> startTimeTravel [
+
+	isRestoring ifFalse: [ 
 	isSaving := false.
 	isRestoring := true.
 	timeTravelIndex := history size.
 	restoringStep := history size - 1.
-	self getTMATimeTravelEventsNotifier startTimeTravel
+	self getTMATimeTravelEventsNotifier startTimeTravel]
+]
+
+{ #category : #'life cycle' }
+MATimeTravel >> startTimeTravelPanelLoop [
+
+		"Starting the time travel panel's view loop."
+
+	panelLoop := [ 
+	            [ true ] whileTrue: [ 
+				            self updatePanelView.
+				            (Delay forMilliseconds:
+					             MASimulationManager simulationStepDurationInMs) wait ] ]
+		            forkAt: Processor userBackgroundPriority.
+	panelLoop name: 'Molecule ViewLoop Process'.
+	panelLoop resume
 ]
 
 { #category : #services }
 MATimeTravel >> stopTimeTravel [
 
-	isRestoring ifTrue: [ 
+	isRestoring ifTrue: [
+		isPlayingBackward ifFalse:[  
 		isReplaying ifFalse: [ 
-		
 			isReplaying := true.
 			[ restoringStep < (history size - 1) ] whileTrue: [ 
 				self restoreAtStep: restoringStep + 1 ].
 			isReplaying := false.
 			isSaving := true.
 			isRestoring := false.
-			self getTMATimeTravelEventsNotifier stopTimeTravel ] ]
+			self getTMATimeTravelEventsNotifier stopTimeTravel ] ]]
+]
+
+{ #category : #'life cycle' }
+MATimeTravel >> stopTimeTravelPanelLoop [
+
+	"Stoping the time travel panel's view loop."
+
+
+	panelLoop ifNil: [ ^ self ].
+	panelLoop terminate.
+	panelLoop := nil
+]
+
+{ #category : #'life cycle' }
+MATimeTravel >> updatePanelView [
+
+	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
+
+	returningStepView text: restoringStep asRopedText.
+
+	isRestoring
+		ifTrue: [ 
+			buttonStartTimeTravel background: Color gray.
+			buttonStopTimeTravel background: Color white.
+			buttonOneStepBefore background: Color white.
+			buttonOneStepAfter background: Color white.
+			buttonPlayBackward background: Color white.
+			buttonReplay background: Color white.
+			isPlayingBackward ifTrue: [ 
+				buttonStopTimeTravel background: Color gray.
+				buttonOneStepBefore background: Color gray.
+				buttonOneStepAfter background: Color gray.
+				buttonReplay background: Color gray ].
+			isReplaying ifTrue: [ 
+				
+				buttonStopTimeTravel background: Color gray.
+				buttonOneStepBefore background: Color gray.
+				buttonOneStepAfter background: Color gray.
+				buttonPlayBackward background: Color gray ].
+			self isOnTheFirstStep ifTrue: [ 
+				buttonOneStepBefore background: Color gray.
+				buttonPlayBackward background: Color gray ].
+			self isOnTheLastStep ifTrue: [ 
+				buttonOneStepAfter background: Color gray.
+				buttonReplay background: Color gray ] ]
+		ifFalse: [ 
+			buttonStartTimeTravel background: Color white.
+			buttonStopTimeTravel background: Color gray.
+			buttonOneStepBefore background: Color gray.
+			buttonOneStepAfter background: Color gray.
+			buttonPlayBackward background: Color gray.
+			buttonReplay background: Color gray ]
 ]

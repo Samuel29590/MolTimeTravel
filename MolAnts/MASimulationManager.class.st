@@ -543,12 +543,13 @@ MASimulationManager >> start [
 
 { #category : #private }
 MASimulationManager >> startSimulationLoop [
-
+	
 	simulationThread ifNil: [ 
 		simulationThread := [ 
 		                    [ true ] whileTrue: [ 
 			                    isRunning ifTrue: [ 
-				                    self getTMATimeTravelServicesProvider isRestoring
+				                    self getTMATimeTravelServicesProvider
+					                    isRestoring
 					                    ifTrue: [  ]
 					                    ifFalse: [ 
 						                    | memento |
@@ -571,7 +572,9 @@ MASimulationManager >> startSimulationLoop [
 { #category : #events }
 MASimulationManager >> startTimeTravel [
 
-	isRunning := false.
+	isRunning ifFalse: [ self class playSimulation ].
+
+	isRunning := false
 ]
 
 { #category : #services }
