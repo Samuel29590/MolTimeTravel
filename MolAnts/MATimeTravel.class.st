@@ -22,7 +22,7 @@ Class {
 		'buttonReplay',
 		'timeTravelPanel',
 		'panelLoop',
-		'insepctor'
+		'inspector'
 	],
 	#category : #MolAnts
 }
@@ -46,12 +46,10 @@ MATimeTravel >> componentInitialize [
 	mySpace title: 'TimeTravel Panel'.
 	self createTimeTravelPanel.
 
-	insepctor := MolComponentManager default homeServices
+	inspector := MolComponentManager default homeServices
 		             deployedComponents inspect.
-	mySpace show.
 
-
-	
+	mySpace show
 ]
 
 { #category : #'life cycle' }
@@ -62,8 +60,8 @@ MATimeTravel >> componentRemove [
 	history := nil.
 
 	self stopTimeTravelPanelLoop.
-	insepctor ifNotNil: [ insepctor close.].
-	mySpace ifNotNil: [mySpace close].
+	inspector ifNotNil: [ inspector close ].
+	mySpace ifNotNil: [ mySpace close ]
 ]
 
 { #category : #'life cycle' }
@@ -601,7 +599,6 @@ MATimeTravel >> updatePanelView [
 				buttonOneStepAfter background: Color gray.
 				buttonReplay background: Color gray ].
 			isReplaying ifTrue: [ 
-				
 				buttonStopTimeTravel background: Color gray.
 				buttonOneStepBefore background: Color gray.
 				buttonOneStepAfter background: Color gray.
