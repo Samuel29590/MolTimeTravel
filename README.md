@@ -36,10 +36,12 @@ To start the simulation, go to the *MolAnts* package, on the class side of the M
 
 ![Screenshot from 2022-07-07 14-48-12](https://user-images.githubusercontent.com/64481702/177777229-fa0a1e0e-b613-44bf-b083-ac8aeafb1914.png)
 
-When the simulation is started, 3 windows are openned.
+When the simulation is launched, three windows are opened:
 
 1- Is the simulation.
+
 2- Is the time travel panel.
+
 3- Is an inspector on *MolComponentManager* and it permit to inspect each component of the simulation and their data.
 
 ![draw(2)](https://user-images.githubusercontent.com/64481702/178457974-c9afbe47-023f-48c3-868b-82fe07949b91.png)
