@@ -57,11 +57,29 @@ MATimeTravel >> componentRemove [
 
 	"here write the code corresponding to component remove phase"
 
-	history := nil.
-
 	self stopTimeTravelPanelLoop.
+	
 	inspector ifNotNil: [ inspector close ].
-	mySpace ifNotNil: [ mySpace close ]
+	mySpace ifNotNil: [ mySpace close ].
+
+	history := nil.
+	restoringStep := nil.
+	isSaving := nil.
+	isRestoring := nil.
+	isReplaying := nil.
+	isPlayingBackward := nil.
+	timeTravelLoop := nil.
+	timeTravelIndex := nil.
+	mySpace := nil.
+	returningStepView := nil.
+	buttonStartTimeTravel := nil.
+	buttonStopTimeTravel := nil.
+	buttonOneStepBefore := nil.
+	buttonOneStepAfter := nil.
+	buttonPlayBackward := nil.
+	buttonReplay := nil.
+	timeTravelPanel := nil.
+	inspector := nil
 ]
 
 { #category : #'life cycle' }

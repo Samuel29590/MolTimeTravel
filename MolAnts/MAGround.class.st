@@ -85,8 +85,21 @@ MAGround >> componentRemove [
 
 	"Removing the MAGround component."
 
+	self stopViewLoop.
 	mySpace ifNotNil: [ mySpace close ].
-	self stopViewLoop
+	mySpace := nil.
+	
+refreshing:= nil.
+ stepView:= nil.
+ nbInsectsView:= nil.
+ nbDeliveredView:= nil.
+ nbPheromonesView:= nil.
+ nbEggsView:= nil.
+ nbAntsView:= nil.
+ nbFeedingPointView:= nil.
+ buttonReplay:= nil.
+ buttonPlay:= nil.
+ buttonPause:= nil.
 ]
 
 { #category : #initialization }
