@@ -105,6 +105,10 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/177521067-61e1f0ad-5454-4f1e-a0cc-2d5e12de7874.png)
 
 <br><br><br>
+
+### How is the Time Travel implemented ?
+
+If you want to know how time travel is implemented in the simulation and what are the steps to follow to make it go, see this document: [9 steps to implement TimeTravel in MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
 <br><br><br>
 
 ## Illustrations
