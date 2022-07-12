@@ -42,7 +42,7 @@ When the simulation is launched, three windows are opened:
 
 2- Is the time travel panel.
 
-3- Is an inspector on *MolComponentManager* and it permit to inspect each component of the simulation and their data.
+3- Is an inspector on *MolComponentManager* and it allows to inspect each component of the simulation and their data.
 
 ![draw(2)](https://user-images.githubusercontent.com/64481702/178457974-c9afbe47-023f-48c3-868b-82fe07949b91.png)
 
