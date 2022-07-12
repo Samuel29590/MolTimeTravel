@@ -1,4 +1,4 @@
-# 10 steps to implement TimeTravel in MolAnts
+# 9 steps to implement TimeTravel in MolAnts
 
 
 ### 1 : Connect the component TimeTravel to all the other components
@@ -61,11 +61,3 @@ Knowing where the simulation breakpoints must be placed so that when the time tr
 In MolAnts the management of the pause is carried out in the main loop, thanks to a condition on a variable of the *TimeTravel* component.
 
 <img src="https://user-images.githubusercontent.com/64481702/177967001-f4effbec-1174-4f72-9362-8c1dfb0a212f.png" width="75%">
-
-### 10 : Add the Time Travel panel
-
-Added time travel buttons to the UI and made them work.
-
-In MolAnts the interface is added to that of the simulation, but it could be separated.
-
-<img src="https://user-images.githubusercontent.com/64481702/177966439-15ac7a56-ff53-4056-bdf0-7913547b48d6.png" width="75%">
