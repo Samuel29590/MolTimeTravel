@@ -25,6 +25,7 @@ Class {
 	#traits : 'MolComponentImpl + TMAGroundType + TMASimulationToGlobalEvents + TMATimeTravelEvents',
 	#classTraits : 'MolComponentImpl classTrait + TMAGroundType classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
 	#instVars : [
+		'viewLoop',
 		'mySpace',
 		'refreshing',
 		'stepView',
@@ -34,13 +35,6 @@ Class {
 		'nbEggsView',
 		'nbAntsView',
 		'nbFeedingPointView',
-		'viewLoop',
-		'returningStepView',
-		'buttonStartTimeTravel',
-		'buttonStopTimeTravel',
-		'buttonOneStepBefore',
-		'buttonOneStepAfter',
-		'buttonPlayBackward',
 		'buttonReplay',
 		'buttonPlay',
 		'buttonPause'
@@ -70,10 +64,9 @@ MAGround >> componentInitialize [
 	refreshing := 1.
 	mySpace := self openInNewSpace extent:
 		           MASimulationManager simulationWidth
-		           @ (MASimulationManager simulationHeight + 500).
-
+		           @ (MASimulationManager simulationHeight + 300).
+	mySpace title: 'MolAnts Simulation'.
 	self createInfoPanel.
-	self createTimeTravelPanel.
 	self startViewLoop
 ]
 
@@ -411,311 +404,6 @@ MAGround >> createInfoPanel [
 	infoPanel addChild: nbAntsView
 ]
 
-{ #category : #testing }
-MAGround >> createTimeTravelPanel [
-
-	| timeTravelPanel labelText label |
-	timeTravelPanel := BlElement new.
-	timeTravelPanel background: Color gray.
-	timeTravelPanel relocate:
-		0 @ (MASimulationManager simulationHeight + 300).
-	timeTravelPanel size: MASimulationManager simulationWidth @ 200.
-	timeTravelPanel constraintsDo: [ :c | 
-		c maxHeight: 200.
-		c maxWidth: MASimulationManager simulationWidth ].
-	mySpace addChild: timeTravelPanel.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding returningStep to the panel."
-	timeTravelPanel addChild: ((BlTextElement new
-			  relocate:
-				  MASimulationManager simulationWidth / 10 @ 20;
-			  background: Color transparent) text:
-			 'Returning Step :' asRopedText).
-	returningStepView := BlTextElement new
-		                     relocate:
-			                     MASimulationManager simulationWidth / 10 @ 40;
-		                     background: Color transparent;
-		                     text: '000' asRopedText.
-	timeTravelPanel addChild: returningStepView.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding the Start time trave button"
-	buttonStartTimeTravel := BlElement new
-		                         background: Color white;
-		                         geometry:
-			                         (BlRoundedRectangleGeometry cornerRadius:
-					                          2);
-		                         padding: (BlInsets
-				                          top: 8
-				                          right: 16
-				                          bottom: 8
-				                          left: 16);
-		                         layout: BlLinearLayout horizontal;
-		                         effect: (BlGaussianShadowEffect
-				                          color: (Color black alpha: 0.3)
-				                          width: 1
-				                          offset: 0 @ 2);
-		                         constraintsDo: [ :c | 
-			                         c horizontal fitContent.
-			                         c vertical fitContent ];
-		                         relocate:
-			                         MASimulationManager simulationWidth / 10
-			                         @ 80;
-		                         addEventHandler: (BlEventHandler
-				                          on: BlClickEvent
-				                          do: [ :anEvent | 
-					                          buttonStartTimeTravel isVisible 
-						                          ifTrue: [ 
-							                          self isRunning
-								                          ifTrue: [ 
-									                          self
-										                          getTMATimeTravelServicesProvider
-										                          isRestoring ifFalse: [ 
-											                          self
-												                          getTMATimeTravelServicesProvider
-												                          startTimeTravel.
-											                          self updateView ] ]
-								                          ifFalse: [ 
-									                          self
-										                          getTMATimeTravelServicesProvider
-										                          isRestoring ifFalse: [ 
-											                          MASimulationManager
-												                          playSimulation.
-											                          self
-												                          getTMATimeTravelServicesProvider
-												                          startTimeTravel.
-											                          self updateView ] ] ].
-					                          anEvent consumed: true ]).
-	labelText := 'Start time travel' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	buttonStartTimeTravel addChild: label.
-	timeTravelPanel addChild: buttonStartTimeTravel.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding the Stop time trave button"
-	buttonStopTimeTravel := BlElement new
-		                        background: Color white;
-		                        geometry:
-			                        (BlRoundedRectangleGeometry cornerRadius: 2);
-		                        padding: (BlInsets
-				                         top: 8
-				                         right: 16
-				                         bottom: 8
-				                         left: 16);
-		                        layout: BlLinearLayout horizontal;
-		                        effect: (BlGaussianShadowEffect
-				                         color: (Color black alpha: 0.3)
-				                         width: 1
-				                         offset: 0 @ 2);
-		                        constraintsDo: [ :c | 
-			                        c horizontal fitContent.
-			                        c vertical fitContent ];
-		                        relocate:
-			                        MASimulationManager simulationWidth / 10
-			                        * 3 @ 80;
-		                        addEventHandler: (BlEventHandler
-				                         on: BlClickEvent
-				                         do: [ :anEvent | 
-					                         buttonStopTimeTravel isVisible ifTrue: [ 
-							                         self isRunning ifFalse: [ 
-									                         self
-										                         getTMATimeTravelServicesProvider
-										                         isRestoring ifTrue: [ 
-											                         self
-												                         getTMATimeTravelServicesProvider
-												                         stopTimeTravel.
-											                         self updateView ] ] ].
-					                         anEvent consumed: true ]).
-	labelText := 'Stop time travel' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	buttonStopTimeTravel addChild: label.
-	timeTravelPanel addChild: buttonStopTimeTravel.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding One Step before button"
-	buttonOneStepBefore := BlElement new
-		                       background: Color white;
-		                       geometry:
-			                       (BlRoundedRectangleGeometry cornerRadius: 2);
-		                       padding: (BlInsets
-				                        top: 8
-				                        right: 16
-				                        bottom: 8
-				                        left: 16);
-		                       layout: BlLinearLayout horizontal;
-		                       effect: (BlGaussianShadowEffect
-				                        color: (Color black alpha: 0.3)
-				                        width: 1
-				                        offset: 0 @ 2);
-		                       constraintsDo: [ :c | 
-			                       c horizontal fitContent.
-			                       c vertical fitContent ];
-		                       relocate:
-			                       MASimulationManager simulationWidth / 10 * 5
-			                       @ 80;
-		                       addEventHandler: (BlEventHandler
-				                        on: BlClickEvent
-				                        do: [ :anEvent | 
-					                        buttonOneStepBefore isVisible ifTrue: [ 
-							                        self getTMATimeTravelServicesProvider
-								                        restoreOneStepBefore.
-							                        self updateView ].
-					                        anEvent consumed: true ]).
-	labelText := 'One step before' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	buttonOneStepBefore addChild: label.
-	timeTravelPanel addChild: buttonOneStepBefore.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding One Step after button"
-	buttonOneStepAfter := BlElement new
-		                      background: Color white;
-		                      geometry:
-			                      (BlRoundedRectangleGeometry cornerRadius: 2);
-		                      padding: (BlInsets
-				                       top: 8
-				                       right: 16
-				                       bottom: 8
-				                       left: 16);
-		                      layout: BlLinearLayout horizontal;
-		                      effect: (BlGaussianShadowEffect
-				                       color: (Color black alpha: 0.3)
-				                       width: 1
-				                       offset: 0 @ 2);
-		                      constraintsDo: [ :c | 
-			                      c horizontal fitContent.
-			                      c vertical fitContent ];
-		                      relocate:
-			                      MASimulationManager simulationWidth / 10 * 7
-			                      @ 80;
-		                      addEventHandler: (BlEventHandler
-				                       on: BlClickEvent
-				                       do: [ :anEvent | 
-					                       buttonOneStepAfter isVisible ifTrue: [ 
-							                       self getTMATimeTravelServicesProvider
-								                       restoreOneStepAfter.
-							                       self updateView ].
-					                       anEvent consumed: true ]).
-	labelText := 'One step after' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	buttonOneStepAfter addChild: label.
-	timeTravelPanel addChild: buttonOneStepAfter.
-
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding playing backward button"
-	buttonPlayBackward := BlElement new
-		                      background: Color white;
-		                      geometry:
-			                      (BlRoundedRectangleGeometry cornerRadius: 2);
-		                      padding: (BlInsets
-				                       top: 8
-				                       right: 16
-				                       bottom: 8
-				                       left: 16);
-		                      layout: BlLinearLayout horizontal;
-		                      effect: (BlGaussianShadowEffect
-				                       color: (Color black alpha: 0.3)
-				                       width: 1
-				                       offset: 0 @ 2);
-		                      constraintsDo: [ :c | 
-			                      c horizontal fitContent.
-			                      c vertical fitContent ];
-		                      relocate:
-			                      MASimulationManager simulationWidth / 10 * 3
-			                      @ 130;
-		                      addEventHandler: (BlEventHandler
-				                       on: BlClickEvent
-				                       do: [ :anEvent | 
-					                       buttonPlayBackward isVisible ifTrue: [ 
-							                       self getTMATimeTravelServicesProvider
-								                       playBackward.
-							                       self updateView ].
-					                       anEvent consumed: true ]).
-	labelText := 'Play Backward' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	buttonPlayBackward addChild: label.
-	timeTravelPanel addChild: buttonPlayBackward.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding replay button"
-	buttonReplay := BlElement new
-		                background: Color white;
-		                geometry:
-			                (BlRoundedRectangleGeometry cornerRadius: 2);
-		                padding: (BlInsets
-				                 top: 8
-				                 right: 16
-				                 bottom: 8
-				                 left: 16);
-		                layout: BlLinearLayout horizontal;
-		                effect: (BlGaussianShadowEffect
-				                 color: (Color black alpha: 0.3)
-				                 width: 1
-				                 offset: 0 @ 2);
-		                constraintsDo: [ :c | 
-			                c horizontal fitContent.
-			                c vertical fitContent ];
-		                relocate:
-			                MASimulationManager simulationWidth / 10 * 5 @ 130;
-		                addEventHandler: (BlEventHandler
-				                 on: BlClickEvent
-				                 do: [ :anEvent | 
-					                 buttonReplay isVisible ifTrue: [ 
-							                 self getTMATimeTravelServicesProvider replay.
-							                 self updateView ].
-					                 anEvent consumed: true ]).
-	labelText := 'Relay' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
-	label := BlTextElement new.
-	label text: labelText.
-	buttonReplay addChild: label.
-	timeTravelPanel addChild: buttonReplay
-]
-
 { #category : #drawing }
 MAGround >> drawOnSpartaCanvas: aCanvas [
 
@@ -975,47 +663,7 @@ MAGround >> updateInfoPanel [
 ]
 
 { #category : #events }
-MAGround >> updateTimeTravelPanel [
-
-	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
-
-	returningStepView text:
-		self getTMATimeTravelServicesProvider restoringStep asRopedText.
-
-	self getTMATimeTravelServicesProvider isRestoring
-		ifTrue: [ 
-			buttonStartTimeTravel background: Color gray.
-			buttonStopTimeTravel background: Color white.
-			buttonOneStepBefore background: Color white.
-			buttonOneStepAfter background: Color white.
-			buttonPlayBackward background: Color white.
-			buttonReplay background: Color white.
-			self getTMATimeTravelServicesProvider isPlayingBackward ifTrue: [ 
-				buttonOneStepBefore background: Color gray.
-				buttonOneStepAfter background: Color gray.
-				buttonReplay background: Color gray ].
-			self getTMATimeTravelServicesProvider isReplaying ifTrue: [ 
-				buttonOneStepBefore background: Color gray.
-				buttonOneStepAfter background: Color gray.
-				buttonPlayBackward background: Color gray ].
-			self getTMATimeTravelServicesProvider isOnTheFirstStep ifTrue: [ 
-				buttonOneStepBefore background: Color gray.
-				buttonPlayBackward background: Color gray ].
-			self getTMATimeTravelServicesProvider isOnTheLastStep ifTrue: [ 
-				buttonOneStepAfter background: Color gray.
-				buttonReplay background: Color gray ] ]
-		ifFalse: [ 
-			buttonStartTimeTravel background: Color white.
-			buttonStopTimeTravel background: Color gray.
-			buttonOneStepBefore background: Color gray.
-			buttonOneStepAfter background: Color gray.
-			buttonPlayBackward background: Color gray.
-			buttonReplay background: Color gray ]
-]
-
-{ #category : #events }
 MAGround >> updateView [
 
 	self updateInfoPanel.
-	self updateTimeTravelPanel
 ]
