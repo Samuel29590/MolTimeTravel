@@ -22,7 +22,7 @@ Metacello new
 
 MolAntsTimeTravel like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill. The folder *MolAntsExperimental* is a lighter implementation of the anthill, it was created to test quickly the time travel component. The folder *MolAnts* the time travel has been added to the original simulation with all the features of the anthill. In this two folder the component *TimeTravel* is the same and it adds the possibility of returning in the past, and replay the simulation step-by-step.
 
-If you want to know more about the organization of components in [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md) or [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md), click on the hyperlink.
+If you want to know more about the organization of components in [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md) or [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md), click on the hyperlink.
 
 <br>
 
