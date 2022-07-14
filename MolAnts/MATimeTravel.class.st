@@ -375,24 +375,12 @@ MATimeTravel >> isOnTheLastStep [
 ]
 
 { #category : #services }
-MATimeTravel >> isPlayingBackward [
-
-	^ isPlayingBackward
-]
-
-{ #category : #services }
-MATimeTravel >> isReplaying [
-
-	^ isReplaying
-]
-
-{ #category : #services }
 MATimeTravel >> isRestoring [
 
 	^ isRestoring
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> playBackward [
 
 	isRestoring ifFalse: [ ^ self ].
@@ -438,7 +426,7 @@ MATimeTravel >> removeOf: aComponent at: aStep [
 	restoringStep := aStep
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> replay [
 
 	isRestoring ifFalse: [ ^ self ].
@@ -468,7 +456,7 @@ MATimeTravel >> replay [
 			timeTravelLoop resume ]
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> restoreAtStep: aStep [
 
 	| stepToIndex componentsLifeCycles mementos |
@@ -503,23 +491,17 @@ MATimeTravel >> restoreAtStep: aStep [
 	restoringStep := aStep
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> restoreOneStepAfter [
 
 	self restoreAtStep: restoringStep +1
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> restoreOneStepBefore [
 
 	self restoreAtStep:
 		restoringStep -1
-]
-
-{ #category : #services }
-MATimeTravel >> restoringStep [ 
-
-	^restoringStep 
 ]
 
 { #category : #services }
@@ -544,7 +526,7 @@ MATimeTravel >> saveTheSimulationAt: aStep [
 	self getTMATimeTravelEventsNotifier saveForTimeTravel: aStep.
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> startTimeTravel [
 
 	isRestoring ifFalse: [ 
@@ -558,19 +540,19 @@ MATimeTravel >> startTimeTravel [
 { #category : #'life cycle' }
 MATimeTravel >> startTimeTravelPanelLoop [
 
-		"Starting the time travel panel's view loop."
+	"Starting the time travel panel's view loop."
 
 	panelLoop := [ 
-	            [ true ] whileTrue: [ 
-				            self updatePanelView.
-				            (Delay forMilliseconds:
-					             MASimulationManager simulationStepDurationInMs) wait ] ]
-		            forkAt: Processor userBackgroundPriority.
+	             [ true ] whileTrue: [ 
+		             self updatePanelView.
+		             (Delay forMilliseconds:
+			              MASimulationManager simulationStepDurationInMs) wait ] ] 
+		             forkAt: Processor userBackgroundPriority.
 	panelLoop name: 'Molecule ViewLoop Process'.
 	panelLoop resume
 ]
 
-{ #category : #services }
+{ #category : #'life cycle' }
 MATimeTravel >> stopTimeTravel [
 
 	isRestoring ifTrue: [
@@ -602,7 +584,7 @@ MATimeTravel >> updatePanelView [
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
 	returningStepView text: restoringStep asRopedText.
-
+	
 	isRestoring
 		ifTrue: [ 
 			buttonStartTimeTravel background: Color gray.
