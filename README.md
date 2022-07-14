@@ -22,7 +22,7 @@ Metacello new
 
 MolAntsTimeTravel like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill. The folder *MolAntsExperimental* is a lighter implementation of the anthill, it was created to test quickly the time travel component. The folder *MolAnts* the time travel has been added to the original simulation with all the features of the anthill. In this two folder the component *TimeTravel* is the same and it adds the possibility of returning in the past, and replay the simulation step-by-step.
 
-If you want to know more about the organization of components in [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md) or [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md), click on the hyperlink.
+If you want to know more about the organization of components of [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md) or [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md), click on the hyperlink.
 
 <br>
 
@@ -35,6 +35,16 @@ If you want to know more about the organization of components in [MolAntExperime
 To start the simulation, go to the *MolAnts* package, on the class side of the MASimulationManager class and launch the start method.
 
 ![Screenshot from 2022-07-07 14-48-12](https://user-images.githubusercontent.com/64481702/177777229-fa0a1e0e-b613-44bf-b083-ac8aeafb1914.png)
+
+When the simulation is launched, three windows are opened:
+
+1- Is the simulation.
+
+2- Is the time travel panel.
+
+3- Is an inspector on *MolComponentManager* and it allows to inspect each component of the simulation and their data.
+
+![draw(2)](https://user-images.githubusercontent.com/64481702/178457974-c9afbe47-023f-48c3-868b-82fe07949b91.png)
 
 ### How is the data recorded with the *TimeTravel* component ?
 
@@ -95,11 +105,15 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/177521067-61e1f0ad-5454-4f1e-a0cc-2d5e12de7874.png)
 
 <br><br><br>
+
+### How is the Time Travel implemented ?
+
+If you want to know how time travel is implemented in the simulation and what are the steps to follow to make it go, see this document: [9 steps to implement TimeTravel in MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
 <br><br><br>
 
 ## Illustrations
 ![2022-07-04 14-31-40](https://user-images.githubusercontent.com/64481702/177515569-c6d831f3-37b2-4d56-8a6c-50dcd4202a7f.gif)
 
-<img src="https://user-images.githubusercontent.com/64481702/177521614-b9164631-fa88-4443-a9ae-7ddeada802ee.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/177521618-870a8ecf-80ac-4603-9e6e-568d4093b30a.png" width="50%">
+<img src="https://user-images.githubusercontent.com/64481702/178459438-4a5fa818-551f-4784-9dfc-c9f6e39e3365.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/178459444-17020844-17b0-4cec-9e29-6fc8d2d2d57f.png" width="50%">
 
-<img src="https://user-images.githubusercontent.com/64481702/177521621-71a7afbf-6a48-4176-b09f-3f381be41443.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/177521626-1eec8360-b0d8-4fb4-ad48-96f04be32189.png" width="50%">
+<img src="https://user-images.githubusercontent.com/64481702/178459447-f7c8b35d-2658-4264-99df-0f14a9d7e4a9.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/178459449-e2bceebc-c3d1-485f-a375-566183e0bdf2.png" width="50%">
