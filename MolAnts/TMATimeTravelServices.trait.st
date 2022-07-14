@@ -11,18 +11,6 @@ TMATimeTravelServices >> creationOf: aComponentMemento at: aStep [
 ]
 
 { #category : #services }
-TMATimeTravelServices >> isOnTheFirstStep [
-
-	
-]
-
-{ #category : #services }
-TMATimeTravelServices >> isOnTheLastStep [
-
-	
-]
-
-{ #category : #services }
 TMATimeTravelServices >> isPlayingBackward [ 
 
 	

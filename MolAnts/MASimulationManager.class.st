@@ -511,7 +511,7 @@ MASimulationManager >> start [
 	| pheromones ground memento |
 	memento := MASimulationMemento new.
 
-	MATimeTravel start: 'TimeTravel'.
+	MATimeTravel start: #TimeTravel.
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 	self forEvents: TMATimeTravelEvents addProducer: #TimeTravel.
 	isRunning := true.
