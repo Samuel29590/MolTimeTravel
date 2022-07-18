@@ -8,14 +8,15 @@ Class {
 BaselineOfMolAntsTimeTravel >> baseline: spec [
 
 	<baseline>
-	
-	spec for: #common do: [ 
+	spec for: #common do: [ "Load Molecule"
+		spec
+			baseline: 'Molecule'
+			with: [ spec repository: 'github://OpenSmock/Molecule' ].
 
-		"Load Molecule"
-		spec baseline: 'Molecule' with: [ spec repository: 'github://OpenSmock/Molecule' ].
-		
 		"Load Bloc"
-		spec baseline: 'NewBloc' with: [ spec repository: 'github://pharo-graphics/Bloc/src' ].
-		
-		spec package: 'MolAnts' .]
+		spec
+			baseline: 'NewBloc'
+			with: [ spec repository: 'github://pharo-graphics/Bloc/src' ].
+
+		spec package: 'MolAntsTimeTravel' ]
 ]
