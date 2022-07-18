@@ -8,6 +8,7 @@ This repository aims to help the search in Time-Traveling debugging techniques w
 ### Prerequisites
 
 MolAntsTimeTravel require [Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and [Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
+So this is why this two frameworks are loaded with the baseline of MolAntsTimeTravel.
 
 ### Installing MolAntsTimeTravel
 
@@ -26,7 +27,7 @@ If you want to know more about the organization of components of [MolAnts](https
 
 <br>
 
-**⚠️** The following explanations are adapted for the *MolAnts* version, the full version of the anthill. If you want specific explanations for *MolAntsExperimental*, the lighter anthill implementation, you can find them here : [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md).
+**⚠️** The following explanations are adapted for the *MolAntsTimeTravel* version, the full version of the anthill with TimeTravel. If you want specific explanations for *MolAntsExperimental*, the lighter anthill implementation with TimeTravel, you can find them here : [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md).
 
 <br>
 
