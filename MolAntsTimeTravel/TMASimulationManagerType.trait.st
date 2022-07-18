@@ -1,0 +1,43 @@
+"
+I'm the simulation manager type trait.
+"
+Trait {
+	#name : #TMASimulationManagerType,
+	#traits : 'MolComponentType',
+	#classTraits : 'MolComponentType classTrait',
+	#category : #MolAntsTimeTravel
+}
+
+{ #category : #'accessing - events' }
+TMASimulationManagerType classSide >> consumedComponentEvents [
+
+	<componentContract>
+	^ { 
+		  TMAStageEvents.
+		  TMARoleEvents.
+		  TMAInsectEvents.
+		  TMATimeTravelEvents }
+]
+
+{ #category : #'accessing - events' }
+TMASimulationManagerType classSide >> producedComponentEvents [
+
+	<componentContract>
+	^ { TMASimulationToGlobalEvents }
+]
+
+{ #category : #'accessing - services' }
+TMASimulationManagerType classSide >> providedComponentServices [
+	<componentContract>
+	^ {TMASimulationServices} 
+]
+
+{ #category : #'accessing - services' }
+TMASimulationManagerType classSide >> usedComponentServices [
+
+	<componentContract>
+	^ { 
+		  TMAPheromoneServices.
+		  TMAFeedingPointServices.
+		  TMATimeTravelServices }
+]
