@@ -24,10 +24,12 @@ MAFighter >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "fighter notify the creation"
+"fighter notify the creation"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep ]]
 ]
 
 { #category : #'life cycle' }

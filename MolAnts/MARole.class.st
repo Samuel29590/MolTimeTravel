@@ -39,12 +39,12 @@ MARole >> getTMARoleEventsNotifier [
 { #category : #'component accessing' }
 MARole >> getTMASimulationServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMASimulationServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMASimulationServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -63,12 +63,12 @@ MARole >> getTMATimeTravelEventsSubscriber [
 { #category : #'component accessing' }
 MARole >> getTMATimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMATimeTravelServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 

@@ -43,10 +43,12 @@ MAAnt >> componentInitialize [
 	self initializeStage.
 	ageInMs := 0.
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "ant notify the creation"
+	"ant notify the creation"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep.]
+			at: self getTMASimulationServicesProvider getStep ]]
 ]
 
 { #category : #'life cycle' }
@@ -156,12 +158,12 @@ MAAnt >> getStageName [
 { #category : #'component accessing' }
 MAAnt >> getTMASimulationServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMASimulationServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMASimulationServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -180,12 +182,12 @@ MAAnt >> getTMASimulationToGlobalEventsSubscriber [
 { #category : #'component accessing' }
 MAAnt >> getTMAStageServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMAStageServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAStageServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMAStageServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -204,19 +206,20 @@ MAAnt >> getTMATimeTravelEventsSubscriber [
 { #category : #'component accessing' }
 MAAnt >> getTMATimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMATimeTravelServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
 { #category : #stage }
 MAAnt >> initializeStage [
 
-	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ].
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ]].
 
 	stage := MAStage start:
 		         (#stage , self componentName asSymbol) asSymbol
@@ -252,10 +255,5 @@ MAAnt >> saveForTimeTravel: aStep [
 { #category : #'events - lifecycle' }
 MAAnt >> simulationStepSent: aStep [
 
-	self doSimulationStep.
-
-
-	"self getRole saveForTimeTravel: aStep.
-	self getStage saveForTimeTravel: aStep.
-	self saveForTimeTravel: aStep"
+	self doSimulationStep
 ]

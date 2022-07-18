@@ -141,15 +141,20 @@ MAGround >> createInfoPanel [
 			               c horizontal fitContent.
 			               c vertical fitContent ];
 		               relocate:
-			               MASimulationManager simulationWidth / 10
-			               @ 10;
+			               MASimulationManager simulationWidth / 10 @ 10;
 		               addEventHandler: (BlEventHandler
 				                on: BlClickEvent
 				                do: [ :anEvent | 
 					                buttonPause isVisible ifTrue: [ 
 							                self isRunning ifTrue: [ 
-									                self getTMATimeTravelServicesProvider
-										                isRestoring ifFalse: [ 
+									                (MolUtils
+										                 instanceOf: MATimeTravel
+										                 named: #TimeTravel)
+										                ifNotNil: [ 
+											                self getTMATimeTravelServicesProvider
+												                isRestoring ifFalse: [ 
+													                MASimulationManager pauseSimulation ] ]
+										                ifNil: [ 
 											                MASimulationManager pauseSimulation ] ] ].
 					                anEvent consumed: true ]).
 	labelText := 'Pause' asRopedText
@@ -183,16 +188,16 @@ MAGround >> createInfoPanel [
 			              c horizontal fitContent.
 			              c vertical fitContent ];
 		              relocate:
-			              MASimulationManager simulationWidth / 10
-			              * 4.5 @ 10;
+			              MASimulationManager simulationWidth / 10 * 4.5 @ 10;
 		              addEventHandler: (BlEventHandler
 				               on: BlClickEvent
 				               do: [ :anEvent | 
 					               buttonPlay isVisible ifTrue: [ 
 							               self isRunning ifFalse: [ 
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
 									               self getTMATimeTravelServicesProvider
 										               isRestoring ifFalse: [ 
-											               MASimulationManager playSimulation ] ] ].
+											               MASimulationManager playSimulation ]]ifNil:[MASimulationManager playSimulation ] ] ].
 					               anEvent consumed: true ]).
 	labelText := 'Play' asRopedText
 		             foreground: Color black;
@@ -225,8 +230,7 @@ MAGround >> createInfoPanel [
 			          c horizontal fitContent.
 			          c vertical fitContent ];
 		          relocate:
-			          MASimulationManager simulationWidth / 10 * 8
-			          @ 10;
+			          MASimulationManager simulationWidth / 10 * 8 @ 10;
 		          addEventHandler: (BlEventHandler
 				           on: BlClickEvent
 				           do: [ :anEvent | 
@@ -528,24 +532,24 @@ MAGround >> getInsects [
 { #category : #'component accessing' }
 MAGround >> getTMAPheromoneServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMAPheromoneServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol.
 	^servicesProvider
 ]
 
 { #category : #'component accessing' }
 MAGround >> getTMASimulationServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMASimulationServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMASimulationServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -576,12 +580,12 @@ MAGround >> getTMATimeTravelEventsSubscriber [
 { #category : #'component accessing' }
 MAGround >> getTMATimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMATimeTravelServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -622,8 +626,17 @@ MAGround >> startViewLoop [
 
 	viewLoop := [ 
 	            [ true ] whileTrue: [ 
-		            (self getTMASimulationServicesProvider getStep
-		            % refreshing = 0 | self getTMATimeTravelServicesProvider isRestoring ) ifTrue: [ 
+		            | doUpdateView |
+		            doUpdateView := true.
+		            self getTMASimulationServicesProvider getStep
+		            % refreshing = 0 ifFalse: [ doUpdateView := false ].
+
+						
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+		            self getTMATimeTravelServicesProvider isRestoring 
+			            ifTrue: [ doUpdateView := true ]].
+
+		            doUpdateView ifTrue: [ 
 			            self updateView.
 			            (Delay forMilliseconds:
 				             MASimulationManager simulationStepDurationInMs) wait ] ] ] 
@@ -646,7 +659,8 @@ MAGround >> updateInfoPanel [
 	"Modify each elements of the info panel. It permit to keep the view up to date with the simulation."
 
 	| eggs |
-	stepView text: self getTMASimulationServicesProvider getStep asRopedText.
+	stepView text:
+		self getTMASimulationServicesProvider getStep asRopedText.
 	nbInsectsView text: self getInsects size asRopedText.
 	nbDeliveredView text:
 		self getTMASimulationServicesProvider getStorage asRopedText.
@@ -670,9 +684,10 @@ MAGround >> updateInfoPanel [
 			buttonPause background: Color orange ]
 		ifFalse: [ 
 			buttonPause background: Color gray.
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
 			self getTMATimeTravelServicesProvider isRestoring
 				ifTrue: [ buttonPlay background: Color gray ]
-				ifFalse: [ buttonPlay background: Color green ] ]
+				ifFalse: [ buttonPlay background: Color green ]]ifNil:[buttonPlay background: Color green.] ]
 ]
 
 { #category : #events }

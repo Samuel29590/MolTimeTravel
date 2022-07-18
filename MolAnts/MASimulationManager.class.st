@@ -91,6 +91,15 @@ MASimulationManager class >> startSimulation [
 ]
 
 { #category : #scripts }
+MASimulationManager class >> startSimulationWithTimeTravel [
+
+	<script>
+	MATimeTravel start: #TimeTravel.
+	self start.
+	self passivate
+]
+
+{ #category : #scripts }
 MASimulationManager class >> stopSimulation [
 	<script>
 	
@@ -121,7 +130,8 @@ MASimulationManager >> componentActivate [
 	super componentActivate.
 	self getTMAStageEventsSubscriber subscribe: self.
 	self getTMARoleEventsSubscriber subscribe: self.
-	self getTMAInsectEventsSubscriber subscribe: self..self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTMAInsectEventsSubscriber subscribe: self.
+	self getTMATimeTravelEventsSubscriber subscribe: self.
 	isRunning := true
 ]
 
@@ -284,12 +294,12 @@ MASimulationManager >> getStorage [
 { #category : #'component accessing' }
 MASimulationManager >> getTMAFeedingPointServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMAFeedingPointServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAFeedingPointServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMAFeedingPointServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -308,12 +318,12 @@ MASimulationManager >> getTMAInsectEventsSubscriber [
 { #category : #'component accessing' }
 MASimulationManager >> getTMAPheromoneServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMAPheromoneServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMAPheromoneServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -361,12 +371,12 @@ MASimulationManager >> getTMATimeTravelEventsSubscriber [
 { #category : #'component accessing' }
 MASimulationManager >> getTMATimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMATimeTravelServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -374,6 +384,12 @@ MASimulationManager >> getTMATimeTravelServicesProvider [
 MASimulationManager >> insectDelivered [
 
 	storage := storage + 1.
+]
+
+{ #category : #services }
+MASimulationManager >> isRunning [
+
+	^ isRunning ifNil: [ isRunning := false ].
 ]
 
 { #category : #events }
@@ -448,7 +464,7 @@ MASimulationManager >> removePheromones [
 
 	"delete all pheromones of the system."
 
-	MAPheromones stop: 'Pheromones'
+	MAPheromones stop: #Pheromones
 ]
 
 { #category : #events }
@@ -511,9 +527,9 @@ MASimulationManager >> start [
 	| pheromones ground memento |
 	memento := MASimulationMemento new.
 
-	MATimeTravel start: #TimeTravel.
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 	self forEvents: TMATimeTravelEvents addProducer: #TimeTravel.
+	
 	isRunning := true.
 	simulationThread := nil.
 	step := 0.
@@ -522,11 +538,11 @@ MASimulationManager >> start [
 	storage := 0.
 	insects := Dictionary new.
 	feedingPoints := Dictionary new.
-	pheromones := MAPheromones start: 'Pheromones'.
+	pheromones := MAPheromones start: #Pheromones.
 	self
 		forServices: TMAPheromoneServices
 		useProvider: pheromones componentName asSymbol.
-	ground := MAGround start: 'Ground'.
+	ground := MAGround start: #Ground.
 	ground
 		forServices: TMAPheromoneServices
 		useProvider: pheromones componentName asSymbol.
@@ -543,27 +559,36 @@ MASimulationManager >> start [
 
 { #category : #private }
 MASimulationManager >> startSimulationLoop [
-	
+
 	simulationThread ifNil: [ 
 		simulationThread := [ 
 		                    [ true ] whileTrue: [ 
 			                    isRunning ifTrue: [ 
-				                    self getTMATimeTravelServicesProvider
-					                    isRestoring
-					                    ifTrue: [  ]
-					                    ifFalse: [ 
-						                    | memento |
-						                    memento := MASimulationMemento new.
-						                    step := step + 1.
-						                    self getTMASimulationToGlobalEventsNotifier 
-							                    simulationStepSent: step.
+				                    | doSimulationStep |
+				                    doSimulationStep := true.
+				                    (MolUtils
+					                     instanceOf: MATimeTravel
+					                     named: #TimeTravel)
+					                    ifNotNil: [ 
+						                    self getTMATimeTravelServicesProvider
+							                    isRestoring ifTrue: [ 
+							                    doSimulationStep := false ] ]
+					                    ifNil: [ 
+					                    step = 250 ifTrue: [ 
+						                    MATimeTravel start: #TimeTravel.self getTMATimeTravelServicesProvider initializationAt: step. ] ].
+				                    doSimulationStep ifTrue: [ 
+					                    | memento |
+					                    memento := MASimulationMemento new.
+					                    step := step + 1.
+					                    self getTMASimulationToGlobalEventsNotifier 
+						                    simulationStepSent: step.
 
-						                    self getTMATimeTravelServicesProvider 
-							                    saveTheSimulationAt: step.
+					                    self getTMATimeTravelServicesProvider 
+						                    saveTheSimulationAt: step.
 
-						                    (Delay forMilliseconds:
-							                     self class simulationStepDurationInMs)
-							                    wait ] ] ] ] newProcess priority:
+					                    (Delay forMilliseconds:
+						                     self class simulationStepDurationInMs) wait ] ] ] ]
+			                    newProcess priority:
 			                    Processor userBackgroundPriority.
 		simulationThread name: 'Molecule SimulationManager Process' ].
 	simulationThread resume
@@ -581,14 +606,17 @@ MASimulationManager >> startTimeTravel [
 MASimulationManager >> stop [
 
 	self stopSimulationLoop.
-	MAGround stop: 'Ground'.
+	MAGround stop: #Ground.
 	self removeAnts.
 	self removeInsects.
 	self removeFeedingPoints.
 	self removePheromones.
 	isRunning := false.
 	self getTMASimulationToGlobalEventsNotifier stopped.
-	MATimeTravel stop: 'TimeTravel'
+	
+	
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	MATimeTravel stop: #TimeTravel].
 ]
 
 { #category : #private }

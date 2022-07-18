@@ -47,18 +47,16 @@ MAPheromones >> componentInitialize [
 	pheromonesDict := Dictionary new.
 	pheromonesReturnDict := Dictionary new.
 
-	self
-		forServices: TMATimeTravelServices
-		useProvider: #TimeTravel.
+	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
-	self
-		forServices: TMASimulationServices
-		useProvider: #default.
+	self forServices: TMASimulationServices useProvider: #default.
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "pheromones notify the creation"
+"pheromones notify the creation"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep ]]
 ]
 
 { #category : #'life cycle' }
@@ -80,12 +78,11 @@ MAPheromones >> componentRemove [
 	pheromonesReturnDict := nil.
 
 	"Pheromones notify its remove"
-	
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]].
+			self getTMATimeTravelServicesProvider
+				removeOf: self
+				at: self getTMASimulationServicesProvider getStep ] ]
 ]
 
 { #category : #'events - lifecycle' }
@@ -125,12 +122,12 @@ MAPheromones >> getPheromonesReturnDict [
 { #category : #'component accessing' }
 MAPheromones >> getTMASimulationServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMASimulationServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMASimulationServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -161,12 +158,12 @@ MAPheromones >> getTMATimeTravelEventsSubscriber [
 { #category : #'component accessing' }
 MAPheromones >> getTMATimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMATimeTravelServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 

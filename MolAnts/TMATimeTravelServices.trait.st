@@ -11,6 +11,12 @@ TMATimeTravelServices >> creationOf: aComponentMemento at: aStep [
 ]
 
 { #category : #services }
+TMATimeTravelServices >> initializationAt: aStep [
+
+	
+]
+
+{ #category : #services }
 TMATimeTravelServices >> isRestoring [
 
 	

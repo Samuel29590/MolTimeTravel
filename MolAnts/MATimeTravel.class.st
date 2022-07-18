@@ -5,6 +5,7 @@ Class {
 	#classTraits : 'MolComponentImpl classTrait + TMATimeTravelType classTrait + TMATimeTravelServices classTrait',
 	#instVars : [
 		'history',
+		'firstStep',
 		'restoringStep',
 		'isSaving',
 		'isRestoring',
@@ -39,7 +40,9 @@ MATimeTravel >> componentInitialize [
 	isPlayingBackward := false.
 	timeTravelLoop := nil.
 	timeTravelIndex := 0.
+	firstStep := 0.
 	restoringStep := 0.
+
 
 	mySpace := BlSpace new.
 	mySpace extent: 800 @ 200.
@@ -362,10 +365,17 @@ MATimeTravel >> getTMATimeTravelEventsNotifier [
 	^self eventsNotifiers at: TMATimeTravelEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMATimeTravelEvents name: nil].
 ]
 
-{ #category : #testing }
-MATimeTravel >> isOnTheFirstStep [ 
+{ #category : #services }
+MATimeTravel >> initializationAt: aStep [
 
-	^ restoringStep = 0
+	firstStep := aStep.
+	restoringStep := aStep.
+]
+
+{ #category : #testing }
+MATimeTravel >> isOnTheFirstStep [
+
+	^ restoringStep = firstStep .
 ]
 
 { #category : #testing }
@@ -395,11 +405,11 @@ MATimeTravel >> playBackward [
 		ifFalse: [ 
 			isPlayingBackward := true.
 			timeTravelLoop := [ 
-			                  [ restoringStep > 0 ] whileTrue: [ 
+			                  [ restoringStep > firstStep ] whileTrue: [ 
 				                  self restoreAtStep: restoringStep - 1.
 				                  (Delay forMilliseconds:
-					                   MASimulationManager
-						                   simulationStepDurationInMs) wait ].
+					                   MASimulationManager simulationStepDurationInMs)
+					                  wait ].
 			                  isPlayingBackward := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
 			                  timeTravelLoop terminate.
@@ -463,7 +473,8 @@ MATimeTravel >> restoreAtStep: aStep [
 	isRestoring ifFalse: [ ^ self ].
 
 	stepToIndex := aStep + 1.
-	stepToIndex < 1 | (stepToIndex > history size) ifTrue: [ ^ self ].
+	stepToIndex < (firstStep + 1) | (stepToIndex > history size) ifTrue: [ 
+		^ self ].
 
 	"Undo"
 	aStep < restoringStep ifTrue: [ "Remove or create components"
@@ -522,8 +533,8 @@ MATimeTravel >> save: aComponentMemento at: aStep [
 { #category : #services }
 MATimeTravel >> saveTheSimulationAt: aStep [
 
-	
-	self getTMATimeTravelEventsNotifier saveForTimeTravel: aStep.
+	firstStep ifNil:[ firstStep := aStep. restoringStep := aStep ].
+	self getTMATimeTravelEventsNotifier saveForTimeTravel: aStep
 ]
 
 { #category : #'life cycle' }

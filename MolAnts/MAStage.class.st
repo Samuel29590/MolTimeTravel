@@ -35,17 +35,21 @@ MAStage >> componentInitialize [
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
 	self forServices: TMASimulationServices useProvider: #default.
-	
-	self forServices: TMARoleServices useProvider: ((#role , self componentName asSymbol) asSymbol).
+
+	self
+		forServices: TMARoleServices
+		useProvider: (#role , self componentName asSymbol) asSymbol.
 
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
 	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
 	self initializeRole.
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "stage notify the creation"
+	"stage notify the creation"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep ]]
 ]
 
 { #category : #'life cycle' }
@@ -66,9 +70,8 @@ MAStage >> componentRemove [
 	stageName := nil.
 	role := nil.
 
-	"stage notify its remove"
-
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+	"stage notify its remove"	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 		self getTMATimeTravelServicesProvider
 			removeOf: self
 			at: self getTMASimulationServicesProvider getStep ]]
@@ -133,24 +136,24 @@ MAStage >> getRoleName [
 { #category : #'component accessing' }
 MAStage >> getTMARoleServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMARoleServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMARoleServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMARoleServices named: servicesSymbol.
 	^servicesProvider
 ]
 
 { #category : #'component accessing' }
 MAStage >> getTMASimulationServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMASimulationServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMASimulationServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMASimulationServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -174,12 +177,12 @@ MAStage >> getTMATimeTravelEventsSubscriber [
 { #category : #'component accessing' }
 MAStage >> getTMATimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
+
 	itf := TMATimeTravelServices.
-	servicesSymbol := self servicesProviders at: itf ifAbsent: [^MolNotFoundServicesProvider new interface: itf name: nil].
-	servicesSymbol isSymbol
-	 	ifTrue: 
-			[servicesProvider := MolComponentManager default locatorServices 
-						searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol]. 
+	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
+	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
+
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -189,7 +192,9 @@ MAStage >> initializeRole [
 	"Initialization of the role of an ant."
 
 	| x |
-	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ].
+	
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ]].
 
 
 	"The first ant is always a queen."

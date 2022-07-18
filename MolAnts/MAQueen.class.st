@@ -24,10 +24,12 @@ MAQueen >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "queen notify the creation"
+ "queen notify the creation"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	self getTMATimeTravelServicesProvider isRestoring ifFalse: [
 		self getTMATimeTravelServicesProvider
 			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]
+			at: self getTMASimulationServicesProvider getStep ]]
 ]
 
 { #category : #'life cycle' }
