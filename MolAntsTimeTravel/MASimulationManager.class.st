@@ -472,6 +472,7 @@ MASimulationManager >> restoreFrom: aMemento [
 
 	| dict orderedCollection |
 	componentName := aMemento componentName.
+		step := aMemento getStep.
 	storage := aMemento getStorage.
 
 	aMemento getInsects isDictionary ifTrue: [ 
@@ -483,8 +484,8 @@ MASimulationManager >> restoreFrom: aMemento [
 				list add: (MolUtils instanceOf: value key named: value value) ].
 			dict add: k -> list ] ].
 	insects := dict.
-	
-		aMemento getFeedingPoints  isDictionary ifTrue: [ 
+
+	aMemento getFeedingPoints isDictionary ifTrue: [ 
 		dict := Dictionary new.
 		aMemento getFeedingPoints keysAndValuesDo: [ :k :v | 
 			| list |

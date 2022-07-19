@@ -5,7 +5,8 @@ Class {
 		'ants',
 		'feedingPoints',
 		'insects',
-		'storage'
+		'storage',
+		'step'
 	],
 	#category : #MolAntsTimeTravel
 }
@@ -29,6 +30,12 @@ MASimulationMemento >> getInsects [
 ]
 
 { #category : #accessing }
+MASimulationMemento >> getStep [
+
+	^ step
+]
+
+{ #category : #accessing }
 MASimulationMemento >> getStorage [
 
 	^ storage
@@ -47,6 +54,8 @@ MASimulationMemento >> save: aSimulationManager [
 	componentClass := aSimulationManager class.
 	componentName := aSimulationManager componentName.
 
+	step := aSimulationManager getStep.
+	
 	dict := Dictionary new.
 	aSimulationManager getInsects isDictionary ifTrue: [ 
 		aSimulationManager getInsects keysAndValuesDo: [ :k :v | 
