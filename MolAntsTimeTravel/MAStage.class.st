@@ -46,10 +46,9 @@ MAStage >> componentInitialize [
 
 	"stage notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self ] ]
 ]
 
 { #category : #'life cycle' }
@@ -70,11 +69,11 @@ MAStage >> componentRemove [
 	stageName := nil.
 	role := nil.
 
-	"stage notify its remove"	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	"stage notify its remove"
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				deletionOf: self ] ]
 ]
 
 { #category : #private }
@@ -248,13 +247,11 @@ MAStage >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAStage >> saveForTimeTravel: aStep [
+MAStage >> saveForTimeTravel [
 
-	| memento |
+		| memento |
 	memento := MAStageMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
-	
 ]

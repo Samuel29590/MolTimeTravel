@@ -94,12 +94,11 @@ MAWorker >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-"worker notify the creation"
+	"worker notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self] ]
 ]
 
 { #category : #'life cycle' }
@@ -113,12 +112,10 @@ MAWorker >> componentRemove [
 
 	"Worker notify its remove"
 
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
-
-	
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				deletionOf: self ] ]
 ]
 
 { #category : #role }
@@ -505,23 +502,9 @@ MAWorker >> restoreFrom: aMemento [
 { #category : #events }
 MAWorker >> saveForTimeTravel [
 
-	| memento step |
-	memento := MAAntMemento new.
-
-	step := self getTMASimulationServicesProvider getStep.
-
-	self getTMATimeTravelServicesProvider
-		save: (memento save: self)
-		at: step
-]
-
-{ #category : #events }
-MAWorker >> saveForTimeTravel: aStep [
-
 	| memento |
 	memento := MAWorkerMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]

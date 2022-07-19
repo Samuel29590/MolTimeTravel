@@ -504,14 +504,13 @@ MASimulationManager >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MASimulationManager >> saveForTimeTravel: aStep [
+MASimulationManager >> saveForTimeTravel [
 
-	| memento |
+		| memento |
 	memento := MASimulationMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #events }
@@ -530,7 +529,7 @@ MASimulationManager >> start [
 
 	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 	self forEvents: TMATimeTravelEvents addProducer: #TimeTravel.
-	
+
 	isRunning := true.
 	simulationThread := nil.
 	step := 0.
@@ -552,8 +551,7 @@ MASimulationManager >> start [
 	self createInsects.
 	self createFeedingPoints.
 	self getTMATimeTravelServicesProvider
-		save: (memento save: self)
-		at: 0.
+		save: (memento save: self).
 	self startSimulationLoop.
 	self getTMASimulationToGlobalEventsNotifier started
 ]
@@ -569,12 +567,11 @@ MASimulationManager >> startSimulationLoop [
 				                    doSimulationStep := true.
 				                    (MolUtils
 					                     instanceOf: MATimeTravel
-					                     named: #TimeTravel)
-					                    ifNotNil: [ 
-						                    self getTMATimeTravelServicesProvider
-							                    isRestoring ifTrue: [ 
-							                    doSimulationStep := false ] ].
-			
+					                     named: #TimeTravel) ifNotNil: [ 
+					                    self getTMATimeTravelServicesProvider
+						                    isRestoring ifTrue: [ 
+						                    doSimulationStep := false ] ].
+
 				                    doSimulationStep ifTrue: [ 
 					                    | memento |
 					                    memento := MASimulationMemento new.
@@ -583,7 +580,7 @@ MASimulationManager >> startSimulationLoop [
 						                    simulationStepSent: step.
 
 					                    self getTMATimeTravelServicesProvider 
-						                    saveTheSimulationAt: step.
+						                    saveTheApplication.
 
 					                    (Delay forMilliseconds:
 						                     self class simulationStepDurationInMs) wait ] ] ] ]

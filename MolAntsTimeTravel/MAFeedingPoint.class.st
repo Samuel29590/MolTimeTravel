@@ -42,12 +42,11 @@ MAFeedingPoint >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-"feedingPoint notify the creation"
+	"feedingPoint notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self ] ]
 ]
 
 { #category : #'life cycle' }
@@ -63,10 +62,9 @@ MAFeedingPoint >> componentRemove [
 	"feedingPoint notify its remove"
 
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]].
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				deletionOf: self ] ]
 ]
 
 { #category : #events }
@@ -146,14 +144,14 @@ MAFeedingPoint >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAFeedingPoint >> saveForTimeTravel: aStep [
+MAFeedingPoint >> saveForTimeTravel [
 
+	
 	| memento |
-	memento := MAFeedingPointMemento  new.
+	memento := MAFeedingPointMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }

@@ -45,10 +45,9 @@ MAAnt >> componentInitialize [
 
 	"ant notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self ] ]
 ]
 
 { #category : #'life cycle' }
@@ -72,10 +71,9 @@ MAAnt >> componentRemove [
 
 	"Ant notify its remove"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]].
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				deletionOf: self ] ]
 ]
 
 { #category : #private }
@@ -242,14 +240,13 @@ MAAnt >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAAnt >> saveForTimeTravel: aStep [
+MAAnt >> saveForTimeTravel [
 
-	| memento |
+		| memento |
 	memento := MAAntMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }

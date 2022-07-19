@@ -79,8 +79,3 @@ MARole >> moveFrom: anAnt [
 { #category : #events }
 MARole >> restoreFrom: aMemento [
 ]
-
-{ #category : #role }
-MARole >> saveForTimeTravel: aStep [
-
-]

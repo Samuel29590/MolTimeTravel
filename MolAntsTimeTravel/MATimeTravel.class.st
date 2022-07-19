@@ -5,16 +5,16 @@ Class {
 	#classTraits : 'MolComponentImpl classTrait + TMATimeTravelType classTrait + TMATimeTravelServices classTrait',
 	#instVars : [
 		'history',
-		'firstStep',
-		'restoringStep',
+		'currentStep',
+		'lastStep',
 		'isSaving',
 		'isRestoring',
 		'isReplaying',
 		'isPlayingBackward',
 		'timeTravelLoop',
-		'timeTravelIndex',
 		'mySpace',
-		'returningStepView',
+		'lastStepView',
+		'currentStepView',
 		'buttonStartTimeTravel',
 		'buttonStopTimeTravel',
 		'buttonOneStepBefore',
@@ -33,16 +33,15 @@ MATimeTravel >> componentInitialize [
 
 	"here write the code corresponding to component initialisation phase"
 
-	history := OrderedCollection new.
 	isSaving := true.
 	isRestoring := false.
 	isReplaying := false.
 	isPlayingBackward := false.
 	timeTravelLoop := nil.
-	timeTravelIndex := 0.
-	firstStep := 0.
-	restoringStep := 0.
-
+	lastStep := 1.
+	currentStep := 1.
+	history := OrderedCollection new.
+	history add: MAComponentStep new.
 
 	mySpace := BlSpace new.
 	mySpace extent: 800 @ 200.
@@ -61,20 +60,21 @@ MATimeTravel >> componentRemove [
 	"here write the code corresponding to component remove phase"
 
 	self stopTimeTravelPanelLoop.
-	
+
 	inspector ifNotNil: [ inspector close ].
 	mySpace ifNotNil: [ mySpace close ].
 
 	history := nil.
-	restoringStep := nil.
+	lastStep := nil.
+	currentStep := nil.
 	isSaving := nil.
 	isRestoring := nil.
 	isReplaying := nil.
 	isPlayingBackward := nil.
 	timeTravelLoop := nil.
-	timeTravelIndex := nil.
 	mySpace := nil.
-	returningStepView := nil.
+	lastStepView := nil.
+	currentStepView := nil.
 	buttonStartTimeTravel := nil.
 	buttonStopTimeTravel := nil.
 	buttonOneStepBefore := nil.
@@ -105,11 +105,26 @@ MATimeTravel >> createTimeTravelPanel [
 			  relocate: mySpace width / 10 @ 20;
 			  background: Color transparent) text:
 			 'Returning Step :' asRopedText).
-	returningStepView := BlTextElement new
+	lastStepView := BlTextElement new
 		                     relocate: mySpace width / 10 @ 40;
 		                     background: Color transparent;
 		                     text: '000' asRopedText.
-	timeTravelPanel addChild: returningStepView.
+	timeTravelPanel addChild: lastStepView.
+	
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding returningStep to the panel."
+
+	timeTravelPanel addChild: ((BlTextElement new
+			  relocate: mySpace width / 10 *5 @ 20;
+			  background: Color transparent) text:
+			 'Returning Step :' asRopedText).
+	currentStepView := BlTextElement new
+		                     relocate: mySpace width / 10 * 5 @ 40;
+		                     background: Color transparent;
+		                     text: '000' asRopedText.
+	timeTravelPanel addChild: currentStepView.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -339,25 +354,32 @@ MATimeTravel >> createTimeTravelPanel [
 	label text: labelText.
 	buttonReplay addChild: label.
 	timeTravelPanel addChild: buttonReplay.
-	
+
 	self startTimeTravelPanelLoop
 ]
 
 { #category : #services }
-MATimeTravel >> creationOf: aComponent at: aStep [
+MATimeTravel >> creationOf: aComponent [
 
-	| stepToIndex aComponentMemento |
-	stepToIndex := aStep + 1.
+	| aComponentMemento |
 
-	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentStep new ].
 
 	aComponentMemento := MAComponentCreationMemento new save: aComponent.
 
-	(history at: stepToIndex) saveCreationOrDeletionOf: aComponentMemento.
+	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
 
-	timeTravelIndex := stepToIndex.
-	restoringStep := aStep
+]
+
+{ #category : #services }
+MATimeTravel >> deletionOf: aComponent [
+
+	|  aComponentMemento |
+
+
+	aComponentMemento := MAComponentDeletionMemento new save: aComponent.
+
+	(history at: currentStep ) saveCreationOrDeletionOf: aComponentMemento.
+
 ]
 
 { #category : #'component accessing' }
@@ -365,23 +387,16 @@ MATimeTravel >> getTMATimeTravelEventsNotifier [
 	^self eventsNotifiers at: TMATimeTravelEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMATimeTravelEvents name: nil].
 ]
 
-{ #category : #services }
-MATimeTravel >> initializationAt: aStep [
-
-	firstStep := aStep.
-	restoringStep := aStep.
-]
-
 { #category : #testing }
 MATimeTravel >> isOnTheFirstStep [
 
-	^ restoringStep = firstStep .
+	^ currentStep = 1
 ]
 
 { #category : #testing }
 MATimeTravel >> isOnTheLastStep [
 
-	^ restoringStep = (history size - 1)
+	^ currentStep = lastStep 
 ]
 
 { #category : #services }
@@ -405,10 +420,9 @@ MATimeTravel >> playBackward [
 		ifFalse: [ 
 			isPlayingBackward := true.
 			timeTravelLoop := [ 
-			                  [ restoringStep > firstStep ] whileTrue: [ 
-				                  self restoreAtStep: restoringStep - 1.
-				                  (Delay forMilliseconds:
-					                   MASimulationManager simulationStepDurationInMs)
+			                  [ currentStep > 1 ] whileTrue: [ 
+				                  self restoreOneStepBefore.
+				                  (Delay forMilliseconds: 50)
 					                  wait ].
 			                  isPlayingBackward := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
@@ -417,23 +431,6 @@ MATimeTravel >> playBackward [
 				                  Processor userBackgroundPriority.
 			timeTravelLoop name: 'Molecule TimeTravelLoop Process'.
 			timeTravelLoop resume ]
-]
-
-{ #category : #services }
-MATimeTravel >> removeOf: aComponent at: aStep [
-
-	| stepToIndex aComponentMemento |
-	stepToIndex := aStep + 1.
-
-	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentStep new ].
-	
-	aComponentMemento := MAComponentDeletionMemento new save:aComponent.
-	
-	(history at: stepToIndex) saveCreationOrDeletionOf: aComponentMemento.
-
-	timeTravelIndex := stepToIndex.
-	restoringStep := aStep
 ]
 
 { #category : #'life cycle' }
@@ -451,12 +448,10 @@ MATimeTravel >> replay [
 		ifFalse: [ 
 			isReplaying := true.
 			timeTravelLoop := [ 
-			                  [ restoringStep < (history size - 1) ] 
-				                  whileTrue: [ 
-					                  self restoreAtStep: restoringStep + 1.
-					                  (Delay forMilliseconds:
-						                   MASimulationManager
-							                   simulationStepDurationInMs) wait ].
+			                  [ currentStep < lastStep ] whileTrue: [ 
+				                  self restoreOneStepAfter .
+				                  (Delay forMilliseconds: 50)
+					                  wait ].
 			                  isReplaying := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
 			                  timeTravelLoop terminate.
@@ -469,83 +464,72 @@ MATimeTravel >> replay [
 { #category : #'life cycle' }
 MATimeTravel >> restoreAtStep: aStep [
 
-	| stepToIndex componentsLifeCycles mementos |
+	| componentsLifeCycles mementos |
 	isRestoring ifFalse: [ ^ self ].
 
-	stepToIndex := aStep + 1.
-	stepToIndex < (firstStep + 1) | (stepToIndex > history size) ifTrue: [ 
-		^ self ].
+	currentStep < 1 | (currentStep > lastStep) ifTrue: [ ^ self ].
 
 	"Undo"
-	aStep < restoringStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: stepToIndex + 1)
+	aStep < currentStep ifTrue: [ "Remove or create components"
+		componentsLifeCycles := (history at: aStep + 1)
 			                        creationsAndDeletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle undo ].
 
 		"Restoration of the state of components"
-		mementos := (history at: stepToIndex) mementos.
+		mementos := (history at: aStep) mementos.
 		mementos do: [ :memento | memento undo ] ].
 
 	"Redo"
-	restoringStep < aStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: stepToIndex)
+	currentStep < aStep ifTrue: [ "Remove or create components"
+		componentsLifeCycles := (history at: aStep)
 			                        creationsAndDeletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle redo ].
 
 		"Restoration of the state of components"
-		mementos := (history at: stepToIndex) mementos.
-		mementos do: [ :memento | memento redo ] ].
-
-	timeTravelIndex := stepToIndex.
-	restoringStep := aStep
+		mementos := (history at: aStep) mementos.
+		mementos do: [ :memento | memento redo ] ]
 ]
 
 { #category : #'life cycle' }
 MATimeTravel >> restoreOneStepAfter [
-
-	self restoreAtStep: restoringStep +1
+ currentStep < lastStep  ifTrue: [ 
+	self restoreAtStep: currentStep + 1.
+	currentStep := currentStep + 1]
 ]
 
 { #category : #'life cycle' }
 MATimeTravel >> restoreOneStepBefore [
-
-	self restoreAtStep:
-		restoringStep -1
+ currentStep > 1 ifTrue: [ 
+	self restoreAtStep: currentStep - 1.
+	currentStep := currentStep - 1]
 ]
 
 { #category : #services }
-MATimeTravel >> save: aComponentMemento at: aStep [
+MATimeTravel >> save: aComponentMemento [
 
-	| stepToIndex |
-	stepToIndex := aStep + 1.
 
-	[ history size < stepToIndex ] whileTrue: [ 
-		history add: MAComponentStep new ].
+	(history at: currentStep) save: aComponentMemento.
 
-	(history at: stepToIndex) save: aComponentMemento.
-
-	timeTravelIndex := stepToIndex.
-	restoringStep := aStep.
 ]
 
 { #category : #services }
-MATimeTravel >> saveTheSimulationAt: aStep [
+MATimeTravel >> saveTheApplication [
 
-	firstStep ifNil:[ firstStep := aStep. restoringStep := aStep ].
-	self getTMATimeTravelEventsNotifier saveForTimeTravel: aStep
+	self getTMATimeTravelEventsNotifier saveForTimeTravel.
+	currentStep := currentStep + 1.
+	lastStep := lastStep +1.
+	history add: MAComponentStep new
 ]
 
 { #category : #'life cycle' }
 MATimeTravel >> startTimeTravel [
 
 	isRestoring ifFalse: [ 
-	isSaving := false.
-	isRestoring := true.
-	timeTravelIndex := history size.
-	restoringStep := history size - 1.
-	self getTMATimeTravelEventsNotifier startTimeTravel]
+		isSaving := false.
+		isRestoring := true.
+		self getTMATimeTravelEventsNotifier startTimeTravel ]
 ]
 
 { #category : #'life cycle' }
@@ -566,16 +550,16 @@ MATimeTravel >> startTimeTravelPanelLoop [
 { #category : #'life cycle' }
 MATimeTravel >> stopTimeTravel [
 
-	isRestoring ifTrue: [
-		isPlayingBackward ifFalse:[  
-		isReplaying ifFalse: [ 
-			isReplaying := true.
-			[ restoringStep < (history size - 1) ] whileTrue: [ 
-				self restoreAtStep: restoringStep + 1 ].
-			isReplaying := false.
-			isSaving := true.
-			isRestoring := false.
-			self getTMATimeTravelEventsNotifier stopTimeTravel ] ]]
+	isRestoring ifTrue: [ 
+		isPlayingBackward ifFalse: [ 
+			isReplaying ifFalse: [ 
+				isReplaying := true.
+				[ currentStep  < lastStep  ] whileTrue: [ 
+					self restoreAtStep: currentStep  + 1 ].
+				isReplaying := false.
+				isSaving := true.
+				isRestoring := false.
+				self getTMATimeTravelEventsNotifier stopTimeTravel ] ] ]
 ]
 
 { #category : #'life cycle' }
@@ -594,8 +578,9 @@ MATimeTravel >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
-	returningStepView text: restoringStep asRopedText.
-	
+	lastStepView   text: lastStep   asRopedText.
+	currentStepView  text: currentStep  asRopedText.
+
 	isRestoring
 		ifTrue: [ 
 			buttonStartTimeTravel background: Color gray.

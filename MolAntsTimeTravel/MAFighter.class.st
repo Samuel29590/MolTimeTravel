@@ -24,12 +24,11 @@ MAFighter >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-"fighter notify the creation"
+	"fighter notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self ] ]
 ]
 
 { #category : #'life cycle' }
@@ -43,13 +42,10 @@ MAFighter >> componentRemove [
 
 	"Fighter notify its remove"
 
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ self getTMATimeTravelServicesProvider isRestoring 
-		ifFalse: [ 
+	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 			self getTMATimeTravelServicesProvider
-				removeOf: self
-				at: self getTMASimulationServicesProvider getStep ]].
-
-	
+				deletionOf: self] ]
 ]
 
 { #category : #role }
@@ -99,12 +95,11 @@ MAFighter >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAFighter >> saveForTimeTravel: aStep [
+MAFighter >> saveForTimeTravel [
 
 	| memento |
 	memento := MAFighterMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]

@@ -51,12 +51,11 @@ MAPheromones >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-"pheromones notify the creation"
+	"pheromones notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self ] ]
 ]
 
 { #category : #'life cycle' }
@@ -81,8 +80,7 @@ MAPheromones >> componentRemove [
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
 			self getTMATimeTravelServicesProvider
-				removeOf: self
-				at: self getTMASimulationServicesProvider getStep ] ]
+				deletionOf: self ] ]
 ]
 
 { #category : #'events - lifecycle' }
@@ -223,14 +221,13 @@ MAPheromones >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAPheromones >> saveForTimeTravel: aStep [
+MAPheromones >> saveForTimeTravel [
 
-	| memento |
-	memento := MAPheromonesMemento  new.
+		| memento |
+	memento := MAPheromonesMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }

@@ -38,12 +38,11 @@ MAInsect >> componentInitialize [
 
 	self forServices: TMASimulationServices useProvider: #default.
 
-"insect notify the creation"
+	"insect notify the creation"
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				creationOf: self ] ]
 ]
 
 { #category : #'life cycle' }
@@ -62,10 +61,9 @@ MAInsect >> componentRemove [
 	"insect notify its remove"
 
 	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]].
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTMATimeTravelServicesProvider
+				deletionOf: self] ]
 ]
 
 { #category : #'life cycle' }
@@ -176,14 +174,13 @@ MAInsect >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAInsect >> saveForTimeTravel: aStep [
+MAInsect >> saveForTimeTravel [
 
-	| memento |
-	memento := MAInsectMemento  new.
+		| memento |
+	memento := MAInsectMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }
