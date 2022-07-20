@@ -10,6 +10,10 @@ Class {
 { #category : #'life cycle' }
 MAFighter >> componentActivate [
 
+	"---------------------------------------------------------------"
+	"--------------------------Time Travel--------------------------"
+	"---------------------------------------------------------------"
+	"Subscription to the Time Travel event"
 	self getTMATimeTravelEventsSubscriber subscribe: self
 ]
 
@@ -18,34 +22,45 @@ MAFighter >> componentInitialize [
 
 	"Initialization of the MAFighter component."
 
+	self forServices: TMASimulationServices useProvider: #default.
+	
 	roleName := #fighter.
 
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
-
-	self forServices: TMASimulationServices useProvider: #default.
-
-	"fighter notify the creation"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTMATimeTravelServicesProvider
-				creationOf: self ] ]
+	"---------------------------------------------------------------"
+	"--------------------------Time Travel--------------------------"
+	"---------------------------------------------------------------"
+	"Connection to the TimeTravel service."
+	self forServices: TMATimeTravelServices useProvider: #default.
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self.
+			"Component saves its state."
+			self saveForTimeTravel ] ].
 ]
 
 { #category : #'life cycle' }
 MAFighter >> componentPassivate [
-
+	
+	"---------------------------------------------------------------"
+	"--------------------------Time Travel--------------------------"
+	"---------------------------------------------------------------"
+	"Unsubscribe from the Time Travel event"
 	self getTMATimeTravelEventsSubscriber unsubscribe: self
 ]
 
 { #category : #role }
 MAFighter >> componentRemove [
 
-	"Fighter notify its remove"
-
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	"---------------------------------------------------------------"
+	"--------------------------Time Travel--------------------------"
+	"---------------------------------------------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Component saves its state."
+		self saveForTimeTravel.
+		"Component notifies its deletion"
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTMATimeTravelServicesProvider
-				deletionOf: self] ]
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
 ]
 
 { #category : #role }

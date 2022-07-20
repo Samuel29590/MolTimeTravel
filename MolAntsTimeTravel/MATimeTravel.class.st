@@ -405,6 +405,14 @@ MATimeTravel >> isRestoring [
 	^ isRestoring
 ]
 
+{ #category : #services }
+MATimeTravel >> nextStep [
+
+	currentStep := currentStep + 1.
+	lastStep := lastStep + 1.
+	history add: MAComponentStep new
+]
+
 { #category : #'life cycle' }
 MATimeTravel >> playBackward [
 
@@ -518,9 +526,8 @@ MATimeTravel >> save: aComponentMemento [
 MATimeTravel >> saveTheApplication [
 
 	self getTMATimeTravelEventsNotifier saveForTimeTravel.
-	currentStep := currentStep + 1.
-	lastStep := lastStep +1.
-	history add: MAComponentStep new
+
+	self nextStep.
 ]
 
 { #category : #'life cycle' }
@@ -554,8 +561,8 @@ MATimeTravel >> stopTimeTravel [
 		isPlayingBackward ifFalse: [ 
 			isReplaying ifFalse: [ 
 				isReplaying := true.
-				[ currentStep  < lastStep  ] whileTrue: [ 
-					self restoreAtStep: currentStep  + 1 ].
+				[ currentStep < lastStep ] whileTrue: [ 
+					self restoreOneStepAfter  ].
 				isReplaying := false.
 				isSaving := true.
 				isRestoring := false.

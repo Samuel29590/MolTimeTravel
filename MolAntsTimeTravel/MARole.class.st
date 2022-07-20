@@ -9,22 +9,6 @@ Class {
 	#category : #MolAntsTimeTravel
 }
 
-{ #category : #'life cycle' }
-MARole >> componentActivate [
-
-	self getTMATimeTravelEventsSubscriber subscribe: self
-]
-
-{ #category : #'life cycle' }
-MARole >> componentPassivate [
-
-	
-.
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
-
-	
-]
-
 { #category : #accessing }
 MARole >> getRoleName [
 
