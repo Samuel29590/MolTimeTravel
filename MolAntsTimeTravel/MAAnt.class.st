@@ -26,16 +26,24 @@ MAAnt >> componentActivate [
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
 	
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Subscription to the Time Travel event"
 	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAAnt >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	"Connection to the TimeTravel service."
+	self forServices: TMATimeTravelServices useProvider: #default.
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAAnt component."
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -48,17 +56,12 @@ MAAnt >> componentInitialize [
 	ageInMs := 0.
 	position := MASimulationManager simulationAntHillPosition.
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
-	"Connection to the TimeTravel service."
-	self forServices: TMATimeTravelServices useProvider: #default.
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self.
 			"Component saves its state."
 			self saveForTimeTravel ] ]
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -68,25 +71,23 @@ MAAnt >> componentPassivate [
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
 	
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAAnt >> componentRemove [
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		"Component saves its state."
-		self saveForTimeTravel.
-		"Component notifies its deletion"
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
 			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
 
 	"Removing the MAAnt component."
 

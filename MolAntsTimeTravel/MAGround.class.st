@@ -49,15 +49,19 @@ MAGround >> componentActivate [
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAGround >> componentInitialize [
+
+	"--------------------------Time Travel--------------------------"
+	"Connection to the TimeTravel service."
+	self forServices: TMATimeTravelServices useProvider: #default.
+	"---------------------------------------------------------------"
 
 	"Initialization of the MAGround component."
 	
@@ -70,12 +74,6 @@ MAGround >> componentInitialize [
 	mySpace title: 'MolAnts Simulation'.
 	self createInfoPanel.
 	self startViewLoop.
-	
-	"---------------------------------------------------------------"
-	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
-	"Connection to the TimeTravel service."
-	self forServices: TMATimeTravelServices useProvider: #default.
 
 ]
 
@@ -86,11 +84,10 @@ MAGround >> componentPassivate [
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
 	
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -102,17 +99,17 @@ MAGround >> componentRemove [
 	mySpace ifNotNil: [ mySpace close ].
 	mySpace := nil.
 	
-refreshing:= nil.
- stepView:= nil.
- nbInsectsView:= nil.
- nbDeliveredView:= nil.
- nbPheromonesView:= nil.
- nbEggsView:= nil.
- nbAntsView:= nil.
- nbFeedingPointView:= nil.
- buttonReplay:= nil.
- buttonPlay:= nil.
- buttonPause:= nil.
+	refreshing:= nil.
+ 	stepView:= nil.
+ 	nbInsectsView:= nil.
+ 	nbDeliveredView:= nil.
+ 	nbPheromonesView:= nil.
+ 	nbEggsView:= nil.
+ 	nbAntsView:= nil.
+ 	nbFeedingPointView:= nil.
+ 	buttonReplay:= nil.
+ 	buttonPlay:= nil.
+	buttonPause:= nil.
 ]
 
 { #category : #initialization }
@@ -629,7 +626,7 @@ MAGround >> setRefreshingTo: anInteger [
 { #category : #'events - lifecycle' }
 MAGround >> simulationStepSent: aStep [
 
-
+	
 ]
 
 { #category : #testing }
@@ -677,10 +674,15 @@ MAGround >> updateInfoPanel [
 	nbInsectsView text: self getInsects size asRopedText.
 	nbDeliveredView text:
 		self getTMASimulationServicesProvider getStorage asRopedText.
-	nbPheromonesView text:
-		(self getTMAPheromoneServicesProvider getPheromonesDict size
-		 + self getTMAPheromoneServicesProvider getPheromonesReturnDict size)
-			asRopedText.
+
+	self getTMAPheromoneServicesProvider getPheromonesDict
+		ifNil: [ nbPheromonesView text: 0 asRopedText ]
+		ifNotNil: [ 
+			nbPheromonesView text:
+				(self getTMAPheromoneServicesProvider getPheromonesDict size
+				 +
+				 self getTMAPheromoneServicesProvider getPheromonesReturnDict size)
+					asRopedText ].
 
 	nbFeedingPointView text: self getFeedingPoints size asRopedText.
 
@@ -697,10 +699,12 @@ MAGround >> updateInfoPanel [
 			buttonPause background: Color orange ]
 		ifFalse: [ 
 			buttonPause background: Color gray.
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-			self getTMATimeTravelServicesProvider isRestoring
-				ifTrue: [ buttonPlay background: Color gray ]
-				ifFalse: [ buttonPlay background: Color green ]]ifNil:[buttonPlay background: Color green.] ]
+			(MolUtils instanceOf: MATimeTravel named: #default)
+				ifNotNil: [ 
+					self getTMATimeTravelServicesProvider isRestoring
+						ifTrue: [ buttonPlay background: Color gray ]
+						ifFalse: [ buttonPlay background: Color green ] ]
+				ifNil: [ buttonPlay background: Color green ] ]
 ]
 
 { #category : #events }

@@ -42,7 +42,7 @@ MATimeTravel >> componentInitialize [
 	currentStep := 1.
 	history := OrderedCollection new.
 	history add: MAComponentStep new.
-
+	
 	mySpace := BlSpace new.
 	mySpace extent: 800 @ 200.
 	mySpace title: 'TimeTravel Panel'.
@@ -363,10 +363,11 @@ MATimeTravel >> creationOf: aComponent [
 
 	| aComponentMemento |
 
-
 	aComponentMemento := MAComponentCreationMemento new save: aComponent.
 
 	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
+	
+	self saveTheApplication .
 
 ]
 
@@ -379,7 +380,8 @@ MATimeTravel >> deletionOf: aComponent [
 	aComponentMemento := MAComponentDeletionMemento new save: aComponent.
 
 	(history at: currentStep ) saveCreationOrDeletionOf: aComponentMemento.
-
+	
+	self saveTheApplication .
 ]
 
 { #category : #'component accessing' }
@@ -430,7 +432,7 @@ MATimeTravel >> playBackward [
 			timeTravelLoop := [ 
 			                  [ currentStep > 1 ] whileTrue: [ 
 				                  self restoreOneStepBefore.
-				                  (Delay forMilliseconds: 50)
+				                  (Delay forMilliseconds: 10)
 					                  wait ].
 			                  isPlayingBackward := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
@@ -458,7 +460,7 @@ MATimeTravel >> replay [
 			timeTravelLoop := [ 
 			                  [ currentStep < lastStep ] whileTrue: [ 
 				                  self restoreOneStepAfter .
-				                  (Delay forMilliseconds: 50)
+				                  (Delay forMilliseconds: 10)
 					                  wait ].
 			                  isReplaying := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
@@ -517,9 +519,7 @@ MATimeTravel >> restoreOneStepBefore [
 { #category : #services }
 MATimeTravel >> save: aComponentMemento [
 
-
 	(history at: currentStep) save: aComponentMemento.
-
 ]
 
 { #category : #services }

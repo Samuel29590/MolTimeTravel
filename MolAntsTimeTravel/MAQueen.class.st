@@ -10,57 +10,58 @@ Class {
 { #category : #'life cycle' }
 MAQueen >> componentActivate [
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAQueen >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	"Connection to the TimeTravel service."
+	self forServices: TMATimeTravelServices useProvider: #default.
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAQueen component."
 
 	self forServices: TMASimulationServices useProvider: #default.
 	
 	roleName := #queen.
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
-	"Connection to the TimeTravel service."
-	self forServices: TMATimeTravelServices useProvider: #default.
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self.
 			"Component saves its state."
 			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAQueen >> componentPassivate [
 	
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAQueen >> componentRemove [
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		"Component saves its state."
-		self saveForTimeTravel.
-		"Component notifies its deletion"
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
 			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #role }

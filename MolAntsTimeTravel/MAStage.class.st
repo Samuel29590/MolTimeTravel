@@ -22,11 +22,10 @@ Class {
 { #category : #'life cycle' }
 MAStage >> componentActivate [
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 
 	
 ]
@@ -34,6 +33,15 @@ MAStage >> componentActivate [
 { #category : #'life cycle' }
 MAStage >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	"Connection to the TimeTravel service."
+	self forServices: TMATimeTravelServices useProvider: #default.
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAStage component."
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -46,41 +54,34 @@ MAStage >> componentInitialize [
 	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
 	self initializeRole.
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
-	"Connection to the TimeTravel service."
-	self forServices: TMATimeTravelServices useProvider: #default.
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self.
 			"Component saves its state."
 			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAStage >> componentPassivate [
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAStage >> componentRemove [
 
-	"---------------------------------------------------------------"
 	"--------------------------Time Travel--------------------------"
-	"---------------------------------------------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		"Component saves its state."
-		self saveForTimeTravel.
-		"Component notifies its deletion"
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
 			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
 
 	"Removing of the MAStage component."
 
