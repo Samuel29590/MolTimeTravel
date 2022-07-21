@@ -48,7 +48,10 @@ MAStageMemento >> save: aStage [
 	eggStateDurationInMs := aStage getEggStateDurationInMs.
 	adultStateDurationInMs := aStage getAdultStateDurationInMs.
 	stageName := aStage getStageName.
-	role := aStage getRole class -> aStage getRole componentName
+	
+	aStage getRole ifNil:[role := nil] ifNotNil:[	role := aStage getRole class -> aStage getRole componentName]
+	
+
 ]
 
 { #category : #'undo - undo' }

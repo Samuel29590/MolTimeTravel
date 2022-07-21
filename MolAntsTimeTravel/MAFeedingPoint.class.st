@@ -34,9 +34,11 @@ MAFeedingPoint >> componentActivate [
 MAFeedingPoint >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	"Connection to the TimeTravel service."
-	self forServices: TMATimeTravelServices useProvider: #default.
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
 		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
 			"Component notifies its creation" 
 			self getTMATimeTravelServicesProvider creationOf: self ] ].

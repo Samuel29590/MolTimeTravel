@@ -59,8 +59,14 @@ MAGround >> componentActivate [
 MAGround >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	"Connection to the TimeTravel service."
-	self forServices: TMATimeTravelServices useProvider: #default.
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Initialization of the MAGround component."
@@ -75,6 +81,12 @@ MAGround >> componentInitialize [
 	self createInfoPanel.
 	self startViewLoop.
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -93,12 +105,20 @@ MAGround >> componentPassivate [
 { #category : #'life cycle' }
 MAGround >> componentRemove [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
+
 	"Removing the MAGround component."
 
 	self stopViewLoop.
 	mySpace ifNotNil: [ mySpace close ].
 	mySpace := nil.
-	
 	refreshing:= nil.
  	stepView:= nil.
  	nbInsectsView:= nil.
@@ -613,6 +633,22 @@ MAGround >> initialize [
 MAGround >> isRunning [
 
 	^ self getTMASimulationServicesProvider isRunning. 
+]
+
+{ #category : #events }
+MAGround >> restoreFrom: aMemento [
+
+	
+]
+
+{ #category : #events }
+MAGround >> saveForTimeTravel [
+
+	| memento |
+	memento := MAGroundMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
 ]
 
 { #category : #initialization }
