@@ -230,17 +230,21 @@ MAPheromones >> restoreFrom: aMemento [
 	maxIntensity := aMemento getMaxIntensity.
 
 
-	pheromonesDict := Dictionary new.
-	aMemento getPheromonesDict keysAndValuesDo: [ :k :v | 
-		pheromonesDict
-			at: k
-			put: (MolUtils instanceOf: v key key named: v key value) -> v value ].
-
+	aMemento getPheromonesDict
+		ifNotNil: [ 
+			pheromonesDict := Dictionary new.
+			aMemento getPheromonesDict keysAndValuesDo: [ :k :v | 
+				pheromonesDict
+					at: k
+					put:
+					(MolUtils instanceOf: v key key named: v key value) -> v value ] ]
+		ifNil: [ pheromonesDict := nil ].
+	aMemento getPheromonesReturnDict
+		ifNotNil: [ 
 	pheromonesReturnDict := Dictionary new.
 	aMemento getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
-		pheromonesReturnDict
-			at: k
-			put:v ]
+		pheromonesReturnDict at: k put: v ]] ifNil:[pheromonesReturnDict := nil.
+	].
 ]
 
 { #category : #events }

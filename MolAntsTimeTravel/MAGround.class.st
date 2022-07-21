@@ -59,19 +59,19 @@ MAGround >> componentActivate [
 MAGround >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
+
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
 		self forServices: TMATimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
 		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
 			self getTMATimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Initialization of the MAGround component."
-	
+
 	self forServices: TMASimulationServices useProvider: #default.
+	self forServices: TMAPheromoneServices useProvider: #Pheromones.
 
 	refreshing := 1.
 	mySpace := self openInNewSpace extent:
@@ -82,11 +82,9 @@ MAGround >> componentInitialize [
 	self startViewLoop.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
+			self saveForTimeTravel ] ]
 ]
 
 { #category : #'life cycle' }
@@ -176,16 +174,8 @@ MAGround >> createInfoPanel [
 				                on: BlClickEvent
 				                do: [ :anEvent | 
 					                buttonPause isVisible ifTrue: [ 
-							                self isRunning ifTrue: [ 
-									                (MolUtils
-										                 instanceOf: MATimeTravel
-										                 named: #default)
-										                ifNotNil: [ 
-											                self getTMATimeTravelServicesProvider
-												                isRestoring ifFalse: [ 
-													                MASimulationManager pauseSimulation ] ]
-										                ifNil: [ 
-											                MASimulationManager pauseSimulation ] ] ].
+							                self getTMASimulationServicesProvider
+								                pauseSimulation ].
 					                anEvent consumed: true ]).
 	labelText := 'Pause' asRopedText
 		             foreground: Color black;
@@ -223,11 +213,8 @@ MAGround >> createInfoPanel [
 				               on: BlClickEvent
 				               do: [ :anEvent | 
 					               buttonPlay isVisible ifTrue: [ 
-							               self isRunning ifFalse: [ 
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-									               self getTMATimeTravelServicesProvider
-										               isRestoring ifFalse: [ 
-											               MASimulationManager playSimulation ]]ifNil:[MASimulationManager playSimulation ] ] ].
+							               self getTMASimulationServicesProvider playSimulation ].
+										                
 					               anEvent consumed: true ]).
 	labelText := 'Play' asRopedText
 		             foreground: Color black;

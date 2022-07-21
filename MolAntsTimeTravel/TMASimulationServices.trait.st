@@ -63,6 +63,16 @@ TMASimulationServices >> isRunning [
 ]
 
 { #category : #services }
+TMASimulationServices >> pauseSimulation [
+
+	
+]
+
+{ #category : #services }
+TMASimulationServices >> playSimulation [
+]
+
+{ #category : #services }
 TMASimulationServices >> start [
 ]
 

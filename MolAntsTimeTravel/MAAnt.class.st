@@ -257,7 +257,10 @@ MAAnt >> restoreFrom: aMemento [
 
 	position := aMemento getPosition.
 	ageInMs := aMemento getAgeInMs.
-	stage := MolUtils instanceOf: aMemento getStage key named: aMemento getStage value
+	aMemento getStage ifNil:[stage := nil] ifNotNil:[
+	stage := MolUtils
+		         instanceOf: aMemento getStage key
+		         named: aMemento getStage value ].
 ]
 
 { #category : #events }

@@ -257,10 +257,11 @@ MAStage >> restoreFrom: aMemento [
 
 	eggStateDurationInMs := aMemento getEggStateDurationInMs.
 	adultStateDurationInMs := aMemento getAdultStateDurationInMs.
-	stageName := aMemento getStageName .
+	stageName := aMemento getStageName.
+	aMemento getRole ifNil: [ role := nil ] ifNotNil: [ 
 	role := MolUtils
 		        instanceOf: aMemento getRole key
-		        named: aMemento getRole value
+		        named: aMemento getRole value]
 ]
 
 { #category : #events }

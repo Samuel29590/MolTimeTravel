@@ -42,20 +42,6 @@ Class {
 	#category : #MolAntsTimeTravel
 }
 
-{ #category : #scripts }
-MASimulationManager class >> pauseSimulation [
-	<script>
-	
-	self passivate
-]
-
-{ #category : #scripts }
-MASimulationManager class >> playSimulation [
-	<script>
-	
-	self activate.
-]
-
 { #category : #properties }
 MASimulationManager class >> simulationAntHillPosition [
 
@@ -417,6 +403,20 @@ MASimulationManager >> isRunning [
 	^ isRunning ifNil: [ isRunning := false ].
 ]
 
+{ #category : #services }
+MASimulationManager >> pauseSimulation [
+
+	isRunning ifTrue:[
+	isRunning := false.	
+		]
+]
+
+{ #category : #services }
+MASimulationManager >> playSimulation [
+
+	isRunning ifFalse: [ isRunning := true ]
+]
+
 { #category : #events }
 MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anotherPoint [
 
@@ -588,13 +588,16 @@ MASimulationManager >> startSimulationLoop [
 			                    isRunning ifTrue: [ 
 				                    | doSimulationStep |
 				                    doSimulationStep := true.
+				
+				                    "--------------------------Time Travel--------------------------"
 				                    (MolUtils
 					                     instanceOf: MATimeTravel
 					                     named: #default) ifNotNil: [ 
 					                    self getTMATimeTravelServicesProvider
 						                    isRestoring ifTrue: [ 
 						                    doSimulationStep := false ] ].
-
+				                    "---------------------------------------------------------------"
+				
 				                    doSimulationStep ifTrue: [ 
 					                    | memento |
 					                    memento := MASimulationMemento new.
