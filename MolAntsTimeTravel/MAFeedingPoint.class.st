@@ -22,13 +22,31 @@ Class {
 { #category : #'life cycle' }
 MAFeedingPoint >> componentActivate [
 
-
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-	self getTMATimeTravelEventsSubscriber subscribe: self
+
+	"--------------------------Time Travel--------------------------"
+	"Subscription to the Time Travel event"
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAFeedingPoint >> componentInitialize [
+
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
+	"Initialization of the MAFeedingPoint component."
+	
+	self forServices: TMASimulationServices useProvider: #default.
 
 	capacity := 10.
 	position := (Random new
@@ -38,35 +56,43 @@ MAFeedingPoint >> componentInitialize [
 			             nextIntegerBetween: 1
 			             and: MASimulationManager simulationHeight).
 
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
-
-	self forServices: TMASimulationServices useProvider: #default.
-
-"feedingPoint notify the creation"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAFeedingPoint >> componentPassivate [
 
+	"Passivating the MAFeedingPoint component."
+
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
+
+	"--------------------------Time Travel--------------------------"
+	"Unsubscribe from the Time Travel event"
 	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAFeedingPoint >> componentRemove [
 
-	"feedingPoint notify its remove"
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
+	
+	"Removing the MAFeedingPoint component."
 
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]].
+	position := nil.
+	capacity := nil
 ]
 
 { #category : #events }
@@ -146,14 +172,14 @@ MAFeedingPoint >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAFeedingPoint >> saveForTimeTravel: aStep [
+MAFeedingPoint >> saveForTimeTravel [
 
+	
 	| memento |
-	memento := MAFeedingPointMemento  new.
+	memento := MAFeedingPointMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }

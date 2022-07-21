@@ -41,17 +41,23 @@ MAPheromonesMemento >> save: aPheromones [
 	componentName := aPheromones componentName.
 	maxIntensity := aPheromones getMaxIntensity.
 
-	dict := Dictionary new.
-	aPheromones getPheromonesDict keysAndValuesDo: [ :k :v | 
-		| assoc |
-		assoc := v key class -> v key componentName -> v value.
-		dict at: k put: assoc ].
-	pheromonesDict := dict.
+	aPheromones getPheromonesDict
+		ifNotNil: [ 
+			dict := Dictionary new.
+			aPheromones getPheromonesDict keysAndValuesDo: [ :k :v | 
+				| assoc |
+				assoc := v key class -> v key componentName -> v value.
+				dict at: k put: assoc ].
+			pheromonesDict := dict ]
+		ifNil: [ pheromonesDict := nil ].
 
+	aPheromones getPheromonesReturnDict
+		ifNotNil: [ 
 	dictReturn := Dictionary new.
-	aPheromones getPheromonesReturnDict keysAndValuesDo: [ :k :v |
-		dictReturn at: k put: v ].
-	pheromonesReturnDict := dictReturn
+			aPheromones getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
+				dictReturn at: k put: v ].
+			pheromonesReturnDict := dictReturn ]
+		ifNil: [ pheromonesReturnDict := nil ]
 ]
 
 { #category : #'undo - undo' }

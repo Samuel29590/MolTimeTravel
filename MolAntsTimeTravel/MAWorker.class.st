@@ -78,47 +78,67 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 { #category : #'life cycle' }
 MAWorker >> componentActivate [
 
-	self getTMATimeTravelEventsSubscriber subscribe: self
+	"--------------------------Time Travel--------------------------"
+	"Subscription to the Time Travel event"
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAWorker >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAWorker component."
 
+	self forServices: TMASimulationServices useProvider: #default.
+	
 	roleName := #worker.
 	phase := #explore.
 	oldPositions := OrderedCollection new.
 
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
-
-	self forServices: TMASimulationServices useProvider: #default.
-
-"worker notify the creation"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAWorker >> componentPassivate [
-
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	
+	"--------------------------Time Travel--------------------------"
+	"Unsubscribe from the Time Travel event"
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAWorker >> componentRemove [
 
-	"Worker notify its remove"
-
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
-
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
 	
+	"Removing the MAWorker component."
+
+	phase := nil.
+	oldPositions := nil
 ]
 
 { #category : #role }
@@ -505,23 +525,9 @@ MAWorker >> restoreFrom: aMemento [
 { #category : #events }
 MAWorker >> saveForTimeTravel [
 
-	| memento step |
-	memento := MAAntMemento new.
-
-	step := self getTMASimulationServicesProvider getStep.
-
-	self getTMATimeTravelServicesProvider
-		save: (memento save: self)
-		at: step
-]
-
-{ #category : #events }
-MAWorker >> saveForTimeTravel: aStep [
-
 	| memento |
 	memento := MAWorkerMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]

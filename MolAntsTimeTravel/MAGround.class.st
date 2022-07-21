@@ -47,19 +47,31 @@ MAGround >> componentActivate [
 
 	"Activation of the MAGround component."
 
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self
-	
-.self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
+
+	"--------------------------Time Travel--------------------------"
+	"Subscription to the Time Travel event"
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAGround >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+
 	"Initialization of the MAGround component."
 
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
-
 	self forServices: TMASimulationServices useProvider: #default.
+	self forServices: TMAPheromoneServices useProvider: #Pheromones.
 
 	refreshing := 1.
 	mySpace := self openInNewSpace extent:
@@ -67,7 +79,12 @@ MAGround >> componentInitialize [
 		           @ (MASimulationManager simulationHeight + 300).
 	mySpace title: 'MolAnts Simulation'.
 	self createInfoPanel.
-	self startViewLoop
+	self startViewLoop.
+
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
+			self saveForTimeTravel ] ]
 ]
 
 { #category : #'life cycle' }
@@ -75,31 +92,42 @@ MAGround >> componentPassivate [
 
 	"Passivating the MAGround component."
 
-	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
-.
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
+	
+	"--------------------------Time Travel--------------------------"
+	"Unsubscribe from the Time Travel event"
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAGround >> componentRemove [
+
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
 
 	"Removing the MAGround component."
 
 	self stopViewLoop.
 	mySpace ifNotNil: [ mySpace close ].
 	mySpace := nil.
-	
-refreshing:= nil.
- stepView:= nil.
- nbInsectsView:= nil.
- nbDeliveredView:= nil.
- nbPheromonesView:= nil.
- nbEggsView:= nil.
- nbAntsView:= nil.
- nbFeedingPointView:= nil.
- buttonReplay:= nil.
- buttonPlay:= nil.
- buttonPause:= nil.
+	refreshing:= nil.
+ 	stepView:= nil.
+ 	nbInsectsView:= nil.
+ 	nbDeliveredView:= nil.
+ 	nbPheromonesView:= nil.
+ 	nbEggsView:= nil.
+ 	nbAntsView:= nil.
+ 	nbFeedingPointView:= nil.
+ 	buttonReplay:= nil.
+ 	buttonPlay:= nil.
+	buttonPause:= nil.
 ]
 
 { #category : #initialization }
@@ -146,16 +174,8 @@ MAGround >> createInfoPanel [
 				                on: BlClickEvent
 				                do: [ :anEvent | 
 					                buttonPause isVisible ifTrue: [ 
-							                self isRunning ifTrue: [ 
-									                (MolUtils
-										                 instanceOf: MATimeTravel
-										                 named: #TimeTravel)
-										                ifNotNil: [ 
-											                self getTMATimeTravelServicesProvider
-												                isRestoring ifFalse: [ 
-													                MASimulationManager pauseSimulation ] ]
-										                ifNil: [ 
-											                MASimulationManager pauseSimulation ] ] ].
+							                self getTMASimulationServicesProvider
+								                pauseSimulation ].
 					                anEvent consumed: true ]).
 	labelText := 'Pause' asRopedText
 		             foreground: Color black;
@@ -193,11 +213,8 @@ MAGround >> createInfoPanel [
 				               on: BlClickEvent
 				               do: [ :anEvent | 
 					               buttonPlay isVisible ifTrue: [ 
-							               self isRunning ifFalse: [ 
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-									               self getTMATimeTravelServicesProvider
-										               isRestoring ifFalse: [ 
-											               MASimulationManager playSimulation ]]ifNil:[MASimulationManager playSimulation ] ] ].
+							               self getTMASimulationServicesProvider playSimulation ].
+										                
 					               anEvent consumed: true ]).
 	labelText := 'Play' asRopedText
 		             foreground: Color black;
@@ -605,6 +622,22 @@ MAGround >> isRunning [
 	^ self getTMASimulationServicesProvider isRunning. 
 ]
 
+{ #category : #events }
+MAGround >> restoreFrom: aMemento [
+
+	
+]
+
+{ #category : #events }
+MAGround >> saveForTimeTravel [
+
+	| memento |
+	memento := MAGroundMemento new.
+
+	self getTMATimeTravelServicesProvider
+		save: (memento save: self)
+]
+
 { #category : #initialization }
 MAGround >> setRefreshingTo: anInteger [
 
@@ -616,7 +649,7 @@ MAGround >> setRefreshingTo: anInteger [
 { #category : #'events - lifecycle' }
 MAGround >> simulationStepSent: aStep [
 
-
+	
 ]
 
 { #category : #testing }
@@ -632,7 +665,7 @@ MAGround >> startViewLoop [
 		            % refreshing = 0 ifFalse: [ doUpdateView := false ].
 
 						
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		            self getTMATimeTravelServicesProvider isRestoring 
 			            ifTrue: [ doUpdateView := true ]].
 
@@ -664,10 +697,15 @@ MAGround >> updateInfoPanel [
 	nbInsectsView text: self getInsects size asRopedText.
 	nbDeliveredView text:
 		self getTMASimulationServicesProvider getStorage asRopedText.
-	nbPheromonesView text:
-		(self getTMAPheromoneServicesProvider getPheromonesDict size
-		 + self getTMAPheromoneServicesProvider getPheromonesReturnDict size)
-			asRopedText.
+
+	self getTMAPheromoneServicesProvider getPheromonesDict
+		ifNil: [ nbPheromonesView text: 0 asRopedText ]
+		ifNotNil: [ 
+			nbPheromonesView text:
+				(self getTMAPheromoneServicesProvider getPheromonesDict size
+				 +
+				 self getTMAPheromoneServicesProvider getPheromonesReturnDict size)
+					asRopedText ].
 
 	nbFeedingPointView text: self getFeedingPoints size asRopedText.
 
@@ -684,10 +722,12 @@ MAGround >> updateInfoPanel [
 			buttonPause background: Color orange ]
 		ifFalse: [ 
 			buttonPause background: Color gray.
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-			self getTMATimeTravelServicesProvider isRestoring
-				ifTrue: [ buttonPlay background: Color gray ]
-				ifFalse: [ buttonPlay background: Color green ]]ifNil:[buttonPlay background: Color green.] ]
+			(MolUtils instanceOf: MATimeTravel named: #default)
+				ifNotNil: [ 
+					self getTMATimeTravelServicesProvider isRestoring
+						ifTrue: [ buttonPlay background: Color gray ]
+						ifFalse: [ buttonPlay background: Color green ] ]
+				ifNil: [ buttonPlay background: Color green ] ]
 ]
 
 { #category : #events }

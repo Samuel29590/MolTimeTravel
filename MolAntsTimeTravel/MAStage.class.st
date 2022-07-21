@@ -22,7 +22,10 @@ Class {
 { #category : #'life cycle' }
 MAStage >> componentActivate [
 
-.self getTMATimeTravelEventsSubscriber subscribe: self.
+	"--------------------------Time Travel--------------------------"
+	"Subscription to the Time Travel event"
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 
 	
 ]
@@ -30,9 +33,18 @@ MAStage >> componentActivate [
 { #category : #'life cycle' }
 MAStage >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAStage component."
-
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
 
 	self forServices: TMASimulationServices useProvider: #default.
 
@@ -44,37 +56,41 @@ MAStage >> componentInitialize [
 	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
 	self initializeRole.
 
-	"stage notify the creation"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAStage >> componentPassivate [
 
-	
-.
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	"--------------------------Time Travel--------------------------"
+	"Unsubscribe from the Time Travel event"
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAStage >> componentRemove [
+
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
 
 	"Removing of the MAStage component."
 
 	eggStateDurationInMs := nil.
 	adultStateDurationInMs := nil.
 	stageName := nil.
-	role := nil.
-
-	"stage notify its remove"	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	role := nil
 ]
 
 { #category : #private }
@@ -193,7 +209,7 @@ MAStage >> initializeRole [
 
 	| x |
 	
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ]].
 
 
@@ -241,20 +257,19 @@ MAStage >> restoreFrom: aMemento [
 
 	eggStateDurationInMs := aMemento getEggStateDurationInMs.
 	adultStateDurationInMs := aMemento getAdultStateDurationInMs.
-	stageName := aMemento getStageName .
+	stageName := aMemento getStageName.
+	aMemento getRole ifNil: [ role := nil ] ifNotNil: [ 
 	role := MolUtils
 		        instanceOf: aMemento getRole key
-		        named: aMemento getRole value
+		        named: aMemento getRole value]
 ]
 
 { #category : #events }
-MAStage >> saveForTimeTravel: aStep [
+MAStage >> saveForTimeTravel [
 
-	| memento |
+		| memento |
 	memento := MAStageMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
-	
 ]

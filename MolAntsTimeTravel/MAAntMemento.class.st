@@ -38,15 +38,11 @@ MAAntMemento >> save: anAnt [
 
 	componentClass := anAnt class.
 	componentName := anAnt componentName.
-	
-	anAnt getPosition ifNil:[
-		
-	Transcript show: 'An ant save a nil position !!!';cr.
-		].
-	
+
 	position := anAnt getPosition.
 	ageInMs := anAnt getAgeInMs.
-	stage := anAnt getStage class -> anAnt getStage componentName
+	anAnt getStage ifNil:[stage:= nil] ifNotNil: [ 
+	stage := anAnt getStage class -> anAnt getStage componentName ].
 ]
 
 { #category : #'undo - undo' }

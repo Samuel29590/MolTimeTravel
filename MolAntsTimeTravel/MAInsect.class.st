@@ -24,26 +24,41 @@ MAInsect >> componentActivate [
 
 	"Activation of the MAInsect component."
 
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self.self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
+
+	"--------------------------Time Travel--------------------------"
+	"Subscription to the Time Travel event"
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAInsect >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAInsect component."
 
-	ageInMs := 0.
-
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
-
 	self forServices: TMASimulationServices useProvider: #default.
+	
+	ageInMs := 0.
+	position := ((Random new nextIntegerBetween: 1 and: MASimulationManager simulationWidth) @ (Random new nextIntegerBetween: 1 and: MASimulationManager simulationHeight)).
 
-"insect notify the creation"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -51,21 +66,30 @@ MAInsect >> componentPassivate [
 
 	"Passivating the MAInsect component."
 
-	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
-.
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
+	
+	"--------------------------Time Travel--------------------------"
+	"Unsubscribe from the Time Travel event"
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAInsect >> componentRemove [
 
-	"insect notify its remove"
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
+	
+	"Removing the MAInsect component."
 
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			removeOf: self
-			at: self getTMASimulationServicesProvider getStep ]].
+	position := nil.
+	ageInMs := nil
 ]
 
 { #category : #'life cycle' }
@@ -176,14 +200,13 @@ MAInsect >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MAInsect >> saveForTimeTravel: aStep [
+MAInsect >> saveForTimeTravel [
 
 	| memento |
-	memento := MAInsectMemento  new.
+	memento := MAInsectMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }

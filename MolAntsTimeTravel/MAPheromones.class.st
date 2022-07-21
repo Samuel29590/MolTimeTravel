@@ -35,28 +35,42 @@ MAPheromones >> componentActivate [
 
 	"Activation of the MAPheromones component."
 
-	self getTMASimulationToGlobalEventsSubscriber subscribe: self.self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
+
+	"--------------------------Time Travel--------------------------"
+	"Subscription to the Time Travel event"
+	self getTMATimeTravelEventsSubscriber subscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAPheromones >> componentInitialize [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		"Connection to the TimeTravel service."
+		self forServices: TMATimeTravelServices useProvider: #default.
+		"Subscription to the Time Travel event"
+		self getTMATimeTravelEventsSubscriber subscribe: self.
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component notifies its creation" 
+			self getTMATimeTravelServicesProvider creationOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Initialization of the MAPheromones component."
 
+	self forServices: TMASimulationServices useProvider: #default.
+	
 	maxIntensity := 100.
 	pheromonesDict := Dictionary new.
 	pheromonesReturnDict := Dictionary new.
 
-	self forServices: TMATimeTravelServices useProvider: #TimeTravel.
-
-	self forServices: TMASimulationServices useProvider: #default.
-
-"pheromones notify the creation"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-		self getTMATimeTravelServicesProvider
-			creationOf: self
-			at: self getTMASimulationServicesProvider getStep ]]
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel ] ].
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -64,25 +78,32 @@ MAPheromones >> componentPassivate [
 
 	"Passivating the MAPheromones component."
 
-	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self
-.
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
+	
+	"--------------------------Time Travel--------------------------"
+	"Unsubscribe from the Time Travel event"
+	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAPheromones >> componentRemove [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+			"Component saves its state."
+			self saveForTimeTravel.
+			"Component notifies its deletion"
+			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+	"---------------------------------------------------------------"
+	
 	"Removing the MAPheromones component."
 
+	maxIntensity := nil.
 	pheromonesDict := nil.
-	pheromonesReturnDict := nil.
+	pheromonesReturnDict := nil
 
-	"Pheromones notify its remove"
-	(MolUtils instanceOf: MATimeTravel named: #TimeTravel) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTMATimeTravelServicesProvider
-				removeOf: self
-				at: self getTMASimulationServicesProvider getStep ] ]
 ]
 
 { #category : #'events - lifecycle' }
@@ -209,28 +230,31 @@ MAPheromones >> restoreFrom: aMemento [
 	maxIntensity := aMemento getMaxIntensity.
 
 
-	pheromonesDict := Dictionary new.
-	aMemento getPheromonesDict keysAndValuesDo: [ :k :v | 
-		pheromonesDict
-			at: k
-			put: (MolUtils instanceOf: v key key named: v key value) -> v value ].
-
+	aMemento getPheromonesDict
+		ifNotNil: [ 
+			pheromonesDict := Dictionary new.
+			aMemento getPheromonesDict keysAndValuesDo: [ :k :v | 
+				pheromonesDict
+					at: k
+					put:
+					(MolUtils instanceOf: v key key named: v key value) -> v value ] ]
+		ifNil: [ pheromonesDict := nil ].
+	aMemento getPheromonesReturnDict
+		ifNotNil: [ 
 	pheromonesReturnDict := Dictionary new.
 	aMemento getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
-		pheromonesReturnDict
-			at: k
-			put:v ]
+		pheromonesReturnDict at: k put: v ]] ifNil:[pheromonesReturnDict := nil.
+	].
 ]
 
 { #category : #events }
-MAPheromones >> saveForTimeTravel: aStep [
+MAPheromones >> saveForTimeTravel [
 
-	| memento |
-	memento := MAPheromonesMemento  new.
+		| memento |
+	memento := MAPheromonesMemento new.
 
 	self getTMATimeTravelServicesProvider
 		save: (memento save: self)
-		at: aStep
 ]
 
 { #category : #'events - lifecycle' }
