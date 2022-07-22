@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'mementos',
-		'creationsAndDeletions'
+		'creationsAndDeletions',
+		'events'
 	],
 	#category : #MolAntsTimeTravel
 }
@@ -14,12 +15,27 @@ MAComponentStep >> creationsAndDeletions [
 	^ creationsAndDeletions
 ]
 
+{ #category : #accessing }
+MAComponentStep >> events [
+
+	^ events
+]
+
 { #category : #initialization }
 MAComponentStep >> initialize [
 
 	super initialize.
 	mementos := OrderedCollection new.
+	events := OrderedCollection new.
 	creationsAndDeletions := OrderedCollection new
+]
+
+{ #category : #initialization }
+MAComponentStep >> isANewStep [
+
+	(mementos size > 0)|(creationsAndDeletions size > 0) ifTrue: [ ^ false ].
+	
+	^ true.
 ]
 
 { #category : #accessing }
@@ -38,4 +54,10 @@ MAComponentStep >> save: aComponentMemento [
 MAComponentStep >> saveCreationOrDeletionOf: aComponentMemento [
 
 	creationsAndDeletions add: aComponentMemento
+]
+
+{ #category : #initialization }
+MAComponentStep >> saveEvent: aComponentMemento [
+
+	events add: aComponentMemento
 ]

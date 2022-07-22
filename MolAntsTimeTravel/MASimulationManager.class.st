@@ -96,14 +96,33 @@ MASimulationManager class >> stopSimulation [
 MASimulationManager >> ant: anAnt killAt: aPoint [
 
 	| insect |
+	
+		Transcript
+		show: anAnt componentName;
+		show: ' kill at ';
+		show: aPoint;
+		cr.
+	
 	"Removing the insect in the dictionary."
 	(insects includesKey: aPoint) ifTrue: [ 
 		insect := (insects at: aPoint) removeFirst.
-		(insects at: aPoint) isEmpty ifTrue: [ 
-			insects removeKey: aPoint ] ].
+		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
 
 	"Stoping the insect's component instance."
-	MAInsect stop: insect componentName
+	MAInsect stop: insect componentName.
+	Transcript
+		show: anAnt componentName;
+		show: ' kill at ';
+		show: aPoint;
+		cr.
+	"--------------------------Time Travel--------------------------"
+	self getTMATimeTravelServicesProvider
+		saveEvent: #ant:killAt:
+		performBy: self
+		withParameters: { 
+				anAnt.
+				aPoint }
+	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
@@ -115,10 +134,10 @@ MASimulationManager >> componentActivate [
 	self getTMAStageEventsSubscriber subscribe: self.
 	self getTMARoleEventsSubscriber subscribe: self.
 	self getTMAInsectEventsSubscriber subscribe: self.
-	
+
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTMATimeTravelEventsSubscriber subscribe: self
 	"---------------------------------------------------------------"
 ]
 
@@ -126,26 +145,22 @@ MASimulationManager >> componentActivate [
 MASimulationManager >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
 		self forServices: TMATimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
 		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
 			self getTMATimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
-	
-	"Initialization of the MASimulationManager component."
 
+	"Initialization of the MASimulationManager component."
 	super componentInitialize.
 
 	self start.
-	
+
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
 ]
@@ -156,14 +171,13 @@ MASimulationManager >> componentPassivate [
 	"Passivating the MASimulationManager component."
 
 	super componentPassivate.
-
 	self getTMAStageEventsSubscriber unsubscribe: self.
 	self getTMARoleEventsSubscriber unsubscribe: self.
 	self getTMAInsectEventsSubscriber unsubscribe: self.
 
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	self getTMATimeTravelEventsSubscriber unsubscribe: self
 	"---------------------------------------------------------------"
 ]
 
@@ -172,15 +186,14 @@ MASimulationManager >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
 			self getTMATimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
-	
+
 	"Removing the MASimulationManager component."
-	
+
 	self stop
 ]
 
@@ -190,17 +203,19 @@ MASimulationManager >> createAnt [
 	"Creation of a new ant"
 
 	| name ant |
-		nbAnts := nbAnts + 1.
-		name := ('Ant' , nbAnts printString) asSymbol.
-		ant := MAAnt start: name.
+	nbAnts := nbAnts+1.
+	name := ('Ant' , nbAnts printString) asSymbol.
+	ant := MAAnt start: name.
 
-		"Adding event producer into SimulationManager"
+	"Adding event producer into SimulationManager"
+	self
+		forEvents: TMAStageEvents
+		addProducer: ant getStage componentName.
+	self forEvents: TMARoleEvents addProducer: ant getRole componentName.
 
-		self forEvents: TMARoleEvents addProducer: ant getRole componentName.
+	"Adding the ant to the OrderedCollection of ants"
 
-		"Adding the ant to the OrderedCollection of ants"
-
-		ants add: ant 
+	ants add: ant
 ]
 
 { #category : #private }
@@ -270,6 +285,14 @@ MASimulationManager >> getInsects [
 	"Returning a Dictionary of the insects positions (key: a Point / value: an OrderedCollection of MAInsect instances"
 
 	^ insects
+]
+
+{ #category : #services }
+MASimulationManager >> getNbAnts [
+
+	"Returning an OrderedCollection of all the ant currently alive in the system."
+
+	^ nbAnts
 ]
 
 { #category : #services }
@@ -447,58 +470,14 @@ MASimulationManager >> queenLaid [
 	self createAnt
 ]
 
-{ #category : #private }
-MASimulationManager >> removeAnts [
-
-	"Delete nbAnt ants"
-
-	ants do: [ :e | 
-		MAAnt stop: e componentName.].
-	ants := nil.
-	nbAnts := 0
-]
-
-{ #category : #private }
-MASimulationManager >> removeFeedingPoints [
-
-	"Delete feeding points"
-
-	feedingPoints do: [ :each | 
-		| name |
-		each do: [ :feedingPoint | "Delete a feeding point"
-			name := feedingPoint componentName.
-			MAFeedingPoint stop: name ] ].
-	feedingPoints := nil
-]
-
-{ #category : #private }
-MASimulationManager >> removeInsects [
-
-	"Delete insects"
-
-	insects do: [ :each | 
-		| name |
-		each do: [ :insect | "Delete insect"
-			name := insect componentName.
-			MAInsect stop: name ] ].
-	insects := nil
-]
-
-{ #category : #private }
-MASimulationManager >> removePheromones [
-
-	"delete all pheromones of the system."
-
-	MAPheromones stop: #Pheromones
-]
-
 { #category : #events }
 MASimulationManager >> restoreFrom: aMemento [
 
 	| dict orderedCollection |
 	componentName := aMemento componentName.
-		step := aMemento getStep.
+	step := aMemento getStep.
 	storage := aMemento getStorage.
+	nbAnts := aMemento getNbAnts.
 
 	aMemento getInsects isDictionary ifTrue: [ 
 		dict := Dictionary new.
@@ -543,15 +522,15 @@ MASimulationManager >> stageChanged: aSymbol for: anAnt [
 
 	"Removing an ant"
 
-	aSymbol = #dead ifTrue: [ ants remove: anAnt ]
+	aSymbol = #dead ifTrue: [ 
+		ants remove: anAnt.
+		MAAnt stop: anAnt componentName ]
 ]
 
 { #category : #services }
 MASimulationManager >> start [
 
-	| pheromones ground memento |
-	memento := MASimulationMemento new.
-
+	| pheromones ground |
 	self forServices: TMATimeTravelServices useProvider: #default.
 	self forEvents: TMATimeTravelEvents addProducer: #default.
 
@@ -563,19 +542,21 @@ MASimulationManager >> start [
 	storage := 0.
 	insects := Dictionary new.
 	feedingPoints := Dictionary new.
-	pheromones := MAPheromones start: #Pheromones.
-	self
-		forServices: TMAPheromoneServices
-		useProvider: pheromones componentName asSymbol.
-	ground := MAGround start: #Ground.
-	ground
-		forServices: TMAPheromoneServices
-		useProvider: pheromones componentName asSymbol.
 
-	self createAnt.
-	self createInsects.
-	self createFeedingPoints.
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+			ground := MAGround start: #Ground.
+			pheromones := MAPheromones start: #Pheromones.
+			self createAnt.
+			self createInsects.
+			self createFeedingPoints ] ].
+	"---------------------------------------------------------------"
+
+	self forServices: TMAPheromoneServices useProvider: #Pheromones.
+
 	self startSimulationLoop.
+
 	self getTMASimulationToGlobalEventsNotifier started
 ]
 
@@ -588,7 +569,7 @@ MASimulationManager >> startSimulationLoop [
 			                    isRunning ifTrue: [ 
 				                    | doSimulationStep |
 				                    doSimulationStep := true.
-				
+
 				                    "--------------------------Time Travel--------------------------"
 				                    (MolUtils
 					                     instanceOf: MATimeTravel
@@ -597,11 +578,12 @@ MASimulationManager >> startSimulationLoop [
 						                    isRestoring ifTrue: [ 
 						                    doSimulationStep := false ] ].
 				                    "---------------------------------------------------------------"
-				
+
 				                    doSimulationStep ifTrue: [ 
 					                    | memento |
 					                    memento := MASimulationMemento new.
 					                    step := step + 1.
+					
 					                    self getTMASimulationToGlobalEventsNotifier 
 						                    simulationStepSent: step.
 
@@ -626,17 +608,15 @@ MASimulationManager >> startTimeTravel [
 MASimulationManager >> stop [
 
 	self stopSimulationLoop.
-	MAGround stop: #Ground.
-	self removeAnts.
-	self removeInsects.
-	self removeFeedingPoints.
-	self removePheromones.
+	step := nil.
+	storage := nil.
+	ants := nil.
+	nbAnts := nil.
+	insects := nil.
+	feedingPoints := nil.
 	isRunning := false.
-	self getTMASimulationToGlobalEventsNotifier stopped.
-	
-	
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-	MATimeTravel stop].
+
+	self getTMASimulationToGlobalEventsNotifier stopped
 ]
 
 { #category : #private }

@@ -34,16 +34,15 @@ MAStage >> componentActivate [
 MAStage >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
+
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
 		self forServices: TMATimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
 		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
 			self getTMATimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
-	
+
 	"Initialization of the MAStage component."
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -53,15 +52,13 @@ MAStage >> componentInitialize [
 		useProvider: (#role , self componentName asSymbol) asSymbol.
 
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
-	adultStateDurationInMs := (Random new next * 25000) rounded + 25000.
+	adultStateDurationInMs := (Random new next * 5000) rounded + 10000.
 	self initializeRole.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
+			self saveForTimeTravel ] ]
 ]
 
 { #category : #'life cycle' }
@@ -208,9 +205,8 @@ MAStage >> initializeRole [
 	"Initialization of the role of an ant."
 
 	| x |
-	
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-	self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ]].
+		self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ] ].
 
 
 	"The first ant is always a queen."

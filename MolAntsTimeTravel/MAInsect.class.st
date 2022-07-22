@@ -213,6 +213,4 @@ MAInsect >> saveForTimeTravel [
 MAInsect >> simulationStepSent: aStep [
 
 	self doSimulationStep.
-
-	"self saveForTimeTravel: aStep"
 ]

@@ -38,11 +38,12 @@ MATimeTravel >> componentInitialize [
 	isReplaying := false.
 	isPlayingBackward := false.
 	timeTravelLoop := nil.
-	lastStep := 1.
-	currentStep := 1.
+	lastStep := 2.
+	currentStep := 2.
 	history := OrderedCollection new.
 	history add: MAComponentStep new.
-	
+	history add: MAComponentStep new.
+
 	mySpace := BlSpace new.
 	mySpace extent: 800 @ 200.
 	mySpace title: 'TimeTravel Panel'.
@@ -88,7 +89,7 @@ MATimeTravel >> componentRemove [
 { #category : #'life cycle' }
 MATimeTravel >> createTimeTravelPanel [
 
-	| labelText label |
+	| labelText label button |
 	timeTravelPanel := BlElement new.
 	timeTravelPanel background: Color gray.
 	timeTravelPanel constraintsDo: [ :c | 
@@ -106,24 +107,24 @@ MATimeTravel >> createTimeTravelPanel [
 			  background: Color transparent) text:
 			 'Returning Step :' asRopedText).
 	lastStepView := BlTextElement new
-		                     relocate: mySpace width / 10 @ 40;
-		                     background: Color transparent;
-		                     text: '000' asRopedText.
+		                relocate: mySpace width / 10 @ 40;
+		                background: Color transparent;
+		                text: '000' asRopedText.
 	timeTravelPanel addChild: lastStepView.
-	
+
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding returningStep to the panel."
 
 	timeTravelPanel addChild: ((BlTextElement new
-			  relocate: mySpace width / 10 *5 @ 20;
+			  relocate: mySpace width / 10 * 5 @ 20;
 			  background: Color transparent) text:
 			 'Returning Step :' asRopedText).
 	currentStepView := BlTextElement new
-		                     relocate: mySpace width / 10 * 5 @ 40;
-		                     background: Color transparent;
-		                     text: '000' asRopedText.
+		                   relocate: mySpace width / 10 * 5 @ 40;
+		                   background: Color transparent;
+		                   text: '000' asRopedText.
 	timeTravelPanel addChild: currentStepView.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -355,6 +356,45 @@ MATimeTravel >> createTimeTravelPanel [
 	buttonReplay addChild: label.
 	timeTravelPanel addChild: buttonReplay.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"Adding Stop button"
+	button := BlElement new
+		          background: Color red;
+		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		          padding: (BlInsets
+				           top: 8
+				           right: 16
+				           bottom: 8
+				           left: 16);
+		          layout: BlLinearLayout horizontal;
+		          effect: (BlGaussianShadowEffect
+				           color: (Color black alpha: 0.3)
+				           width: 1
+				           offset: 0 @ 2);
+		          constraintsDo: [ :c | 
+			          c horizontal fitContent.
+			          c vertical fitContent ];
+		          relocate:
+			          MASimulationManager simulationWidth / 10 * 9 @ 160;
+		          addEventHandler: (BlEventHandler
+				           on: BlClickEvent
+				           do: [ :anEvent | 
+					           button isVisible ifTrue: [ 
+										self stopTimeTravel .
+							           self class stop: self componentName ].
+					           anEvent consumed: true ]).
+	labelText := 'Stop' asRopedText
+		             foreground: Color black;
+		             fontSize: 16;
+		             fontName: 'Helvetica';
+		             thin.
+	label := BlTextElement new.
+	label text: labelText.
+	button addChild: label.
+	timeTravelPanel addChild: button.
+
 	self startTimeTravelPanelLoop
 ]
 
@@ -362,26 +402,26 @@ MATimeTravel >> createTimeTravelPanel [
 MATimeTravel >> creationOf: aComponent [
 
 	| aComponentMemento |
-
 	aComponentMemento := MAComponentCreationMemento new save: aComponent.
 
-	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
-	
-	self saveTheApplication .
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 
+	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
+
+	self saveTheApplication
 ]
 
 { #category : #services }
 MATimeTravel >> deletionOf: aComponent [
 
-	|  aComponentMemento |
-
-
+	| aComponentMemento |
 	aComponentMemento := MAComponentDeletionMemento new save: aComponent.
 
-	(history at: currentStep ) saveCreationOrDeletionOf: aComponentMemento.
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 	
-	self saveTheApplication .
+	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
+
+	self saveTheApplication
 ]
 
 { #category : #'component accessing' }
@@ -432,8 +472,7 @@ MATimeTravel >> playBackward [
 			timeTravelLoop := [ 
 			                  [ currentStep > 1 ] whileTrue: [ 
 				                  self restoreOneStepBefore.
-				                  (Delay forMilliseconds: 10)
-					                  wait ].
+				                  (Delay forMilliseconds: 10) wait ].
 			                  isPlayingBackward := false.
 			                  timeTravelLoop ifNil: [ ^ self ].
 			                  timeTravelLoop terminate.
@@ -474,32 +513,38 @@ MATimeTravel >> replay [
 { #category : #'life cycle' }
 MATimeTravel >> restoreAtStep: aStep [
 
-	| componentsLifeCycles mementos |
+	| componentsLifeCycles mementos events |
 	isRestoring ifFalse: [ ^ self ].
 
 	currentStep < 1 | (currentStep > lastStep) ifTrue: [ ^ self ].
 
 	"Undo"
 	aStep < currentStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: aStep + 1)
-			                        creationsAndDeletions.
+		componentsLifeCycles := (history at: aStep) creationsAndDeletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle undo ].
 
 		"Restoration of the state of components"
 		mementos := (history at: aStep) mementos.
-		mementos do: [ :memento | memento undo ] ].
+		mementos do: [ :memento | memento undo ].
+
+		"events undo"
+		events := (history at: aStep) events.
+		events do: [ :event | event undo ] ].
 
 	"Redo"
 	currentStep < aStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: aStep)
-			                        creationsAndDeletions.
+		componentsLifeCycles := (history at: aStep) creationsAndDeletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle redo ].
 
 		"Restoration of the state of components"
 		mementos := (history at: aStep) mementos.
-		mementos do: [ :memento | memento redo ] ]
+		mementos do: [ :memento | memento redo ].
+
+		"Replay the events"
+		events := (history at: aStep) events.
+		events do: [ :event | event redo ] ]
 ]
 
 { #category : #'life cycle' }
@@ -520,6 +565,22 @@ MATimeTravel >> restoreOneStepBefore [
 MATimeTravel >> save: aComponentMemento [
 
 	(history at: currentStep) save: aComponentMemento.
+]
+
+{ #category : #services }
+MATimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
+
+	| aComponentMemento |
+	aComponentMemento := MAComponentEventMemento new
+		                     saveEvent: aMethodName
+		                     performBy: aComponent
+		                     withParameters: someParameters.
+
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
+
+	(history at: currentStep) saveEvent: aComponentMemento.
+
+	self saveTheApplication
 ]
 
 { #category : #services }

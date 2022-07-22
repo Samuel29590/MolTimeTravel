@@ -83,9 +83,9 @@ MAAnt >> componentPassivate [
 MAAnt >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
+
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
+		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
 			self getTMATimeTravelServicesProvider deletionOf: self ] ].
@@ -94,7 +94,7 @@ MAAnt >> componentRemove [
 	"Removing the MAAnt component."
 
 	position := nil.
-	ageInMs := nil
+	ageInMs := nil.
 ]
 
 { #category : #private }

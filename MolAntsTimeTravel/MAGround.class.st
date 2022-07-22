@@ -686,6 +686,12 @@ MAGround >> stopViewLoop [
 	viewLoop := nil
 ]
 
+{ #category : #'events - control' }
+MAGround >> stopped [
+
+	self class stop: self componentName.
+]
+
 { #category : #initialization }
 MAGround >> updateInfoPanel [
 

@@ -3,6 +3,7 @@ Class {
 	#superclass : #MAComponentMemento,
 	#instVars : [
 		'ants',
+		'nbAnts',
 		'feedingPoints',
 		'insects',
 		'storage',
@@ -27,6 +28,12 @@ MASimulationMemento >> getFeedingPoints [
 MASimulationMemento >> getInsects [
 
 	^ insects
+]
+
+{ #category : #accessing }
+MASimulationMemento >> getNbAnts [
+
+	^ nbAnts
 ]
 
 { #category : #accessing }
@@ -56,7 +63,8 @@ MASimulationMemento >> save: aSimulationManager [
 
 	step := aSimulationManager getStep.
 	storage := aSimulationManager getStorage.
-	
+	nbAnts := aSimulationManager getNbAnts.
+
 	dict := Dictionary new.
 	aSimulationManager getInsects
 		ifNotNil: [ 
@@ -88,7 +96,7 @@ MASimulationMemento >> save: aSimulationManager [
 				aSimulationManager getAnts do: [ :value | 
 					orderedCollection add: value class -> value componentName ] ].
 			ants := orderedCollection ]
-		ifNil: [ ants := nil ].
+		ifNil: [ ants := nil ]
 ]
 
 { #category : #accessing }
