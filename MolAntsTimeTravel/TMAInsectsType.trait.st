@@ -14,7 +14,7 @@ TMAInsectsType classSide >> consumedComponentEvents [
 	<componentContract>
 	^ { 
 		  TMASimulationToGlobalEvents.
-		  TMATimeTravelEvents }
+		  TimeTravelEvents }
 ]
 
 { #category : #'accessing - events' }
@@ -27,5 +27,5 @@ TMAInsectsType classSide >> producedComponentEvents [
 TMAInsectsType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMASimulationServices .TMATimeTravelServices  }
+	^ { TMASimulationServices .TimeTravelServices  }
 ]

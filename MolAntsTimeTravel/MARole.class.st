@@ -4,8 +4,8 @@ The actual implementation of the TMARoleeType: MARole, describe the role of one 
 Class {
 	#name : #MARole,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMARoleType + TMARoleServices + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMARoleType classTrait + TMARoleServices classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMARoleType + TMARoleServices + TimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMARoleType classTrait + TMARoleServices classTrait + TimeTravelEvents classTrait',
 	#category : #MolAntsTimeTravel
 }
 
@@ -33,26 +33,26 @@ MARole >> getTMASimulationServicesProvider [
 ]
 
 { #category : #'component accessing' }
-MARole >> getTMATimeTravelEventsSubscriber [
+MARole >> getTimeTravelEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
-	itf := TMATimeTravelEvents.
+	itf := TimeTravelEvents.
 	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
 	eventsSymbol isCollection
 	 	ifTrue: 
 			[eventsSubscriber := MolComponentManager default locatorServices 
-						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+						searchEventsSubscriberFor: TimeTravelEvents named: eventsSymbol ]. 
 	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
-MARole >> getTMATimeTravelServicesProvider [
+MARole >> getTimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
 
-	itf := TMATimeTravelServices.
+	itf := TimeTravelServices.
 	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
 	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
 
-	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 

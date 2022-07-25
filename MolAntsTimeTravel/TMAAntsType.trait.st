@@ -14,7 +14,7 @@ TMAAntsType classSide >> consumedComponentEvents [
 	<componentContract>
 	^ { 
 		  TMASimulationToGlobalEvents.
-		  TMATimeTravelEvents }
+		  TimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }
@@ -30,5 +30,5 @@ TMAAntsType classSide >> usedComponentServices [
 	^ { 
 		  TMAStageServices.
 		  TMASimulationServices.
-		  TMATimeTravelServices }
+		  TimeTravelServices }
 ]

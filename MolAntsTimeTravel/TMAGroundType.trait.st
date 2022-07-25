@@ -13,7 +13,7 @@ TMAGroundType classSide >> consumedComponentEvents [
 
 	<componentContract>
 	^ { TMASimulationToGlobalEvents.
-	TMATimeTravelEvents }
+	TimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }
@@ -23,5 +23,5 @@ TMAGroundType classSide >> usedComponentServices [
 	^ { 
 		  TMAPheromoneServices.
 		  TMASimulationServices.
-		  TMATimeTravelServices }
+		  TimeTravelServices }
 ]

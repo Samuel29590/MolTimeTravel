@@ -14,7 +14,7 @@ TMAPheromonesType classSide >> consumedComponentEvents [
 	<componentContract>
 	^ { 
 		  TMASimulationToGlobalEvents.
-		  TMATimeTravelEvents }
+		  TimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }
@@ -27,5 +27,5 @@ TMAPheromonesType classSide >> providedComponentServices [
 TMAPheromonesType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMASimulationServices .TMATimeTravelServices }
+	^ { TMASimulationServices .TimeTravelServices }
 ]

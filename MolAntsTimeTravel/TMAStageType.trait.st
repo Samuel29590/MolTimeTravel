@@ -12,7 +12,7 @@ Trait {
 TMAStageType classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { TMATimeTravelEvents }
+	^ { TimeTravelEvents }
 ]
 
 { #category : #'accessing - events' }
@@ -35,5 +35,5 @@ TMAStageType classSide >> usedComponentServices [
 	<componentContract>
 	^ { 
 		  TMARoleServices.TMASimulationServices .
-		  TMATimeTravelServices }
+		  TimeTravelServices }
 ]

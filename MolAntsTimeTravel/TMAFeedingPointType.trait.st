@@ -14,7 +14,7 @@ TMAFeedingPointType classSide >> consumedComponentEvents [
 	<componentContract>
 	^ { 
 		  TMASimulationToGlobalEvents .
-		  TMATimeTravelEvents }
+		  TimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }
@@ -28,5 +28,5 @@ TMAFeedingPointType classSide >> providedComponentServices [
 TMAFeedingPointType classSide >> usedComponentServices [
 
 	<componentContract>
-	^ { TMASimulationServices .TMATimeTravelServices }
+	^ { TMASimulationServices .TimeTravelServices }
 ]
