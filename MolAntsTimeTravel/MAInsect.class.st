@@ -36,7 +36,7 @@ MAInsect >> componentActivate [
 MAInsect >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -54,7 +54,7 @@ MAInsect >> componentInitialize [
 	position := ((Random new nextIntegerBetween: 1 and: MASimulationManager simulationWidth) @ (Random new nextIntegerBetween: 1 and: MASimulationManager simulationHeight)).
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
@@ -78,7 +78,7 @@ MAInsect >> componentPassivate [
 MAInsect >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -203,7 +203,7 @@ MAInsect >> restoreFrom: aMemento [
 MAInsect >> saveForTimeTravel [
 
 	| memento |
-	memento := MAInsectMemento new.
+	memento := MolInsectMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

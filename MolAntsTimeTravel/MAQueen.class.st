@@ -20,7 +20,7 @@ MAQueen >> componentActivate [
 MAQueen >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -37,7 +37,7 @@ MAQueen >> componentInitialize [
 	roleName := #queen.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
@@ -57,7 +57,7 @@ MAQueen >> componentPassivate [
 MAQueen >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -94,7 +94,7 @@ MAQueen >> restoreFrom: aMemento [
 MAQueen >> saveForTimeTravel [
 
 	| memento |
-	memento := MAQueenMemento new.
+	memento := MolQueenMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

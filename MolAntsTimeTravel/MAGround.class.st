@@ -60,7 +60,7 @@ MAGround >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
 		self getTimeTravelEventsSubscriber subscribe: self.
@@ -82,7 +82,7 @@ MAGround >> componentInitialize [
 	self startViewLoop.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ]
 ]
@@ -104,7 +104,7 @@ MAGround >> componentPassivate [
 MAGround >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -632,7 +632,7 @@ MAGround >> restoreFrom: aMemento [
 MAGround >> saveForTimeTravel [
 
 	| memento |
-	memento := MAGroundMemento new.
+	memento := MolGroundMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)
@@ -665,7 +665,7 @@ MAGround >> startViewLoop [
 		            % refreshing = 0 ifFalse: [ doUpdateView := false ].
 
 						
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		            self getTimeTravelServicesProvider isRestoring 
 			            ifTrue: [ doUpdateView := true ]].
 
@@ -728,7 +728,7 @@ MAGround >> updateInfoPanel [
 			buttonPause background: Color orange ]
 		ifFalse: [ 
 			buttonPause background: Color gray.
-			(MolUtils instanceOf: MATimeTravel named: #default)
+			(MolUtils instanceOf: MolTimeTravel named: #default)
 				ifNotNil: [ 
 					self getTimeTravelServicesProvider isRestoring
 						ifTrue: [ buttonPlay background: Color gray ]

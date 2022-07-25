@@ -1,6 +1,6 @@
 Class {
-	#name : #MASimulationMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolSimulationMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'ants',
 		'nbAnts',
@@ -13,49 +13,49 @@ Class {
 }
 
 { #category : #accessing }
-MASimulationMemento >> getAnts [
+MolSimulationMemento >> getAnts [
 
 	^ ants
 ]
 
 { #category : #accessing }
-MASimulationMemento >> getFeedingPoints [
+MolSimulationMemento >> getFeedingPoints [
 
 ^ feedingPoints
 ]
 
 { #category : #accessing }
-MASimulationMemento >> getInsects [
+MolSimulationMemento >> getInsects [
 
 	^ insects
 ]
 
 { #category : #accessing }
-MASimulationMemento >> getNbAnts [
+MolSimulationMemento >> getNbAnts [
 
 	^ nbAnts
 ]
 
 { #category : #accessing }
-MASimulationMemento >> getStep [
+MolSimulationMemento >> getStep [
 
 	^ step
 ]
 
 { #category : #accessing }
-MASimulationMemento >> getStorage [
+MolSimulationMemento >> getStorage [
 
 	^ storage
 ]
 
 { #category : #accessing }
-MASimulationMemento >> redo [ 
+MolSimulationMemento >> redo [ 
 	
 	self restoreValues 
 ]
 
 { #category : #actions }
-MASimulationMemento >> save: aSimulationManager [
+MolSimulationMemento >> save: aSimulationManager [
 
 	| dict orderedCollection |
 	componentClass := aSimulationManager class.
@@ -100,7 +100,7 @@ MASimulationMemento >> save: aSimulationManager [
 ]
 
 { #category : #accessing }
-MASimulationMemento >> undo [
+MolSimulationMemento >> undo [
 
 	self restoreValues
 ]

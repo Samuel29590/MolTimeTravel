@@ -47,7 +47,7 @@ MAPheromones >> componentActivate [
 MAPheromones >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -66,7 +66,7 @@ MAPheromones >> componentInitialize [
 	pheromonesReturnDict := Dictionary new.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
@@ -90,7 +90,7 @@ MAPheromones >> componentPassivate [
 MAPheromones >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -251,7 +251,7 @@ MAPheromones >> restoreFrom: aMemento [
 MAPheromones >> saveForTimeTravel [
 
 		| memento |
-	memento := MAPheromonesMemento new.
+	memento := MolPheromonesMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

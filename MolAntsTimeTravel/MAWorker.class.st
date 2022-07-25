@@ -88,7 +88,7 @@ MAWorker >> componentActivate [
 MAWorker >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -107,7 +107,7 @@ MAWorker >> componentInitialize [
 	oldPositions := OrderedCollection new.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
@@ -127,7 +127,7 @@ MAWorker >> componentPassivate [
 MAWorker >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -526,7 +526,7 @@ MAWorker >> restoreFrom: aMemento [
 MAWorker >> saveForTimeTravel [
 
 	| memento |
-	memento := MAWorkerMemento new.
+	memento := MolWorkerMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

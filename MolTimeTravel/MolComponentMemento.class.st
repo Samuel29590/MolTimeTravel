@@ -1,5 +1,5 @@
 Class {
-	#name : #MAComponentMemento,
+	#name : #MolComponentMemento,
 	#superclass : #Object,
 	#instVars : [
 		'componentClass',
@@ -9,34 +9,34 @@ Class {
 }
 
 { #category : #accessing }
-MAComponentMemento >> componentClass [
+MolComponentMemento >> componentClass [
 
 	^ componentClass
 ]
 
 { #category : #accessing }
-MAComponentMemento >> componentName [
+MolComponentMemento >> componentName [
 
 	^ componentName
 ]
 
 { #category : #'undo - undo' }
-MAComponentMemento >> redo [
+MolComponentMemento >> redo [
 ]
 
 { #category : #accessing }
-MAComponentMemento >> restoreValues [
+MolComponentMemento >> restoreValues [
  | instance |
 	instance := (MolUtils instanceOf: componentClass named: componentName) .
 	instance ifNotNil: [ instance restoreFrom: self. ]
 ]
 
 { #category : #actions }
-MAComponentMemento >> save: aComponent [
+MolComponentMemento >> save: aComponent [
 ]
 
 { #category : #'undo - undo' }
-MAComponentMemento >> undo [
+MolComponentMemento >> undo [
 
 	
 ]

@@ -36,7 +36,7 @@ MAAnt >> componentActivate [
 MAAnt >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -59,7 +59,7 @@ MAAnt >> componentInitialize [
 	position := MASimulationManager simulationAntHillPosition.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ]
@@ -84,7 +84,7 @@ MAAnt >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
@@ -237,7 +237,7 @@ MAAnt >> getTimeTravelServicesProvider [
 { #category : #stage }
 MAAnt >> initializeStage [
 
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 	self getTimeTravelServicesProvider isRestoring ifTrue: [ ^ self ]].
 
 	stage := MAStage start:
@@ -267,7 +267,7 @@ MAAnt >> restoreFrom: aMemento [
 MAAnt >> saveForTimeTravel [
 
 		| memento |
-	memento := MAAntMemento new.
+	memento := MolAntMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

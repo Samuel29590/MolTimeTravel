@@ -1,5 +1,5 @@
 Class {
-	#name : #MATimeTravel,
+	#name : #MolTimeTravel,
 	#superclass : #Object,
 	#traits : 'MolComponentImpl + TimeTravelType + TimeTravelServices',
 	#classTraits : 'MolComponentImpl classTrait + TimeTravelType classTrait + TimeTravelServices classTrait',
@@ -29,7 +29,7 @@ Class {
 }
 
 { #category : #'life cycle' }
-MATimeTravel >> componentInitialize [
+MolTimeTravel >> componentInitialize [
 
 	"here write the code corresponding to component initialisation phase"
 
@@ -41,8 +41,8 @@ MATimeTravel >> componentInitialize [
 	lastStep := 2.
 	currentStep := 2.
 	history := OrderedCollection new.
-	history add: MAComponentStep new.
-	history add: MAComponentStep new.
+	history add: MolComponentStep new.
+	history add: MolComponentStep new.
 
 	mySpace := BlSpace new.
 	mySpace extent: 800 @ 200.
@@ -56,7 +56,7 @@ MATimeTravel >> componentInitialize [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> componentRemove [
+MolTimeTravel >> componentRemove [
 
 	"here write the code corresponding to component remove phase"
 
@@ -87,7 +87,7 @@ MATimeTravel >> componentRemove [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> createTimeTravelPanel [
+MolTimeTravel >> createTimeTravelPanel [
 
 	| labelText label button |
 	timeTravelPanel := BlElement new.
@@ -399,10 +399,10 @@ MATimeTravel >> createTimeTravelPanel [
 ]
 
 { #category : #services }
-MATimeTravel >> creationOf: aComponent [
+MolTimeTravel >> creationOf: aComponent [
 
 	| aComponentMemento |
-	aComponentMemento := MAComponentCreationMemento new save: aComponent.
+	aComponentMemento := MolComponentCreationMemento new save: aComponent.
 
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 
@@ -412,10 +412,10 @@ MATimeTravel >> creationOf: aComponent [
 ]
 
 { #category : #services }
-MATimeTravel >> deletionOf: aComponent [
+MolTimeTravel >> deletionOf: aComponent [
 
 	| aComponentMemento |
-	aComponentMemento := MAComponentDeletionMemento new save: aComponent.
+	aComponentMemento := MolComponentDeletionMemento new save: aComponent.
 
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 	
@@ -425,38 +425,38 @@ MATimeTravel >> deletionOf: aComponent [
 ]
 
 { #category : #'component accessing' }
-MATimeTravel >> getTimeTravelEventsNotifier [
+MolTimeTravel >> getTimeTravelEventsNotifier [
 	^self eventsNotifiers at: TimeTravelEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TimeTravelEvents name: nil].
 ]
 
 { #category : #testing }
-MATimeTravel >> isOnTheFirstStep [
+MolTimeTravel >> isOnTheFirstStep [
 
 	^ currentStep = 1
 ]
 
 { #category : #testing }
-MATimeTravel >> isOnTheLastStep [
+MolTimeTravel >> isOnTheLastStep [
 
 	^ currentStep = lastStep 
 ]
 
 { #category : #services }
-MATimeTravel >> isRestoring [
+MolTimeTravel >> isRestoring [
 
 	^ isRestoring
 ]
 
 { #category : #services }
-MATimeTravel >> nextStep [
+MolTimeTravel >> nextStep [
 
 	currentStep := currentStep + 1.
 	lastStep := lastStep + 1.
-	history add: MAComponentStep new
+	history add: MolComponentStep new
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> playBackward [
+MolTimeTravel >> playBackward [
 
 	isRestoring ifFalse: [ ^ self ].
 	isReplaying ifTrue: [ ^ self ].
@@ -483,7 +483,7 @@ MATimeTravel >> playBackward [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> replay [
+MolTimeTravel >> replay [
 
 	isRestoring ifFalse: [ ^ self ].
 	isPlayingBackward ifTrue: [ ^ self ].
@@ -511,7 +511,7 @@ MATimeTravel >> replay [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> restoreAtStep: aStep [
+MolTimeTravel >> restoreAtStep: aStep [
 
 	| componentsLifeCycles mementos events |
 	isRestoring ifFalse: [ ^ self ].
@@ -548,30 +548,30 @@ MATimeTravel >> restoreAtStep: aStep [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> restoreOneStepAfter [
+MolTimeTravel >> restoreOneStepAfter [
  currentStep < lastStep  ifTrue: [ 
 	self restoreAtStep: currentStep + 1.
 	currentStep := currentStep + 1]
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> restoreOneStepBefore [
+MolTimeTravel >> restoreOneStepBefore [
  currentStep > 1 ifTrue: [ 
 	self restoreAtStep: currentStep - 1.
 	currentStep := currentStep - 1]
 ]
 
 { #category : #services }
-MATimeTravel >> save: aComponentMemento [
+MolTimeTravel >> save: aComponentMemento [
 
 	(history at: currentStep) save: aComponentMemento.
 ]
 
 { #category : #services }
-MATimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
+MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 
 	| aComponentMemento |
-	aComponentMemento := MAComponentEventMemento new
+	aComponentMemento := MolComponentEventMemento new
 		                     saveEvent: aMethodName
 		                     performBy: aComponent
 		                     withParameters: someParameters.
@@ -584,7 +584,7 @@ MATimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: som
 ]
 
 { #category : #services }
-MATimeTravel >> saveTheApplication [
+MolTimeTravel >> saveTheApplication [
 
 	self getTimeTravelEventsNotifier saveForTimeTravel.
 
@@ -592,7 +592,7 @@ MATimeTravel >> saveTheApplication [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> startTimeTravel [
+MolTimeTravel >> startTimeTravel [
 
 	isRestoring ifFalse: [ 
 		isSaving := false.
@@ -601,7 +601,7 @@ MATimeTravel >> startTimeTravel [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> startTimeTravelPanelLoop [
+MolTimeTravel >> startTimeTravelPanelLoop [
 
 	"Starting the time travel panel's view loop."
 
@@ -616,7 +616,7 @@ MATimeTravel >> startTimeTravelPanelLoop [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> stopTimeTravel [
+MolTimeTravel >> stopTimeTravel [
 
 	isRestoring ifTrue: [ 
 		isPlayingBackward ifFalse: [ 
@@ -631,7 +631,7 @@ MATimeTravel >> stopTimeTravel [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> stopTimeTravelPanelLoop [
+MolTimeTravel >> stopTimeTravelPanelLoop [
 
 	"Stoping the time travel panel's view loop."
 
@@ -642,7 +642,7 @@ MATimeTravel >> stopTimeTravelPanelLoop [
 ]
 
 { #category : #'life cycle' }
-MATimeTravel >> updatePanelView [
+MolTimeTravel >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 

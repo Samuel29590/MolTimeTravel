@@ -1,6 +1,6 @@
 Class {
-	#name : #MAPheromonesMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolPheromonesMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'maxIntensity',
 		'pheromonesDict',
@@ -10,31 +10,31 @@ Class {
 }
 
 { #category : #accessing }
-MAPheromonesMemento >> getMaxIntensity [
+MolPheromonesMemento >> getMaxIntensity [
 
 	^ maxIntensity
 ]
 
 { #category : #accessing }
-MAPheromonesMemento >> getPheromonesDict [
+MolPheromonesMemento >> getPheromonesDict [
 
 	^ pheromonesDict
 ]
 
 { #category : #accessing }
-MAPheromonesMemento >> getPheromonesReturnDict [
+MolPheromonesMemento >> getPheromonesReturnDict [
 
 	^ pheromonesReturnDict
 ]
 
 { #category : #'undo - undo' }
-MAPheromonesMemento >> redo [
+MolPheromonesMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAPheromonesMemento >> save: aPheromones [
+MolPheromonesMemento >> save: aPheromones [
 
 	| dict dictReturn |
 	componentClass := aPheromones class.
@@ -61,7 +61,7 @@ MAPheromonesMemento >> save: aPheromones [
 ]
 
 { #category : #'undo - undo' }
-MAPheromonesMemento >> undo [
+MolPheromonesMemento >> undo [
 
 	self restoreValues
 ]

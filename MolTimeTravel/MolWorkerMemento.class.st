@@ -1,6 +1,6 @@
 Class {
-	#name : #MAWorkerMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolWorkerMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'oldPositions',
 		'phase'
@@ -9,25 +9,25 @@ Class {
 }
 
 { #category : #accessing }
-MAWorkerMemento >> getOldPositions [
+MolWorkerMemento >> getOldPositions [
 
 	^ oldPositions
 ]
 
 { #category : #accessing }
-MAWorkerMemento >> getPhase [
+MolWorkerMemento >> getPhase [
 
 	^ phase
 ]
 
 { #category : #'undo - undo' }
-MAWorkerMemento >> redo [
+MolWorkerMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAWorkerMemento >> save: aWorker [
+MolWorkerMemento >> save: aWorker [
 
 	componentClass := aWorker class.
 	componentName := aWorker componentName.
@@ -36,7 +36,7 @@ MAWorkerMemento >> save: aWorker [
 ]
 
 { #category : #'undo - undo' }
-MAWorkerMemento >> undo [
+MolWorkerMemento >> undo [
 
 	self restoreValues
 ]

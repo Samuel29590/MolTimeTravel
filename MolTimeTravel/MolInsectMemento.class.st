@@ -1,6 +1,6 @@
 Class {
-	#name : #MAInsectMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolInsectMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'ageInMs',
 		'position'
@@ -9,25 +9,25 @@ Class {
 }
 
 { #category : #accessing }
-MAInsectMemento >> getAgeInMs [
+MolInsectMemento >> getAgeInMs [
 
 	^ ageInMs
 ]
 
 { #category : #accessing }
-MAInsectMemento >> getPosition [
+MolInsectMemento >> getPosition [
 
 	^ position
 ]
 
 { #category : #accessing }
-MAInsectMemento >> redo [ 
+MolInsectMemento >> redo [ 
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAInsectMemento >> save: anInsect [
+MolInsectMemento >> save: anInsect [
 
 	componentClass := anInsect class.
 	componentName := anInsect componentName.
@@ -36,7 +36,7 @@ MAInsectMemento >> save: anInsect [
 ]
 
 { #category : #accessing }
-MAInsectMemento >> undo [
+MolInsectMemento >> undo [
 
 	self restoreValues
 ]

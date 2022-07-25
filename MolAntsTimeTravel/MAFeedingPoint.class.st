@@ -34,7 +34,7 @@ MAFeedingPoint >> componentActivate [
 MAFeedingPoint >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -57,7 +57,7 @@ MAFeedingPoint >> componentInitialize [
 			             and: MASimulationManager simulationHeight).
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
@@ -81,7 +81,7 @@ MAFeedingPoint >> componentPassivate [
 MAFeedingPoint >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -176,7 +176,7 @@ MAFeedingPoint >> saveForTimeTravel [
 
 	
 	| memento |
-	memento := MAFeedingPointMemento new.
+	memento := MolFeedingPointMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

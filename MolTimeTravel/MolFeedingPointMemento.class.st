@@ -1,6 +1,6 @@
 Class {
-	#name : #MAFeedingPointMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolFeedingPointMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'capacity',
 		'position'
@@ -9,25 +9,25 @@ Class {
 }
 
 { #category : #accessing }
-MAFeedingPointMemento >> getCapacity [
+MolFeedingPointMemento >> getCapacity [
 
 	^ capacity 
 ]
 
 { #category : #accessing }
-MAFeedingPointMemento >> getPosition [
+MolFeedingPointMemento >> getPosition [
 
 	^ position
 ]
 
 { #category : #'undo - undo' }
-MAFeedingPointMemento >> redo [
+MolFeedingPointMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAFeedingPointMemento >> save: aFeedingPoint [
+MolFeedingPointMemento >> save: aFeedingPoint [
 
 	componentClass := aFeedingPoint class.
 	componentName := aFeedingPoint componentName.
@@ -36,7 +36,7 @@ MAFeedingPointMemento >> save: aFeedingPoint [
 ]
 
 { #category : #'undo - undo' }
-MAFeedingPointMemento >> undo [
+MolFeedingPointMemento >> undo [
 
 	self restoreValues
 ]

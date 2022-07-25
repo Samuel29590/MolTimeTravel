@@ -1,11 +1,11 @@
 Class {
-	#name : #MAComponentCreationMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolComponentCreationMemento,
+	#superclass : #MolComponentMemento,
 	#category : #MolTimeTravel
 }
 
 { #category : #'undo - undo' }
-MAComponentCreationMemento >> redo [
+MolComponentCreationMemento >> redo [
 
 	(MolUtils
 		 instanceOf: self componentClass
@@ -14,14 +14,14 @@ MAComponentCreationMemento >> redo [
 ]
 
 { #category : #'undo - undo' }
-MAComponentCreationMemento >> save: aComponent [
+MolComponentCreationMemento >> save: aComponent [
 
 	componentClass := aComponent class.
 	componentName := aComponent componentName
 ]
 
 { #category : #'undo - undo' }
-MAComponentCreationMemento >> undo [
+MolComponentCreationMemento >> undo [
 
 		(MolUtils instanceOf: self componentClass named: self componentName) 
 		ifNotNil: [ self componentClass stop: self componentName ]

@@ -1,5 +1,5 @@
 Class {
-	#name : #MAComponentStep,
+	#name : #MolComponentStep,
 	#superclass : #Object,
 	#instVars : [
 		'mementos',
@@ -10,19 +10,19 @@ Class {
 }
 
 { #category : #accessing }
-MAComponentStep >> creationsAndDeletions [
+MolComponentStep >> creationsAndDeletions [
 
 	^ creationsAndDeletions
 ]
 
 { #category : #accessing }
-MAComponentStep >> events [
+MolComponentStep >> events [
 
 	^ events
 ]
 
 { #category : #initialization }
-MAComponentStep >> initialize [
+MolComponentStep >> initialize [
 
 	super initialize.
 	mementos := OrderedCollection new.
@@ -31,7 +31,7 @@ MAComponentStep >> initialize [
 ]
 
 { #category : #initialization }
-MAComponentStep >> isANewStep [
+MolComponentStep >> isANewStep [
 
 	(mementos size > 0)|(creationsAndDeletions size > 0) ifTrue: [ ^ false ].
 	
@@ -39,25 +39,25 @@ MAComponentStep >> isANewStep [
 ]
 
 { #category : #accessing }
-MAComponentStep >> mementos [
+MolComponentStep >> mementos [
 
 	^ mementos
 ]
 
 { #category : #initialization }
-MAComponentStep >> save: aComponentMemento [
+MolComponentStep >> save: aComponentMemento [
 
 	mementos add: aComponentMemento 
 ]
 
 { #category : #initialization }
-MAComponentStep >> saveCreationOrDeletionOf: aComponentMemento [
+MolComponentStep >> saveCreationOrDeletionOf: aComponentMemento [
 
 	creationsAndDeletions add: aComponentMemento
 ]
 
 { #category : #initialization }
-MAComponentStep >> saveEvent: aComponentMemento [
+MolComponentStep >> saveEvent: aComponentMemento [
 
 	events add: aComponentMemento
 ]

@@ -20,7 +20,7 @@ MAFighter >> componentActivate [
 MAFighter >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
@@ -37,7 +37,7 @@ MAFighter >> componentInitialize [
 	roleName := #fighter.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
@@ -57,7 +57,7 @@ MAFighter >> componentPassivate [
 MAFighter >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -116,7 +116,7 @@ MAFighter >> restoreFrom: aMemento [
 MAFighter >> saveForTimeTravel [
 
 	| memento |
-	memento := MAFighterMemento new.
+	memento := MolFighterMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

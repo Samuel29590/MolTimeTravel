@@ -1,24 +1,24 @@
 Class {
-	#name : #MAGroundMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolFighterMemento,
+	#superclass : #MolComponentMemento,
 	#category : #MolTimeTravel
 }
 
 { #category : #'undo - undo' }
-MAGroundMemento >> redo [
+MolFighterMemento >> redo [
 
 	self restoreValues.
 ]
 
-{ #category : #'undo - undo' }
-MAGroundMemento >> save: aFighter [
+{ #category : #actions }
+MolFighterMemento >> save: aFighter [
 
 	componentClass := aFighter class.
 	componentName := aFighter componentName.
 ]
 
 { #category : #'undo - undo' }
-MAGroundMemento >> undo [
+MolFighterMemento >> undo [
 
 	self restoreValues
 ]

@@ -1,6 +1,6 @@
 Class {
-	#name : #MAAntMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolAntMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'ageInMs',
 		'position',
@@ -10,31 +10,31 @@ Class {
 }
 
 { #category : #accessing }
-MAAntMemento >> getAgeInMs [
+MolAntMemento >> getAgeInMs [
 
 	^ ageInMs
 ]
 
 { #category : #accessing }
-MAAntMemento >> getPosition [
+MolAntMemento >> getPosition [
 
 	^ position
 ]
 
 { #category : #accessing }
-MAAntMemento >> getStage [
+MolAntMemento >> getStage [
 
 	^ stage
 ]
 
 { #category : #'undo - undo' }
-MAAntMemento >> redo [
+MolAntMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAAntMemento >> save: anAnt [
+MolAntMemento >> save: anAnt [
 
 	componentClass := anAnt class.
 	componentName := anAnt componentName.
@@ -46,7 +46,7 @@ MAAntMemento >> save: anAnt [
 ]
 
 { #category : #'undo - undo' }
-MAAntMemento >> undo [
+MolAntMemento >> undo [
 
 	self restoreValues
 ]

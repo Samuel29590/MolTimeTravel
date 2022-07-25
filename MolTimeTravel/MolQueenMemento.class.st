@@ -1,24 +1,24 @@
 Class {
-	#name : #MAQueenMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolQueenMemento,
+	#superclass : #MolComponentMemento,
 	#category : #MolTimeTravel
 }
 
 { #category : #'undo - undo' }
-MAQueenMemento >> redo [
+MolQueenMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAQueenMemento >> save: anQueen [
+MolQueenMemento >> save: anQueen [
 
 	componentClass := anQueen class.
 	componentName := anQueen componentName
 ]
 
 { #category : #'undo - undo' }
-MAQueenMemento >> undo [
+MolQueenMemento >> undo [
 
 	self restoreValues
 ]

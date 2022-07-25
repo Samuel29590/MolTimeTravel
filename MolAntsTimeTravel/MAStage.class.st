@@ -35,7 +35,7 @@ MAStage >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
 		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
 		self getTimeTravelEventsSubscriber subscribe: self.
@@ -56,7 +56,7 @@ MAStage >> componentInitialize [
 	self initializeRole.
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ]
 ]
@@ -74,7 +74,7 @@ MAStage >> componentPassivate [
 MAStage >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
@@ -205,7 +205,7 @@ MAStage >> initializeRole [
 	"Initialization of the role of an ant."
 
 	| x |
-	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifTrue: [ ^ self ] ].
 
 
@@ -264,7 +264,7 @@ MAStage >> restoreFrom: aMemento [
 MAStage >> saveForTimeTravel [
 
 		| memento |
-	memento := MAStageMemento new.
+	memento := MolStageMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

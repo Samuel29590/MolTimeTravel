@@ -1,6 +1,6 @@
 Class {
-	#name : #MAComponentEventMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolComponentEventMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'eventName',
 		'parameters'
@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #'undo - undo' }
-MAComponentEventMemento >> redo [
+MolComponentEventMemento >> redo [
 
 	|realParameters|
 
@@ -27,14 +27,14 @@ MAComponentEventMemento >> redo [
 ]
 
 { #category : #'undo - undo' }
-MAComponentEventMemento >> save: aComponent [
+MolComponentEventMemento >> save: aComponent [
 
 	componentClass := aComponent class.
 	componentName := aComponent componentName
 ]
 
 { #category : #'undo - undo' }
-MAComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
+MolComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 
 	componentClass := aComponent class.
 	componentName := aComponent componentName.
@@ -50,7 +50,7 @@ MAComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withPara
 ]
 
 { #category : #'undo - undo' }
-MAComponentEventMemento >> undo [
+MolComponentEventMemento >> undo [
 
 
 ]

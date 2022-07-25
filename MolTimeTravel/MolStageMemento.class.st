@@ -1,6 +1,6 @@
 Class {
-	#name : #MAStageMemento,
-	#superclass : #MAComponentMemento,
+	#name : #MolStageMemento,
+	#superclass : #MolComponentMemento,
 	#instVars : [
 		'eggStateDurationInMs',
 		'adultStateDurationInMs',
@@ -11,37 +11,37 @@ Class {
 }
 
 { #category : #accessing }
-MAStageMemento >> getAdultStateDurationInMs [
+MolStageMemento >> getAdultStateDurationInMs [
 
 	^ adultStateDurationInMs
 ]
 
 { #category : #accessing }
-MAStageMemento >> getEggStateDurationInMs [
+MolStageMemento >> getEggStateDurationInMs [
 
 	^ eggStateDurationInMs
 ]
 
 { #category : #accessing }
-MAStageMemento >> getRole [
+MolStageMemento >> getRole [
 
 	^ role
 ]
 
 { #category : #accessing }
-MAStageMemento >> getStageName [ 
+MolStageMemento >> getStageName [ 
 
 	^ stageName 
 ]
 
 { #category : #'undo - undo' }
-MAStageMemento >> redo [
+MolStageMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #actions }
-MAStageMemento >> save: aStage [
+MolStageMemento >> save: aStage [
 
 	componentClass := aStage class.
 	componentName := aStage componentName.
@@ -55,7 +55,7 @@ MAStageMemento >> save: aStage [
 ]
 
 { #category : #'undo - undo' }
-MAStageMemento >> undo [
+MolStageMemento >> undo [
 
 	self restoreValues
 ]
