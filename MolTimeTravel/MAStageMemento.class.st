@@ -7,7 +7,7 @@ Class {
 		'stageName',
 		'role'
 	],
-	#category : #MolAntsTimeTravel
+	#category : #MolTimeTravel
 }
 
 { #category : #accessing }

@@ -1,7 +1,7 @@
 Class {
 	#name : #MAComponentDeletionMemento,
 	#superclass : #MAComponentMemento,
-	#category : #MolAntsTimeTravel
+	#category : #MolTimeTravel
 }
 
 { #category : #'undo - undo' }

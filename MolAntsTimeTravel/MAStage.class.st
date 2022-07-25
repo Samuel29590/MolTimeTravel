@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAStage,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAStageType + TMAStageServices + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAStageType classTrait + TMAStageServices classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAStageType + TMAStageServices + TimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAStageType classTrait + TMAStageServices classTrait + TimeTravelEvents classTrait',
 	#instVars : [
 		'eggStateDurationInMs',
 		'adultStateDurationInMs'
@@ -24,7 +24,7 @@ MAStage >> componentActivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTimeTravelEventsSubscriber subscribe: self.
 	"---------------------------------------------------------------"
 
 	
@@ -36,11 +36,11 @@ MAStage >> componentInitialize [
 	"--------------------------Time Travel--------------------------"
 
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TMATimeTravelServices useProvider: #default.
+		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
-		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self ] ].
+		self getTimeTravelEventsSubscriber subscribe: self.
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
+			self getTimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Initialization of the MAStage component."
@@ -57,7 +57,7 @@ MAStage >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ]
 ]
 
@@ -66,7 +66,7 @@ MAStage >> componentPassivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	self getTimeTravelEventsSubscriber unsubscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -75,11 +75,11 @@ MAStage >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
-			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+			self getTimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Removing of the MAStage component."
@@ -176,26 +176,26 @@ MAStage >> getTMAStageEventsNotifier [
 ]
 
 { #category : #'component accessing' }
-MAStage >> getTMATimeTravelEventsSubscriber [
+MAStage >> getTimeTravelEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
-	itf := TMATimeTravelEvents.
+	itf := TimeTravelEvents.
 	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
 	eventsSymbol isCollection
 	 	ifTrue: 
 			[eventsSubscriber := MolComponentManager default locatorServices 
-						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+						searchEventsSubscriberFor: TimeTravelEvents named: eventsSymbol ]. 
 	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
-MAStage >> getTMATimeTravelServicesProvider [
+MAStage >> getTimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
 
-	itf := TMATimeTravelServices.
+	itf := TimeTravelServices.
 	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
 	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
 
-	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -206,7 +206,7 @@ MAStage >> initializeRole [
 
 	| x |
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifTrue: [ ^ self ] ].
+		self getTimeTravelServicesProvider isRestoring ifTrue: [ ^ self ] ].
 
 
 	"The first ant is always a queen."
@@ -266,6 +266,6 @@ MAStage >> saveForTimeTravel [
 		| memento |
 	memento := MAStageMemento new.
 
-	self getTMATimeTravelServicesProvider
+	self getTimeTravelServicesProvider
 		save: (memento save: self)
 ]

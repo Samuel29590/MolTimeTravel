@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAInsect,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAInsectsType + TMASimulationToGlobalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAInsectsType classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAInsectsType + TMASimulationToGlobalEvents + TimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAInsectsType classTrait + TMASimulationToGlobalEvents classTrait + TimeTravelEvents classTrait',
 	#instVars : [
 		'position',
 		'ageInMs'
@@ -28,7 +28,7 @@ MAInsect >> componentActivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTimeTravelEventsSubscriber subscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -38,12 +38,12 @@ MAInsect >> componentInitialize [
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
-		self forServices: TMATimeTravelServices useProvider: #default.
+		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
-		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelEventsSubscriber subscribe: self.
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self ] ].
+			self getTimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 	
 	"Initialization of the MAInsect component."
@@ -55,7 +55,7 @@ MAInsect >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
@@ -70,7 +70,7 @@ MAInsect >> componentPassivate [
 	
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	self getTimeTravelEventsSubscriber unsubscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -79,11 +79,11 @@ MAInsect >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
-			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+			self getTimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
 	
 	"Removing the MAInsect component."
@@ -146,26 +146,26 @@ MAInsect >> getTMASimulationToGlobalEventsSubscriber [
 ]
 
 { #category : #'component accessing' }
-MAInsect >> getTMATimeTravelEventsSubscriber [
+MAInsect >> getTimeTravelEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
-	itf := TMATimeTravelEvents.
+	itf := TimeTravelEvents.
 	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
 	eventsSymbol isCollection
 	 	ifTrue: 
 			[eventsSubscriber := MolComponentManager default locatorServices 
-						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+						searchEventsSubscriberFor: TimeTravelEvents named: eventsSymbol ]. 
 	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
-MAInsect >> getTMATimeTravelServicesProvider [
+MAInsect >> getTimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
 
-	itf := TMATimeTravelServices.
+	itf := TimeTravelServices.
 	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
 	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
 
-	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -205,7 +205,7 @@ MAInsect >> saveForTimeTravel [
 	| memento |
 	memento := MAInsectMemento new.
 
-	self getTMATimeTravelServicesProvider
+	self getTimeTravelServicesProvider
 		save: (memento save: self)
 ]
 

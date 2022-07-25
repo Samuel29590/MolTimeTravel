@@ -5,7 +5,7 @@ Class {
 		'capacity',
 		'position'
 	],
-	#category : #MolAntsTimeTravel
+	#category : #MolTimeTravel
 }
 
 { #category : #accessing }

@@ -12,7 +12,7 @@ MAFighter >> componentActivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTimeTravelEventsSubscriber subscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -22,12 +22,12 @@ MAFighter >> componentInitialize [
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
-		self forServices: TMATimeTravelServices useProvider: #default.
+		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
-		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelEventsSubscriber subscribe: self.
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self ] ].
+			self getTimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 	
 	"Initialization of the MAFighter component."
@@ -38,7 +38,7 @@ MAFighter >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
@@ -49,7 +49,7 @@ MAFighter >> componentPassivate [
 	
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	self getTimeTravelEventsSubscriber unsubscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -58,11 +58,11 @@ MAFighter >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
-			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+			self getTimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
 ]
 
@@ -118,6 +118,6 @@ MAFighter >> saveForTimeTravel [
 	| memento |
 	memento := MAFighterMemento new.
 
-	self getTMATimeTravelServicesProvider
+	self getTimeTravelServicesProvider
 		save: (memento save: self)
 ]

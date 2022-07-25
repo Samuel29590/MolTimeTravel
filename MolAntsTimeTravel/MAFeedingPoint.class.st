@@ -10,8 +10,8 @@ Variables :
 Class {
 	#name : #MAFeedingPoint,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMAFeedingPointType + TMAFeedingPointServices + TMATimeTravelEvents + TMASimulationToGlobalEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAFeedingPointType classTrait + TMAFeedingPointServices classTrait + TMATimeTravelEvents classTrait + TMASimulationToGlobalEvents classTrait',
+	#traits : 'MolComponentImpl + TMAFeedingPointType + TMAFeedingPointServices + TimeTravelEvents + TMASimulationToGlobalEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAFeedingPointType classTrait + TMAFeedingPointServices classTrait + TimeTravelEvents classTrait + TMASimulationToGlobalEvents classTrait',
 	#instVars : [
 		'position',
 		'capacity'
@@ -26,7 +26,7 @@ MAFeedingPoint >> componentActivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTimeTravelEventsSubscriber subscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -36,12 +36,12 @@ MAFeedingPoint >> componentInitialize [
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
 		"Connection to the TimeTravel service."
-		self forServices: TMATimeTravelServices useProvider: #default.
+		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
-		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelEventsSubscriber subscribe: self.
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self ] ].
+			self getTimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 	
 	"Initialization of the MAFeedingPoint component."
@@ -58,7 +58,7 @@ MAFeedingPoint >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
@@ -73,7 +73,7 @@ MAFeedingPoint >> componentPassivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTimeTravelEventsSubscriber unsubscribe: self
 	"---------------------------------------------------------------"
 ]
 
@@ -82,11 +82,11 @@ MAFeedingPoint >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
-			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+			self getTimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
 	
 	"Removing the MAFeedingPoint component."
@@ -139,26 +139,26 @@ MAFeedingPoint >> getTMASimulationToGlobalEventsSubscriber [
 ]
 
 { #category : #'component accessing' }
-MAFeedingPoint >> getTMATimeTravelEventsSubscriber [
+MAFeedingPoint >> getTimeTravelEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
-	itf := TMATimeTravelEvents.
+	itf := TimeTravelEvents.
 	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
 	eventsSymbol isCollection
 	 	ifTrue: 
 			[eventsSubscriber := MolComponentManager default locatorServices 
-						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+						searchEventsSubscriberFor: TimeTravelEvents named: eventsSymbol ]. 
 	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
-MAFeedingPoint >> getTMATimeTravelServicesProvider [
+MAFeedingPoint >> getTimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
 
-	itf := TMATimeTravelServices.
+	itf := TimeTravelServices.
 	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
 	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
 
-	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -178,7 +178,7 @@ MAFeedingPoint >> saveForTimeTravel [
 	| memento |
 	memento := MAFeedingPointMemento new.
 
-	self getTMATimeTravelServicesProvider
+	self getTimeTravelServicesProvider
 		save: (memento save: self)
 ]
 

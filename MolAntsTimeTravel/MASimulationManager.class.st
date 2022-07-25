@@ -28,8 +28,8 @@ Finally this implementation provides *start / pause / play / stop* methods on th
 Class {
 	#name : #MASimulationManager,
 	#superclass : #MolAbstractComponentImpl,
-	#traits : 'TMASimulationManagerType + TMASimulationServices + TMARoleEvents + TMAInsectEvents + TMAStageEvents + TMATimeTravelEvents',
-	#classTraits : 'TMASimulationManagerType classTrait + TMASimulationServices classTrait + TMARoleEvents classTrait + TMAInsectEvents classTrait + TMAStageEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'TMASimulationManagerType + TMASimulationServices + TMARoleEvents + TMAInsectEvents + TMAStageEvents + TimeTravelEvents',
+	#classTraits : 'TMASimulationManagerType classTrait + TMASimulationServices classTrait + TMARoleEvents classTrait + TMAInsectEvents classTrait + TMAStageEvents classTrait + TimeTravelEvents classTrait',
 	#instVars : [
 		'simulationThread',
 		'step',
@@ -96,32 +96,27 @@ MASimulationManager class >> stopSimulation [
 MASimulationManager >> ant: anAnt killAt: aPoint [
 
 	| insect |
-	
-		Transcript
-		show: anAnt componentName;
-		show: ' kill at ';
-		show: aPoint;
-		cr.
-	
-	"Removing the insect in the dictionary."
-	(insects includesKey: aPoint) ifTrue: [ 
-		insect := (insects at: aPoint) removeFirst.
-		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
-
-	"Stoping the insect's component instance."
-	MAInsect stop: insect componentName.
 	Transcript
 		show: anAnt componentName;
 		show: ' kill at ';
 		show: aPoint;
 		cr.
+
+	(insects includesKey: aPoint) ifTrue: [ "Removing the insect in the dictionary."
+		insect := (insects at: aPoint) removeFirst.
+		"Stoping the insect's component instance."
+		MAInsect stop: insect componentName.
+		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
+
 	"--------------------------Time Travel--------------------------"
-	self getTMATimeTravelServicesProvider
-		saveEvent: #ant:killAt:
-		performBy: self
-		withParameters: { 
-				anAnt.
-				aPoint }
+	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTimeTravelServicesProvider
+				saveEvent: #ant:killAt:
+				performBy: self
+				withParameters: { 
+						anAnt.
+						aPoint } ] ]
 	"---------------------------------------------------------------"
 ]
 
@@ -137,7 +132,7 @@ MASimulationManager >> componentActivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self
+	self getTimeTravelEventsSubscriber subscribe: self
 	"---------------------------------------------------------------"
 ]
 
@@ -146,11 +141,11 @@ MASimulationManager >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TMATimeTravelServices useProvider: #default.
+		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
-		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self ] ].
+		self getTimeTravelEventsSubscriber subscribe: self.
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
+			self getTimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Initialization of the MASimulationManager component."
@@ -160,7 +155,7 @@ MASimulationManager >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
 ]
@@ -177,7 +172,7 @@ MASimulationManager >> componentPassivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self
+	self getTimeTravelEventsSubscriber unsubscribe: self
 	"---------------------------------------------------------------"
 ]
 
@@ -186,10 +181,10 @@ MASimulationManager >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
-			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+			self getTimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Removing the MASimulationManager component."
@@ -391,26 +386,26 @@ MASimulationManager >> getTMAStageEventsSubscriber [
 ]
 
 { #category : #'component accessing' }
-MASimulationManager >> getTMATimeTravelEventsSubscriber [
+MASimulationManager >> getTimeTravelEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
-	itf := TMATimeTravelEvents.
+	itf := TimeTravelEvents.
 	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
 	eventsSymbol isCollection
 	 	ifTrue: 
 			[eventsSubscriber := MolComponentManager default locatorServices 
-						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+						searchEventsSubscriberFor: TimeTravelEvents named: eventsSymbol ]. 
 	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
-MASimulationManager >> getTMATimeTravelServicesProvider [
+MASimulationManager >> getTimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
 
-	itf := TMATimeTravelServices.
+	itf := TimeTravelServices.
 	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
 	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
 
-	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -513,7 +508,7 @@ MASimulationManager >> saveForTimeTravel [
 		| memento |
 	memento := MASimulationMemento new.
 
-	self getTMATimeTravelServicesProvider
+	self getTimeTravelServicesProvider
 		save: (memento save: self).
 ]
 
@@ -531,8 +526,8 @@ MASimulationManager >> stageChanged: aSymbol for: anAnt [
 MASimulationManager >> start [
 
 	| pheromones ground |
-	self forServices: TMATimeTravelServices useProvider: #default.
-	self forEvents: TMATimeTravelEvents addProducer: #default.
+	self forServices: TimeTravelServices useProvider: #default.
+	self forEvents: TimeTravelEvents addProducer: #default.
 
 	isRunning := false.
 	simulationThread := nil.
@@ -545,7 +540,7 @@ MASimulationManager >> start [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
 			ground := MAGround start: #Ground.
 			pheromones := MAPheromones start: #Pheromones.
 			self createAnt.
@@ -574,7 +569,7 @@ MASimulationManager >> startSimulationLoop [
 				                    (MolUtils
 					                     instanceOf: MATimeTravel
 					                     named: #default) ifNotNil: [ 
-					                    self getTMATimeTravelServicesProvider
+					                    self getTimeTravelServicesProvider
 						                    isRestoring ifTrue: [ 
 						                    doSimulationStep := false ] ].
 				                    "---------------------------------------------------------------"
@@ -587,7 +582,7 @@ MASimulationManager >> startSimulationLoop [
 					                    self getTMASimulationToGlobalEventsNotifier 
 						                    simulationStepSent: step.
 
-					                    self getTMATimeTravelServicesProvider
+					                    self getTimeTravelServicesProvider
 						                    saveTheApplication.
 
 					                    (Delay forMilliseconds:

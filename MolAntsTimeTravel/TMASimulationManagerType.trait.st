@@ -16,7 +16,7 @@ TMASimulationManagerType classSide >> consumedComponentEvents [
 		  TMAStageEvents.
 		  TMARoleEvents.
 		  TMAInsectEvents.
-		  TMATimeTravelEvents }
+		  TimeTravelEvents }
 ]
 
 { #category : #'accessing - events' }
@@ -39,5 +39,5 @@ TMASimulationManagerType classSide >> usedComponentServices [
 	^ { 
 		  TMAPheromoneServices.
 		  TMAFeedingPointServices.
-		  TMATimeTravelServices }
+		  TimeTravelServices }
 ]

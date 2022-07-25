@@ -1,8 +1,8 @@
 Class {
 	#name : #MATimeTravel,
 	#superclass : #Object,
-	#traits : 'MolComponentImpl + TMATimeTravelType + TMATimeTravelServices',
-	#classTraits : 'MolComponentImpl classTrait + TMATimeTravelType classTrait + TMATimeTravelServices classTrait',
+	#traits : 'MolComponentImpl + TimeTravelType + TimeTravelServices',
+	#classTraits : 'MolComponentImpl classTrait + TimeTravelType classTrait + TimeTravelServices classTrait',
 	#instVars : [
 		'history',
 		'currentStep',
@@ -25,7 +25,7 @@ Class {
 		'panelLoop',
 		'inspector'
 	],
-	#category : #MolAntsTimeTravel
+	#category : #MolTimeTravel
 }
 
 { #category : #'life cycle' }
@@ -425,8 +425,8 @@ MATimeTravel >> deletionOf: aComponent [
 ]
 
 { #category : #'component accessing' }
-MATimeTravel >> getTMATimeTravelEventsNotifier [
-	^self eventsNotifiers at: TMATimeTravelEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TMATimeTravelEvents name: nil].
+MATimeTravel >> getTimeTravelEventsNotifier [
+	^self eventsNotifiers at: TimeTravelEvents ifAbsent: [^MolNotFoundEventsNotifier new interface: TimeTravelEvents name: nil].
 ]
 
 { #category : #testing }
@@ -520,7 +520,7 @@ MATimeTravel >> restoreAtStep: aStep [
 
 	"Undo"
 	aStep < currentStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: aStep) creationsAndDeletions.
+		componentsLifeCycles := (history at: (aStep + 1)) creationsAndDeletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle undo ].
 
@@ -586,7 +586,7 @@ MATimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: som
 { #category : #services }
 MATimeTravel >> saveTheApplication [
 
-	self getTMATimeTravelEventsNotifier saveForTimeTravel.
+	self getTimeTravelEventsNotifier saveForTimeTravel.
 
 	self nextStep.
 ]
@@ -597,7 +597,7 @@ MATimeTravel >> startTimeTravel [
 	isRestoring ifFalse: [ 
 		isSaving := false.
 		isRestoring := true.
-		self getTMATimeTravelEventsNotifier startTimeTravel ]
+		self getTimeTravelEventsNotifier startTimeTravel ]
 ]
 
 { #category : #'life cycle' }
@@ -627,7 +627,7 @@ MATimeTravel >> stopTimeTravel [
 				isReplaying := false.
 				isSaving := true.
 				isRestoring := false.
-				self getTMATimeTravelEventsNotifier stopTimeTravel ] ] ]
+				self getTimeTravelEventsNotifier stopTimeTravel ] ] ]
 ]
 
 { #category : #'life cycle' }

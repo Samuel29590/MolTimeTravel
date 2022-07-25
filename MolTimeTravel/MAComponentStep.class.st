@@ -6,7 +6,7 @@ Class {
 		'creationsAndDeletions',
 		'events'
 	],
-	#category : #MolAntsTimeTravel
+	#category : #MolTimeTravel
 }
 
 { #category : #accessing }

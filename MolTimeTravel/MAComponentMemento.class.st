@@ -1,42 +1,42 @@
 Class {
-	#name : #MAComponentMementoExperimental,
+	#name : #MAComponentMemento,
 	#superclass : #Object,
 	#instVars : [
 		'componentClass',
 		'componentName'
 	],
-	#category : #MolAntsExperimental
+	#category : #MolTimeTravel
 }
 
 { #category : #accessing }
-MAComponentMementoExperimental >> componentClass [
+MAComponentMemento >> componentClass [
 
 	^ componentClass
 ]
 
 { #category : #accessing }
-MAComponentMementoExperimental >> componentName [
+MAComponentMemento >> componentName [
 
 	^ componentName
 ]
 
 { #category : #'undo - undo' }
-MAComponentMementoExperimental >> redo [
+MAComponentMemento >> redo [
 ]
 
 { #category : #accessing }
-MAComponentMementoExperimental >> restoreValues [
+MAComponentMemento >> restoreValues [
  | instance |
 	instance := (MolUtils instanceOf: componentClass named: componentName) .
 	instance ifNotNil: [ instance restoreFrom: self. ]
 ]
 
 { #category : #actions }
-MAComponentMementoExperimental >> save: aComponent [
+MAComponentMemento >> save: aComponent [
 ]
 
 { #category : #'undo - undo' }
-MAComponentMementoExperimental >> undo [
+MAComponentMemento >> undo [
 
 	
 ]

@@ -22,8 +22,8 @@ Variables :
 Class {
 	#name : #MAGround,
 	#superclass : #BlElement,
-	#traits : 'MolComponentImpl + TMAGroundType + TMASimulationToGlobalEvents + TMATimeTravelEvents',
-	#classTraits : 'MolComponentImpl classTrait + TMAGroundType classTrait + TMASimulationToGlobalEvents classTrait + TMATimeTravelEvents classTrait',
+	#traits : 'MolComponentImpl + TMAGroundType + TMASimulationToGlobalEvents + TimeTravelEvents',
+	#classTraits : 'MolComponentImpl classTrait + TMAGroundType classTrait + TMASimulationToGlobalEvents classTrait + TimeTravelEvents classTrait',
 	#instVars : [
 		'viewLoop',
 		'mySpace',
@@ -51,7 +51,7 @@ MAGround >> componentActivate [
 
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
-	self getTMATimeTravelEventsSubscriber subscribe: self.
+	self getTimeTravelEventsSubscriber subscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -61,11 +61,11 @@ MAGround >> componentInitialize [
 	"--------------------------Time Travel--------------------------"
 
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TMATimeTravelServices useProvider: #default.
+		self forServices: TimeTravelServices useProvider: #default.
 		"Subscription to the Time Travel event"
-		self getTMATimeTravelEventsSubscriber subscribe: self.
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTMATimeTravelServicesProvider creationOf: self ] ].
+		self getTimeTravelEventsSubscriber subscribe: self.
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
+			self getTimeTravelServicesProvider creationOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Initialization of the MAGround component."
@@ -83,7 +83,7 @@ MAGround >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ]
 ]
 
@@ -96,7 +96,7 @@ MAGround >> componentPassivate [
 	
 	"--------------------------Time Travel--------------------------"
 	"Unsubscribe from the Time Travel event"
-	self getTMATimeTravelEventsSubscriber unsubscribe: self.
+	self getTimeTravelEventsSubscriber unsubscribe: self.
 	"---------------------------------------------------------------"
 ]
 
@@ -105,11 +105,11 @@ MAGround >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		self getTMATimeTravelServicesProvider isRestoring ifFalse: [
+		self getTimeTravelServicesProvider isRestoring ifFalse: [
 			"Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
-			self getTMATimeTravelServicesProvider deletionOf: self ] ].
+			self getTimeTravelServicesProvider deletionOf: self ] ].
 	"---------------------------------------------------------------"
 
 	"Removing the MAGround component."
@@ -583,26 +583,26 @@ MAGround >> getTMASimulationToGlobalEventsSubscriber [
 ]
 
 { #category : #'component accessing' }
-MAGround >> getTMATimeTravelEventsSubscriber [
+MAGround >> getTimeTravelEventsSubscriber [
 	| eventsSymbol eventsSubscriber itf |
-	itf := TMATimeTravelEvents.
+	itf := TimeTravelEvents.
 	eventsSymbol := self eventsSubscribers at: itf ifAbsent: [^MolNotFoundEventsSubscriber new interface: itf name: nil].
 	eventsSymbol isCollection
 	 	ifTrue: 
 			[eventsSubscriber := MolComponentManager default locatorServices 
-						searchEventsSubscriberFor: TMATimeTravelEvents named: eventsSymbol ]. 
+						searchEventsSubscriberFor: TimeTravelEvents named: eventsSymbol ]. 
 	^eventsSubscriber
 ]
 
 { #category : #'component accessing' }
-MAGround >> getTMATimeTravelServicesProvider [
+MAGround >> getTimeTravelServicesProvider [
 	| servicesSymbol servicesProvider itf |
 
-	itf := TMATimeTravelServices.
+	itf := TimeTravelServices.
 	servicesSymbol := self servicesProviders at: itf ifAbsent: [nil].
 	(servicesSymbol isNil or:[servicesSymbol isSymbol not]) ifTrue: [ ^ MolNotFoundServicesProvider new interface: itf name: nil ].
 
-	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TMATimeTravelServices named: servicesSymbol.
+	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
 
@@ -634,7 +634,7 @@ MAGround >> saveForTimeTravel [
 	| memento |
 	memento := MAGroundMemento new.
 
-	self getTMATimeTravelServicesProvider
+	self getTimeTravelServicesProvider
 		save: (memento save: self)
 ]
 
@@ -666,7 +666,7 @@ MAGround >> startViewLoop [
 
 						
 	(MolUtils instanceOf: MATimeTravel named: #default) ifNotNil: [ 
-		            self getTMATimeTravelServicesProvider isRestoring 
+		            self getTimeTravelServicesProvider isRestoring 
 			            ifTrue: [ doUpdateView := true ]].
 
 		            doUpdateView ifTrue: [ 
@@ -730,7 +730,7 @@ MAGround >> updateInfoPanel [
 			buttonPause background: Color gray.
 			(MolUtils instanceOf: MATimeTravel named: #default)
 				ifNotNil: [ 
-					self getTMATimeTravelServicesProvider isRestoring
+					self getTimeTravelServicesProvider isRestoring
 						ifTrue: [ buttonPlay background: Color gray ]
 						ifFalse: [ buttonPlay background: Color green ] ]
 				ifNil: [ buttonPlay background: Color green ] ]
