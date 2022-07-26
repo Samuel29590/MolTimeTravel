@@ -11,10 +11,9 @@ MolGroundMemento >> redo [
 ]
 
 { #category : #'undo - undo' }
-MolGroundMemento >> save: aFighter [
+MolGroundMemento >> save: aGround [
 
-	componentClass := aFighter class.
-	componentName := aFighter componentName.
+	componentReference := MolComponentReference newFrom: aGround.
 ]
 
 { #category : #'undo - undo' }

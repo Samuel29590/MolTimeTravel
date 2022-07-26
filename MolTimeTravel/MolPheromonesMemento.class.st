@@ -37,8 +37,8 @@ MolPheromonesMemento >> redo [
 MolPheromonesMemento >> save: aPheromones [
 
 	| dict dictReturn |
-	componentClass := aPheromones class.
-	componentName := aPheromones componentName.
+	componentReference := MolComponentReference newFrom: aPheromones.
+
 	maxIntensity := aPheromones getMaxIntensity.
 
 	aPheromones getPheromonesDict
@@ -46,14 +46,16 @@ MolPheromonesMemento >> save: aPheromones [
 			dict := Dictionary new.
 			aPheromones getPheromonesDict keysAndValuesDo: [ :k :v | 
 				| assoc |
-				assoc := v key class -> v key componentName -> v value.
+				(v key) isComponent ifTrue: [
+				assoc := (MolComponentReference newFrom: v key) -> v value.] ifFalse:[ 
+				assoc := (v key) -> v value. ]. 
 				dict at: k put: assoc ].
 			pheromonesDict := dict ]
 		ifNil: [ pheromonesDict := nil ].
 
 	aPheromones getPheromonesReturnDict
 		ifNotNil: [ 
-	dictReturn := Dictionary new.
+			dictReturn := Dictionary new.
 			aPheromones getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
 				dictReturn at: k put: v ].
 			pheromonesReturnDict := dictReturn ]

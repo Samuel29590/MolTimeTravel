@@ -664,15 +664,16 @@ MAGround >> startViewLoop [
 		            self getTMASimulationServicesProvider getStep
 		            % refreshing = 0 ifFalse: [ doUpdateView := false ].
 
-						
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		            self getTimeTravelServicesProvider isRestoring 
-			            ifTrue: [ doUpdateView := true ]].
+
+		            (MolUtils instanceOf: MolTimeTravel named: #default) 
+			            ifNotNil: [ 
+				            self getTimeTravelServicesProvider isRestoring 
+					            ifTrue: [ doUpdateView := true ] ].
 
 		            doUpdateView ifTrue: [ 
 			            self updateView.
 			            (Delay forMilliseconds:
-				             MASimulationManager simulationStepDurationInMs) wait ] ] ] 
+				             50) wait ] ] ] 
 		            forkAt: Processor userBackgroundPriority.
 	viewLoop name: 'Molecule ViewLoop Process'.
 	viewLoop resume

@@ -43,13 +43,13 @@ MolStageMemento >> redo [
 { #category : #actions }
 MolStageMemento >> save: aStage [
 
-	componentClass := aStage class.
-	componentName := aStage componentName.
+	componentReference := MolComponentReference newFrom: aStage.
+	
 	eggStateDurationInMs := aStage getEggStateDurationInMs.
 	adultStateDurationInMs := aStage getAdultStateDurationInMs.
 	stageName := aStage getStageName.
 	
-	aStage getRole ifNil:[role := nil] ifNotNil:[	role := aStage getRole class -> aStage getRole componentName]
+	aStage getRole ifNil:[role := nil] ifNotNil:[	role := (MolComponentReference newFrom: aStage getRole) ]
 	
 
 ]

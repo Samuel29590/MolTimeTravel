@@ -469,7 +469,7 @@ MASimulationManager >> queenLaid [
 MASimulationManager >> restoreFrom: aMemento [
 
 	| dict orderedCollection |
-	componentName := aMemento componentName.
+	componentName := aMemento componentReference componentName.
 	step := aMemento getStep.
 	storage := aMemento getStorage.
 	nbAnts := aMemento getNbAnts.
@@ -480,7 +480,7 @@ MASimulationManager >> restoreFrom: aMemento [
 			| list |
 			list := OrderedCollection new.
 			v do: [ :value | 
-				list add: (MolUtils instanceOf: value key named: value value) ].
+				list add: (MolUtils instanceOf: value componentClass named: value componentName) ].
 			dict add: k -> list ] ].
 	insects := dict.
 
@@ -490,7 +490,7 @@ MASimulationManager >> restoreFrom: aMemento [
 			| list |
 			list := OrderedCollection new.
 			v do: [ :value | 
-				list add: (MolUtils instanceOf: value key named: value value) ].
+				list add: (MolUtils instanceOf: value componentClass named: value componentName) ].
 			dict add: k -> list ] ].
 	feedingPoints := dict.
 
@@ -498,7 +498,7 @@ MASimulationManager >> restoreFrom: aMemento [
 	aMemento getAnts isCollection ifTrue: [ 
 		aMemento getAnts do: [ :value | 
 			orderedCollection add:
-				(MolUtils instanceOf: value key named: value value) ] ].
+				(MolUtils instanceOf: value componentClass named: value componentName) ] ].
 	ants := orderedCollection
 ]
 

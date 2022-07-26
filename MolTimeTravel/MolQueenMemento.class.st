@@ -11,10 +11,9 @@ MolQueenMemento >> redo [
 ]
 
 { #category : #actions }
-MolQueenMemento >> save: anQueen [
+MolQueenMemento >> save: aQueen [
 
-	componentClass := anQueen class.
-	componentName := anQueen componentName
+	componentReference := MolComponentReference newFrom: aQueen.
 ]
 
 { #category : #'undo - undo' }

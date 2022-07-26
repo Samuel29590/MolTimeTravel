@@ -260,9 +260,9 @@ MAWorker >> getOthersPheromonesAround: anAnt [
 		| pheromoneRectangle |
 		pheromoneRectangle := BlBounds origin: each extent: 0 @ 0.
 		(antRectangle intersects: pheromoneRectangle) ifTrue: [ 
-			(anAnt getPheromonesDict at: each) key componentName
-			= anAnt componentName ifFalse: [ 
-				othersPheromonesVisibles add: each ] ] ].
+			(anAnt getPheromonesDict at: each) key ifNil:[othersPheromonesVisibles add: each] ifNotNil:[
+			(anAnt getPheromonesDict at: each) key componentName = anAnt componentName ifFalse: [ 
+				othersPheromonesVisibles add: each ] ] ]].
 
 		othersPheromonesVisibles remove: anAnt getPosition ifAbsent: [  ].
 	oldPositions do: [ :each | 

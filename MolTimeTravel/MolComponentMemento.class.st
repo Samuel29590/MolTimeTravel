@@ -2,22 +2,15 @@ Class {
 	#name : #MolComponentMemento,
 	#superclass : #Object,
 	#instVars : [
-		'componentClass',
-		'componentName'
+		'componentReference'
 	],
 	#category : #MolTimeTravel
 }
 
 { #category : #accessing }
-MolComponentMemento >> componentClass [
+MolComponentMemento >> componentReference [
 
-	^ componentClass
-]
-
-{ #category : #accessing }
-MolComponentMemento >> componentName [
-
-	^ componentName
+	^ componentReference 
 ]
 
 { #category : #'undo - undo' }
@@ -27,7 +20,7 @@ MolComponentMemento >> redo [
 { #category : #accessing }
 MolComponentMemento >> restoreValues [
  | instance |
-	instance := (MolUtils instanceOf: componentClass named: componentName) .
+	instance := (MolUtils instanceOf: componentReference componentClass named: componentReference componentName) .
 	instance ifNotNil: [ instance restoreFrom: self. ]
 ]
 

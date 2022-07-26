@@ -255,9 +255,7 @@ MAStage >> restoreFrom: aMemento [
 	adultStateDurationInMs := aMemento getAdultStateDurationInMs.
 	stageName := aMemento getStageName.
 	aMemento getRole ifNil: [ role := nil ] ifNotNil: [ 
-	role := MolUtils
-		        instanceOf: aMemento getRole key
-		        named: aMemento getRole value]
+	role := (MolUtils instanceOf: aMemento getRole componentClass named: aMemento getRole componentName)]
 ]
 
 { #category : #events }

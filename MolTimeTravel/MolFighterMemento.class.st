@@ -13,8 +13,7 @@ MolFighterMemento >> redo [
 { #category : #actions }
 MolFighterMemento >> save: aFighter [
 
-	componentClass := aFighter class.
-	componentName := aFighter componentName.
+	componentReference := MolComponentReference newFrom: aFighter .
 ]
 
 { #category : #'undo - undo' }

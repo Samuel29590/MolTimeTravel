@@ -13,8 +13,7 @@ MolMapMemento >> redo [
 { #category : #actions }
 MolMapMemento >> save: aMap [
 
-	componentClass := aMap class.
-	componentName := aMap componentName
+	componentReference := MolComponentReference newFrom: aMap.
 ]
 
 { #category : #'undo - undo' }

@@ -58,8 +58,7 @@ MolSimulationMemento >> redo [
 MolSimulationMemento >> save: aSimulationManager [
 
 	| dict orderedCollection |
-	componentClass := aSimulationManager class.
-	componentName := aSimulationManager componentName.
+	componentReference := MolComponentReference newFrom: aSimulationManager.
 
 	step := aSimulationManager getStep.
 	storage := aSimulationManager getStorage.
@@ -72,7 +71,7 @@ MolSimulationMemento >> save: aSimulationManager [
 				aSimulationManager getInsects keysAndValuesDo: [ :k :v | 
 					| list |
 					list := OrderedCollection new.
-					v do: [ :value | list add: value class -> value componentName ].
+					v do: [ :value | list add: (MolComponentReference newFrom: value) ].
 					dict add: k -> list ] ].
 			insects := dict ]
 		ifNil: [ insects := nil ].
@@ -84,7 +83,7 @@ MolSimulationMemento >> save: aSimulationManager [
 				aSimulationManager getFeedingPoints keysAndValuesDo: [ :k :v | 
 					| list |
 					list := OrderedCollection new.
-					v do: [ :value | list add: value class -> value componentName ].
+					v do: [ :value | list add: (MolComponentReference newFrom: value) ].
 					dict add: k -> list ] ].
 			feedingPoints := dict ]
 		ifNil: [ feedingPoints := nil ].
@@ -94,7 +93,7 @@ MolSimulationMemento >> save: aSimulationManager [
 		ifNotNil: [ 
 			aSimulationManager getAnts isCollection ifTrue: [ 
 				aSimulationManager getAnts do: [ :value | 
-					orderedCollection add: value class -> value componentName ] ].
+					orderedCollection add: (MolComponentReference newFrom: value) ] ].
 			ants := orderedCollection ]
 		ifNil: [ ants := nil ]
 ]

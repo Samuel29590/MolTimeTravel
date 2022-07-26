@@ -1,11 +1,11 @@
 Class {
-	#name : #BaselineOfMolAntsTimeTravel,
+	#name : #BaselineOfMolTimeTravel,
 	#superclass : #BaselineOf,
-	#category : #BaselineOfMolAntsTimeTravel
+	#category : #BaselineOfMolTimeTravel
 }
 
 { #category : #baselines }
-BaselineOfMolAntsTimeTravel >> baseline: spec [
+BaselineOfMolTimeTravel >> baseline: spec [
 
 	<baseline>
 	spec for: #common do: [ "Load Molecule"
@@ -19,5 +19,6 @@ BaselineOfMolAntsTimeTravel >> baseline: spec [
 			with: [ spec repository: 'github://pharo-graphics/Bloc/src' ].
 
 		spec package: 'MolTimeTravel'.
-		spec package: 'MolAntsTimeTravel' ]
+		spec package: 'MolAntsTimeTravel'.
+		spec package: 'MolGPSTimeTravel' ]
 ]
