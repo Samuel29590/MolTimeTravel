@@ -14,8 +14,8 @@ So this is why this two frameworks are loaded with the baseline of MolAntsTimeTr
 
 ```smalltalk
 Metacello new
-        baseline: 'MolAntsTimeTravel';
-        repository: 'github://Samuel29590/MolAntsTimeTravel';
+        baseline: 'MolTimeTravel';
+        repository: 'github://Samuel29590/MolTimeTravel';
         load.
 ```
 
