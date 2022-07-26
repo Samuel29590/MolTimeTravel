@@ -478,7 +478,7 @@ MAGround >> createInfoPanel [
 		                   'Number of insects delivered :' asRopedText.
 	mainScreen
 		addEventHandlerOn: BlElementExtentChangedEvent
-		do: [ nbDeliveredText relocate: mainScreen size x / 10 @ 150 ].
+		do: [ nbDeliveredText relocate: mainScreen size x / 10 @ 180 ].
 	infoPanel addChild: nbDeliveredText.
 	nbDeliveredView := BlTextElement new
 		                   relocate:
@@ -589,7 +589,7 @@ MAGround >> createInfoPanel [
 		              'Adults : ' asRopedText.
 	mainScreen
 		addEventHandlerOn: BlElementExtentChangedEvent
-		do: [ nbAntsText relocate: mainScreen size x / 10 * 5 @ 100 ].
+		do: [ nbAntsText relocate: mainScreen size x / 10 * 5 + 100 @ 100 ].
 	infoPanel addChild: nbAntsText.
 	nbAntsView := BlTextElement new
 		              relocate:
