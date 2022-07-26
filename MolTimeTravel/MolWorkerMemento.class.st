@@ -29,8 +29,8 @@ MolWorkerMemento >> redo [
 { #category : #actions }
 MolWorkerMemento >> save: aWorker [
 
-	componentClass := aWorker class.
-	componentName := aWorker componentName.
+	componentReference := MolComponentReference newFrom: aWorker.
+	
 	phase := aWorker getPhase.
 	oldPositions := aWorker getOldPositions copy
 ]

@@ -234,17 +234,27 @@ MAPheromones >> restoreFrom: aMemento [
 		ifNotNil: [ 
 			pheromonesDict := Dictionary new.
 			aMemento getPheromonesDict keysAndValuesDo: [ :k :v | 
+				
+				v key isComponentReference ifTrue:[
+				
 				pheromonesDict
 					at: k
 					put:
-					(MolUtils instanceOf: v key key named: v key value) -> v value ] ]
+						(MolUtils
+							 instanceOf: v key componentClass
+							 named: v key componentName) -> v value
+							] ifFalse:[pheromonesDict
+					at: k
+					put:v key  -> v value]
+							
+							 ] ]
 		ifNil: [ pheromonesDict := nil ].
 	aMemento getPheromonesReturnDict
 		ifNotNil: [ 
-	pheromonesReturnDict := Dictionary new.
-	aMemento getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
-		pheromonesReturnDict at: k put: v ]] ifNil:[pheromonesReturnDict := nil.
-	].
+			pheromonesReturnDict := Dictionary new.
+			aMemento getPheromonesReturnDict keysAndValuesDo: [ :k :v | 
+				pheromonesReturnDict at: k put: v ] ]
+		ifNil: [ pheromonesReturnDict := nil ]
 ]
 
 { #category : #events }

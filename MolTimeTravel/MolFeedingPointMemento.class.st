@@ -29,8 +29,8 @@ MolFeedingPointMemento >> redo [
 { #category : #actions }
 MolFeedingPointMemento >> save: aFeedingPoint [
 
-	componentClass := aFeedingPoint class.
-	componentName := aFeedingPoint componentName.
+	componentReference := MolComponentReference newFrom: aFeedingPoint.
+	
 	position := aFeedingPoint getPosition.
 	capacity  := aFeedingPoint getCapacity.
 ]

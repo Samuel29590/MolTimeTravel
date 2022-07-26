@@ -21,29 +21,22 @@ MolComponentEventMemento >> redo [
 	].
 	realParameters := realParameters asArray.
 
-	(MolUtils instanceOf: self componentClass named: self componentName)
+	(MolUtils instanceOf: componentReference componentClass named: componentReference componentName)
 		perform: eventName
 		withArguments: realParameters
 ]
 
 { #category : #'undo - undo' }
-MolComponentEventMemento >> save: aComponent [
-
-	componentClass := aComponent class.
-	componentName := aComponent componentName
-]
-
-{ #category : #'undo - undo' }
 MolComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 
-	componentClass := aComponent class.
-	componentName := aComponent componentName.
-	eventName := aMethodName.
+	componentReference := MolComponentReference newFrom: aComponent.
 	
+	eventName := aMethodName.
+
 	parameters := OrderedCollection new.
 	
 	someParameters do: [ :parameter |
-			parameter isComponent ifTrue: [ parameters add: (parameter class -> parameter componentName) ]
+			parameter isComponent ifTrue: [ parameters add: (MolComponentReference newFrom: parameter ) ]
 			ifFalse: [ parameters add: parameter ]
 		 ].
 	

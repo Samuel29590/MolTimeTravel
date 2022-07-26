@@ -22,8 +22,7 @@ MolDataMemento >> redo [
 { #category : #actions }
 MolDataMemento >> save: aData [
 
-	componentClass := aData class.
-	componentName := aData componentName.
+	componentReference := MolComponentReference newFrom: aData.
 
 	accuracy := aData accuracy.
 ]

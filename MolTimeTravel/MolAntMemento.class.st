@@ -36,13 +36,12 @@ MolAntMemento >> redo [
 { #category : #actions }
 MolAntMemento >> save: anAnt [
 
-	componentClass := anAnt class.
-	componentName := anAnt componentName.
+	componentReference := MolComponentReference newFrom: anAnt.
 
 	position := anAnt getPosition.
 	ageInMs := anAnt getAgeInMs.
 	anAnt getStage ifNil:[stage:= nil] ifNotNil: [ 
-	stage := anAnt getStage class -> anAnt getStage componentName ].
+	stage := (MolComponentReference newFrom: anAnt getStage) ].
 ]
 
 { #category : #'undo - undo' }

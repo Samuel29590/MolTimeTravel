@@ -29,8 +29,8 @@ MolInsectMemento >> redo [
 { #category : #actions }
 MolInsectMemento >> save: anInsect [
 
-	componentClass := anInsect class.
-	componentName := anInsect componentName.
+	componentReference := MolComponentReference newFrom: anInsect.
+	
 	position := anInsect getPosition.
 	ageInMs := anInsect getAgeInMs
 ]

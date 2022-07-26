@@ -7,22 +7,19 @@ Class {
 { #category : #'undo - undo' }
 MolComponentCreationMemento >> redo [
 
-	(MolUtils
-		 instanceOf: self componentClass
-		 named: self componentName) ifNil: [ 
-		self componentClass start: self componentName ]
+	(MolUtils instanceOf: componentReference componentClass named: componentReference componentName) 
+		ifNil: [ componentReference componentClass start: componentReference componentName ]
 ]
 
 { #category : #'undo - undo' }
 MolComponentCreationMemento >> save: aComponent [
 
-	componentClass := aComponent class.
-	componentName := aComponent componentName
+	componentReference := MolComponentReference newFrom: aComponent.
 ]
 
 { #category : #'undo - undo' }
 MolComponentCreationMemento >> undo [
 
-		(MolUtils instanceOf: self componentClass named: self componentName) 
-		ifNotNil: [ self componentClass stop: self componentName ]
+		(MolUtils instanceOf: componentReference componentClass named: componentReference componentName) 
+		ifNotNil: [ componentReference componentClass stop: componentReference componentName ]
 ]

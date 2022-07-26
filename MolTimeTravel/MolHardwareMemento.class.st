@@ -13,8 +13,7 @@ MolHardwareMemento >> redo [
 { #category : #actions }
 MolHardwareMemento >> save: anHardware [
 
-	componentClass := anHardware class.
-	componentName := anHardware componentName.
+	componentReference := MolComponentReference newFrom: anHardware.
 ]
 
 { #category : #'undo - undo' }
