@@ -37,7 +37,24 @@ Class {
 		'nbFeedingPointView',
 		'buttonReplay',
 		'buttonPlay',
-		'buttonPause'
+		'buttonPause',
+		'mainScreen',
+		'buttonStop',
+		'button1',
+		'button2',
+		'button5',
+		'button10',
+		'button20',
+		'stepsText',
+		'refreshingText',
+		'stepText',
+		'nbInsectsText',
+		'nbDeliveredText',
+		'nbPheromonesText',
+		'nbFeedingPointText',
+		'nbAntsText',
+		'nbOfAntsText',
+		'eggText'
 	],
 	#category : #MolAntsTimeTravel
 }
@@ -74,11 +91,11 @@ MAGround >> componentInitialize [
 	self forServices: TMAPheromoneServices useProvider: #Pheromones.
 
 	refreshing := 1.
-	mySpace := self openInNewSpace extent:
-		           MASimulationManager simulationWidth
-		           @ (MASimulationManager simulationHeight + 300).
-	mySpace title: 'MolAnts Simulation'.
+
+	self createGround.
+
 	self createInfoPanel.
+
 	self startViewLoop.
 
 	"--------------------------Time Travel--------------------------"
@@ -131,21 +148,56 @@ MAGround >> componentRemove [
 ]
 
 { #category : #initialization }
+MAGround >> createGround [
+
+	"Initialize the info panel of the view. It initialize each item of the panel (buttons, texts ...)."
+
+	mySpace := BlSpace new.
+	mySpace title: 'MolAnts Simulation'.
+	mySpace extent: MASimulationManager simulationWidth
+		@ (MASimulationManager simulationHeight + 300).
+	mySpace show.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	mainScreen := BlElement new
+		              background: Color white;
+		              constraintsDo: [ :c | 
+			              c horizontal matchParent.
+			              c vertical matchParent ];
+		              zIndex: 1.
+	mySpace addChild: mainScreen.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	self
+		background: (Color fromHexString: 'c7baae');
+		margin: (BlInsets bottom: 300);
+		constraintsDo: [ :c | 
+			c horizontal matchParent.
+			c vertical matchParent ];
+		zIndex: 2.
+	mainScreen addChild: self
+]
+
+{ #category : #initialization }
 MAGround >> createInfoPanel [
 
 	"Initialize the info panel of the view. It initialize each item of the panel (buttons, texts ...)."
 
-	| infoPanel button labelText label |
-	infoPanel := BlElement new.
-	infoPanel background: Color lightGray.
-	infoPanel relocate: 0 @ MASimulationManager simulationHeight.
-	infoPanel size: MASimulationManager simulationWidth @ 300.
-	infoPanel constraintsDo: [ :c | 
-		c maxHeight: 300.
-		c maxWidth: MASimulationManager simulationWidth ].
-	mySpace addChild: infoPanel.
-
-
+	| infoPanel labelText label |
+	infoPanel := BlElement new
+		             background: Color lightGray;
+		             size: MASimulationManager simulationWidth @ 300;
+		             relocate: 0 @ MASimulationManager simulationHeight;
+		             constraintsDo: [ :c | 
+			             c maxHeight: 300.
+			             c horizontal matchParent ];
+		             zIndex: 3.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ infoPanel relocate: 0 @ (mainScreen size y - 300) ].
+	mainScreen addChild: infoPanel.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -168,8 +220,6 @@ MAGround >> createInfoPanel [
 		               constraintsDo: [ :c | 
 			               c horizontal fitContent.
 			               c vertical fitContent ];
-		               relocate:
-			               MASimulationManager simulationWidth / 10 @ 10;
 		               addEventHandler: (BlEventHandler
 				                on: BlClickEvent
 				                do: [ :anEvent | 
@@ -180,11 +230,13 @@ MAGround >> createInfoPanel [
 	labelText := 'Pause' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
-		             fontName: 'Helvetica';
 		             thin.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonPause addChild: label.
+	mainScreen addEventHandlerOn: BlElementExtentChangedEvent do: [ 
+		buttonPause relocate:
+			mainScreen size x / 3 - (buttonPause width / 2) @ 10 ].
 	infoPanel addChild: buttonPause.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -207,234 +259,347 @@ MAGround >> createInfoPanel [
 		              constraintsDo: [ :c | 
 			              c horizontal fitContent.
 			              c vertical fitContent ];
-		              relocate:
-			              MASimulationManager simulationWidth / 10 * 4.5 @ 10;
+		              relocate: mainScreen size x / 2 @ 10;
 		              addEventHandler: (BlEventHandler
 				               on: BlClickEvent
 				               do: [ :anEvent | 
 					               buttonPlay isVisible ifTrue: [ 
-							               self getTMASimulationServicesProvider playSimulation ].
-										                
+							               self getTMASimulationServicesProvider
+								               playSimulation ].
+
 					               anEvent consumed: true ]).
 	labelText := 'Play' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
-		             fontName: 'Helvetica';
 		             thin.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonPlay addChild: label.
+	mainScreen addEventHandlerOn: BlElementExtentChangedEvent do: [ 
+		buttonPlay relocate:
+			mainScreen size x / 2 - (buttonPlay width / 2) @ 10 ].
 	infoPanel addChild: buttonPlay.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding Stop button"
-	button := BlElement new
-		          background: Color red;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManager simulationWidth / 10 * 8 @ 10;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           button isVisible ifTrue: [ 
-							           MASimulationManager stopSimulation ].
-					           anEvent consumed: true ]).
+	buttonStop := BlElement new
+		              background: Color red;
+		              geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		              padding: (BlInsets
+				               top: 8
+				               right: 16
+				               bottom: 8
+				               left: 16);
+		              layout: BlLinearLayout horizontal;
+		              effect: (BlGaussianShadowEffect
+				               color: (Color black alpha: 0.3)
+				               width: 1
+				               offset: 0 @ 2);
+		              constraintsDo: [ :c | 
+			              c horizontal fitContent.
+			              c vertical fitContent ];
+		              relocate: mainScreen size x / 3 * 2 @ 10;
+		              addEventHandler: (BlEventHandler
+				               on: BlClickEvent
+				               do: [ :anEvent | 
+					               buttonStop isVisible ifTrue: [ 
+							               MASimulationManager stopSimulation ].
+					               anEvent consumed: true ]).
 	labelText := 'Stop' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
-		             fontName: 'Helvetica';
 		             thin.
 	label := BlTextElement new.
 	label text: labelText.
-	button addChild: label.
-	infoPanel addChild: button.
+	buttonStop addChild: label.
+	mainScreen addEventHandlerOn: BlElementExtentChangedEvent do: [ 
+		buttonStop relocate:
+			mainScreen size x / 3 * 2 - (buttonStop width / 2) @ 10 ].
+	infoPanel addChild: buttonStop.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 
 	"Adding the text for refreshing."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 @ 55;
-			  background: Color transparent) text:
-			 'Refreshing the view every ' asRopedText).
+	refreshingText := (BlTextElement new
+		                   relocate:
+			                   MASimulationManager simulationWidth / 10 @ 55;
+		                   background: Color transparent) text:
+		                  'Refreshing the view every ' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ refreshingText relocate: mainScreen size x / 10 @ 55 ].
+	infoPanel addChild: refreshingText.
 
 	"Adding the 1 button"
-	button := BlElement new.
-	button background: Color gray.
-	button size: 25 @ 20.
-	button relocate: MASimulationManager simulationWidth / 10 + 200 @ 50.
-	button addChild:
+	button1 := BlElement new.
+	button1 background: Color gray.
+	button1 size: 25 @ 20.
+	button1 addChild:
 		((BlTextElement new relocate: 10 @ 5) text: '1' asRopedText).
-	button addEventHandler: (BlEventHandler
+	button1 addEventHandler: (BlEventHandler
 			 on: BlClickEvent
 			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ self setRefreshingTo: 1 ].
+				 button1 isVisible ifTrue: [ self setRefreshingTo: 1 ].
 				 anEvent consumed: true ]).
-	infoPanel addChild: button.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ button1 relocate: mainScreen size x / 10 + 200 @ 50 ].
+	infoPanel addChild: button1.
 
 	"Adding the 2 button"
-	button := BlElement new.
-	button background: Color gray.
-	button size: 25 @ 20.
-	button relocate: MASimulationManager simulationWidth / 10 + 230 @ 50.
-	button addChild:
+	button2 := BlElement new.
+	button2 background: Color gray.
+	button2 size: 25 @ 20.
+	button2 addChild:
 		((BlTextElement new relocate: 10 @ 5) text: '2' asRopedText).
-	button addEventHandler: (BlEventHandler
+	button2 addEventHandler: (BlEventHandler
 			 on: BlClickEvent
 			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ self setRefreshingTo: 2 ].
+				 button2 isVisible ifTrue: [ self setRefreshingTo: 2 ].
 				 anEvent consumed: true ]).
-	infoPanel addChild: button.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ button2 relocate: mainScreen size x / 10 + 230 @ 50 ].
+	infoPanel addChild: button2.
 
 	"Adding the 5 button"
-	button := BlElement new.
-	button background: Color gray.
-	button size: 25 @ 20.
-	button relocate: MASimulationManager simulationWidth / 10 + 260 @ 50.
-	button addChild:
+	button5 := BlElement new.
+	button5 background: Color gray.
+	button5 size: 25 @ 20.
+	button5 addChild:
 		((BlTextElement new relocate: 10 @ 5) text: '5' asRopedText).
-	button addEventHandler: (BlEventHandler
+	button5 addEventHandler: (BlEventHandler
 			 on: BlClickEvent
 			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ self setRefreshingTo: 5 ].
+				 button5 isVisible ifTrue: [ self setRefreshingTo: 5 ].
 				 anEvent consumed: true ]).
-	infoPanel addChild: button.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ button5 relocate: mainScreen size x / 10 + 260 @ 50 ].
+	infoPanel addChild: button5.
 
 	"Adding the 10 button"
-	button := BlElement new.
-	button background: Color gray.
-	button size: 35 @ 20.
-	button relocate: MASimulationManager simulationWidth / 10 + 290 @ 50.
-	button addChild:
+	button10 := BlElement new.
+	button10 background: Color gray.
+	button10 size: 35 @ 20.
+	button10 addChild:
 		((BlTextElement new relocate: 10 @ 5) text: '10' asRopedText).
-	button addEventHandler: (BlEventHandler
+	button10 addEventHandler: (BlEventHandler
 			 on: BlClickEvent
 			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ self setRefreshingTo: 10 ].
+				 button10 isVisible ifTrue: [ self setRefreshingTo: 10 ].
 				 anEvent consumed: true ]).
-	infoPanel addChild: button.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ button10 relocate: mainScreen size x / 10 + 290 @ 50 ].
+	infoPanel addChild: button10.
 
 	"Adding the 20 button"
-	button := BlElement new.
-	button background: Color gray.
-	button size: 35 @ 20.
-	button relocate: MASimulationManager simulationWidth / 10 + 330 @ 50.
-	button addChild:
+	button20 := BlElement new.
+	button20 background: Color gray.
+	button20 size: 35 @ 20.
+	button20 addChild:
 		((BlTextElement new relocate: 10 @ 5) text: '20' asRopedText).
-	button addEventHandler: (BlEventHandler
+	button20 addEventHandler: (BlEventHandler
 			 on: BlClickEvent
 			 do: [ :anEvent | 
-				 button isVisible ifTrue: [ self setRefreshingTo: 20 ].
+				 button20 isVisible ifTrue: [ self setRefreshingTo: 20 ].
 				 anEvent consumed: true ]).
-	infoPanel addChild: button.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ button20 relocate: mainScreen size x / 10 + 330 @ 50 ].
+	infoPanel addChild: button20.
 
 	"steps text"
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 + 370 @ 55;
-			  background: Color transparent) text: 'steps.' asRopedText).
+	stepsText := (BlTextElement new background: Color transparent) text:
+		             'steps.' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ stepsText relocate: mainScreen size x / 10 + 370 @ 55 ].
+	infoPanel addChild: stepsText.
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 
 	"Ajout de l'heure à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 @ 80;
-			  background: Color transparent) text: 'Step :' asRopedText).
+	stepText := (BlTextElement new background: Color transparent) text:
+		            'Step :' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ stepText relocate: mainScreen size x / 10 @ 80 ].
+	infoPanel addChild: stepText.
 	stepView := BlTextElement new
 		            relocate: MASimulationManager simulationWidth / 10 @ 100;
 		            background: Color transparent;
 		            text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ stepView relocate: mainScreen size x / 10 @ 100 ].
 	infoPanel addChild: stepView.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+
 	"Ajout du nombre de proies à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 @ 130;
-			  background: Color transparent) text:
-			 'Number of insects :' asRopedText).
+	nbInsectsText := (BlTextElement new
+		                  relocate:
+			                  MASimulationManager simulationWidth / 10 @ 130;
+		                  background: Color transparent) text:
+		                 'Number of insects :' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbInsectsText relocate: mainScreen size x / 10 @ 130 ].
+	infoPanel addChild: nbInsectsText.
 	nbInsectsView := BlTextElement new
 		                 relocate:
 			                 MASimulationManager simulationWidth / 10 @ 150;
 		                 background: Color transparent;
 		                 text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbInsectsView relocate: mainScreen size x / 10 @ 150 ].
 	infoPanel addChild: nbInsectsView.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+
 	"Ajout du nombre de proies ramenées à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 @ 180;
-			  background: Color transparent) text:
-			 'Number of insects delivered :' asRopedText).
+	nbDeliveredText := (BlTextElement new
+		                    relocate:
+			                    MASimulationManager simulationWidth / 10 @ 180;
+		                    background: Color transparent) text:
+		                   'Number of insects delivered :' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbDeliveredText relocate: mainScreen size x / 10 @ 150 ].
+	infoPanel addChild: nbDeliveredText.
 	nbDeliveredView := BlTextElement new
 		                   relocate:
 			                   MASimulationManager simulationWidth / 10 @ 200;
 		                   background: Color transparent;
 		                   text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbDeliveredView relocate: mainScreen size x / 10 @ 200 ].
 	infoPanel addChild: nbDeliveredView.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+
 	"Ajout du nombre de pheromones à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 130;
-			  background: Color transparent) text:
-			 'Number of pheromones :' asRopedText).
+	nbPheromonesText := (BlTextElement new
+		                     relocate:
+			                     MASimulationManager simulationWidth / 10 * 5
+			                     @ 130;
+		                     background: Color transparent) text:
+		                    'Number of pheromones :' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbPheromonesText relocate: mainScreen size x / 10 * 5 @ 130 ].
+	infoPanel addChild: nbPheromonesText.
 	nbPheromonesView := BlTextElement new
 		                    relocate:
 			                    MASimulationManager simulationWidth / 10 * 5
 			                    @ 150;
 		                    background: Color transparent;
 		                    text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbPheromonesView relocate: mainScreen size x / 10 * 5 @ 150 ].
 	infoPanel addChild: nbPheromonesView.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 
 	"Ajout du nombre de feedingPoints à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 180;
-			  background: Color transparent) text:
-			 'Number of feeding points :' asRopedText).
+	nbFeedingPointText := (BlTextElement new
+		                       relocate:
+			                       MASimulationManager simulationWidth / 10 * 5
+			                       @ 180;
+		                       background: Color transparent) text:
+		                      'Number of feeding points :' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbFeedingPointText relocate: mainScreen size x / 10 * 5 @ 180 ].
+	infoPanel addChild: nbFeedingPointText.
 	nbFeedingPointView := BlTextElement new
 		                      relocate:
 			                      MASimulationManager simulationWidth / 10 * 5
 			                      @ 200;
 		                      background: Color transparent;
 		                      text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbFeedingPointView relocate: mainScreen size x / 10 * 5 @ 200 ].
 	infoPanel addChild: nbFeedingPointView.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 
 	"Ajout du nombre de fourmis à l'interface."
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 80;
-			  background: Color transparent) text:
-			 'Number of ants :' asRopedText).
+	nbOfAntsText := (BlTextElement new
+		                 relocate:
+			                 MASimulationManager simulationWidth / 10 * 5 @ 80;
+		                 background: Color transparent) text:
+		                'Number of ants :' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbOfAntsText relocate: mainScreen size x / 10 * 5 @ 80 ].
+	infoPanel addChild: nbOfAntsText.
 
-	infoPanel addChild: ((BlTextElement new
-			  relocate: MASimulationManager simulationWidth / 10 * 5 @ 100;
-			  background: Color transparent) text: 'Eggs : ' asRopedText).
+	eggText := BlTextElement new
+		           relocate:
+			           MASimulationManager simulationWidth / 10 * 5 @ 100;
+		           background: Color transparent;
+		           text: 'Eggs : ' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ eggText relocate: mainScreen size x / 10 * 5 @ 100 ].
+	infoPanel addChild: eggText.
 	nbEggsView := BlTextElement new
 		              relocate:
 			              MASimulationManager simulationWidth / 10 * 5 + 55
 			              @ 100;
 		              background: Color transparent;
 		              text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbEggsView relocate: mainScreen size x / 10 * 5 + 55 @ 100 ].
 	infoPanel addChild: nbEggsView.
 
-	infoPanel addChild: ((BlTextElement new
-			  relocate:
-				  MASimulationManager simulationWidth / 10 * 5 + 100 @ 100;
-			  background: Color transparent) text: 'Adults : ' asRopedText).
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+
+	nbAntsText := (BlTextElement new
+		               relocate:
+			               MASimulationManager simulationWidth / 10 * 5 + 100
+			               @ 100;
+		               background: Color transparent) text:
+		              'Adults : ' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbAntsText relocate: mainScreen size x / 10 * 5 @ 100 ].
+	infoPanel addChild: nbAntsText.
 	nbAntsView := BlTextElement new
 		              relocate:
 			              MASimulationManager simulationWidth / 10 * 5 + 165
 			              @ 100;
 		              background: Color transparent;
 		              text: '000' asRopedText.
+	mainScreen
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ nbAntsView relocate: mainScreen size x / 10 * 5 + 165 @ 100 ].
 	infoPanel addChild: nbAntsView
 ]
 
@@ -458,8 +623,7 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 				aCanvas figure
 					path: (aCanvas shape circleAt: k radius: 2);
 					background: Color blue;
-					backgroundAlpha:
-						v value / self getTMAPheromoneServicesProvider getMaxIntensity;
+					backgroundAlpha: v value / 100;
 					draw ] ].
 
 	self getTMAPheromoneServicesProvider getPheromonesReturnDict 
@@ -469,8 +633,7 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 					aCanvas figure
 						path: (aCanvas shape circleAt: k radius: 2);
 						background: Color cyan;
-						backgroundAlpha:
-							v / self getTMAPheromoneServicesProvider getMaxIntensity;
+						backgroundAlpha: v / 100;
 						draw ] ].
 
 	self getInsects ifNotNil: [ 
@@ -478,16 +641,13 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 			aCanvas figure
 				path: (aCanvas shape circleAt: k radius: 2);
 				background: Color black;
-				backgroundAlpha: 1;
 				draw ] ].
-
 
 	self getFeedingPoints ifNotNil: [ 
 		self getFeedingPoints keysAndValuesDo: [ :k :v | 
 			aCanvas figure
 				path: (aCanvas shape circleAt: k radius: 10);
 				background: Color purple;
-				backgroundAlpha: 1;
 				draw ] ].
 
 	self getAnts ifNotNil: [ 
@@ -500,25 +660,21 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 								aCanvas figure
 									path: (aCanvas shape circleAt: ant getPosition radius: 5);
 									background: Color pink;
-									backgroundAlpha: 1;
 									draw ].
 							ant getRoleName = #worker ifTrue: [ 
 								aCanvas figure
 									path: (aCanvas shape circleAt: ant getPosition radius: 3);
 									background: Color orange;
-									backgroundAlpha: 1;
 									draw ].
 							ant getRoleName = #fighter ifTrue: [ 
 								aCanvas figure
 									path: (aCanvas shape circleAt: ant getPosition radius: 3);
 									background: Color green;
-									backgroundAlpha: 1;
 									draw ] ]
 						ifFalse: [ 
 							aCanvas figure
 								path: (aCanvas shape circleAt: ant getPosition radius: 2);
 								background: Color gray;
-								backgroundAlpha: 1;
 								draw ] ] ] ] ]
 ]
 
@@ -604,16 +760,6 @@ MAGround >> getTimeTravelServicesProvider [
 
 	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
-]
-
-{ #category : #initialization }
-MAGround >> initialize [
-
-	"Initialization of the ground"
-	super initialize.
-	self size: MASimulationManager simulationWidth
-		@ MASimulationManager simulationHeight.
-	self background: (Color fromHexString: 'c7baae')
 ]
 
 { #category : #services }
@@ -737,8 +883,9 @@ MAGround >> updateInfoPanel [
 				ifNil: [ buttonPlay background: Color green ] ]
 ]
 
-{ #category : #events }
+{ #category : #'life cycle' }
 MAGround >> updateView [
 
-	self updateInfoPanel.
+	self getTMASimulationServicesProvider getStep % refreshing = 0 ifTrue:[
+		self updateInfoPanel ].
 ]

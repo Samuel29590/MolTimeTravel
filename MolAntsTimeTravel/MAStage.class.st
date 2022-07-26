@@ -52,7 +52,7 @@ MAStage >> componentInitialize [
 		useProvider: (#role , self componentName asSymbol) asSymbol.
 
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
-	adultStateDurationInMs := (Random new next * 5000) rounded + 10000.
+	adultStateDurationInMs := (Random new next * 10000) rounded + 10000.
 	self initializeRole.
 
 	"--------------------------Time Travel--------------------------"
