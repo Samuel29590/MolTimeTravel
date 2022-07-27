@@ -152,11 +152,11 @@ MAGround >> createGround [
 
 	"Initialize the info panel of the view. It initialize each item of the panel (buttons, texts ...)."
 
-	mySpace := BlSpace new.
-	mySpace title: 'MolAnts Simulation'.
-	mySpace extent: MASimulationManager simulationWidth
-		@ (MASimulationManager simulationHeight + 300).
-	mySpace show.
+	mySpace := BlSpace new
+		           title: 'MolAnts Simulation';
+		           extent: MASimulationManager simulationWidth
+			           @ (MASimulationManager simulationHeight + 250);
+		           show.
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -172,7 +172,7 @@ MAGround >> createGround [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	self
 		background: (Color fromHexString: 'c7baae');
-		margin: (BlInsets bottom: 300);
+		margin: (BlInsets bottom: 250);
 		constraintsDo: [ :c | 
 			c horizontal matchParent.
 			c vertical matchParent ];
@@ -188,15 +188,15 @@ MAGround >> createInfoPanel [
 	| infoPanel labelText label |
 	infoPanel := BlElement new
 		             background: Color lightGray;
-		             size: MASimulationManager simulationWidth @ 300;
+		             size: MASimulationManager simulationWidth @ 2150;
 		             relocate: 0 @ MASimulationManager simulationHeight;
 		             constraintsDo: [ :c | 
-			             c maxHeight: 300.
+			             c maxHeight: 250.
 			             c horizontal matchParent ];
 		             zIndex: 3.
 	mainScreen
 		addEventHandlerOn: BlElementExtentChangedEvent
-		do: [ infoPanel relocate: 0 @ (mainScreen size y - 300) ].
+		do: [ infoPanel relocate: 0 @ (mainScreen size y - 250) ].
 	mainScreen addChild: infoPanel.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -618,13 +618,12 @@ MAGround >> drawOnSpartaCanvas: aCanvas [
 		draw.
 
 	self getTMAPheromoneServicesProvider getPheromonesDict ifNotNil: [ 
-		self getTMAPheromoneServicesProvider getPheromonesDict 
-			keysAndValuesDo: [ :k :v | 
-				aCanvas figure
-					path: (aCanvas shape circleAt: k radius: 2);
-					background: Color blue;
-					backgroundAlpha: v value / 100;
-					draw ] ].
+		self getTMAPheromoneServicesProvider getPheromonesDict keysAndValuesDo: [ :k :v | 
+			aCanvas figure
+				path: (aCanvas shape circleAt: k radius: 2);
+				background: Color blue;
+				backgroundAlpha: v value / 100;
+				draw ] ].
 
 	self getTMAPheromoneServicesProvider getPheromonesReturnDict 
 		ifNotNil: [ 

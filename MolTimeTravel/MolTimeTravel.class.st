@@ -13,7 +13,6 @@ Class {
 		'isPlayingBackward',
 		'timeTravelLoop',
 		'mySpace',
-		'lastStepView',
 		'currentStepView',
 		'buttonStartTimeTravel',
 		'buttonStopTimeTravel',
@@ -23,7 +22,11 @@ Class {
 		'buttonReplay',
 		'timeTravelPanel',
 		'panelLoop',
-		'inspector'
+		'inspector',
+		'currentStepText',
+		'buttonStop',
+		'lastStepText',
+		'lastStepView'
 	],
 	#category : #MolTimeTravel
 }
@@ -44,9 +47,6 @@ MolTimeTravel >> componentInitialize [
 	history add: MolComponentStep new.
 	history add: MolComponentStep new.
 
-	mySpace := BlSpace new.
-	mySpace extent: 800 @ 200.
-	mySpace title: 'TimeTravel Panel'.
 	self createTimeTravelPanel.
 
 	inspector := MolComponentManager default homeServices
@@ -74,14 +74,6 @@ MolTimeTravel >> componentRemove [
 	isPlayingBackward := nil.
 	timeTravelLoop := nil.
 	mySpace := nil.
-	lastStepView := nil.
-	currentStepView := nil.
-	buttonStartTimeTravel := nil.
-	buttonStopTimeTravel := nil.
-	buttonOneStepBefore := nil.
-	buttonOneStepAfter := nil.
-	buttonPlayBackward := nil.
-	buttonReplay := nil.
 	timeTravelPanel := nil.
 	inspector := nil
 ]
@@ -89,12 +81,16 @@ MolTimeTravel >> componentRemove [
 { #category : #'life cycle' }
 MolTimeTravel >> createTimeTravelPanel [
 
-	| labelText label button |
-	timeTravelPanel := BlElement new.
-	timeTravelPanel background: Color gray.
-	timeTravelPanel constraintsDo: [ :c | 
-		c horizontal matchParent.
-		c vertical matchParent ].
+	| labelText label |
+	mySpace := BlSpace new
+		           extent: 800 @ 200;
+		           title: 'TimeTravel Panel'.
+
+	timeTravelPanel := BlElement new
+		                   background: Color gray;
+		                   constraintsDo: [ :c | 
+			                   c horizontal matchParent.
+			                   c vertical matchParent ].
 	mySpace addChild: timeTravelPanel.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -102,29 +98,40 @@ MolTimeTravel >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding returningStep to the panel."
 
-	timeTravelPanel addChild: ((BlTextElement new
-			  relocate: mySpace width / 10 @ 20;
-			  background: Color transparent) text:
-			 'Returning Step :' asRopedText).
+	lastStepText := (BlTextElement new background: Color transparent) 
+		                     text: 'Last Step :' asRopedText.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ lastStepText relocate: timeTravelPanel size x / 10 @ 20 ].
+	timeTravelPanel addChild: lastStepText.
 	lastStepView := BlTextElement new
-		                relocate: mySpace width / 10 @ 40;
-		                background: Color transparent;
-		                text: '000' asRopedText.
+		                     background: Color transparent;
+		                     text: '000' asRopedText.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ lastStepView relocate: timeTravelPanel size x / 10 @ 40 ].
 	timeTravelPanel addChild: lastStepView.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
-	"Adding returningStep to the panel."
+	"Adding currentStep to the panel."
 
-	timeTravelPanel addChild: ((BlTextElement new
-			  relocate: mySpace width / 10 * 5 @ 20;
-			  background: Color transparent) text:
-			 'Returning Step :' asRopedText).
+	currentStepText := BlTextElement new
+		                   background: Color transparent;
+		                   text: 'Current Step :' asRopedText.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		currentStepText relocate: timeTravelPanel size x / 10 * 5 @ 20 ].
+	timeTravelPanel addChild: currentStepText.
 	currentStepView := BlTextElement new
-		                   relocate: mySpace width / 10 * 5 @ 40;
 		                   background: Color transparent;
 		                   text: '000' asRopedText.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		currentStepView relocate: timeTravelPanel size x / 10 * 5 @ 40 ].
 	timeTravelPanel addChild: currentStepView.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -149,7 +156,6 @@ MolTimeTravel >> createTimeTravelPanel [
 		                         constraintsDo: [ :c | 
 			                         c horizontal fitContent.
 			                         c vertical fitContent ];
-		                         relocate: mySpace width / 10 @ 80;
 		                         addEventHandler: (BlEventHandler
 				                          on: BlClickEvent
 				                          do: [ :anEvent | 
@@ -164,6 +170,10 @@ MolTimeTravel >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	buttonStartTimeTravel addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		buttonStartTimeTravel relocate: timeTravelPanel size x / 10 @ 80 ].
 	timeTravelPanel addChild: buttonStartTimeTravel.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -187,7 +197,6 @@ MolTimeTravel >> createTimeTravelPanel [
 		                        constraintsDo: [ :c | 
 			                        c horizontal fitContent.
 			                        c vertical fitContent ];
-		                        relocate: mySpace width / 10 * 3 @ 80;
 		                        addEventHandler: (BlEventHandler
 				                         on: BlClickEvent
 				                         do: [ :anEvent | 
@@ -202,6 +211,10 @@ MolTimeTravel >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	buttonStopTimeTravel addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		buttonStopTimeTravel relocate: timeTravelPanel size x / 10 * 3 @ 80 ].
 	timeTravelPanel addChild: buttonStopTimeTravel.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -225,7 +238,6 @@ MolTimeTravel >> createTimeTravelPanel [
 		                       constraintsDo: [ :c | 
 			                       c horizontal fitContent.
 			                       c vertical fitContent ];
-		                       relocate: mySpace width / 10 * 5 @ 80;
 		                       addEventHandler: (BlEventHandler
 				                        on: BlClickEvent
 				                        do: [ :anEvent | 
@@ -240,6 +252,10 @@ MolTimeTravel >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	buttonOneStepBefore addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		buttonOneStepBefore relocate: timeTravelPanel size x / 10 * 5 @ 80 ].
 	timeTravelPanel addChild: buttonOneStepBefore.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -263,7 +279,6 @@ MolTimeTravel >> createTimeTravelPanel [
 		                      constraintsDo: [ :c | 
 			                      c horizontal fitContent.
 			                      c vertical fitContent ];
-		                      relocate: mySpace width / 10 * 7 @ 80;
 		                      addEventHandler: (BlEventHandler
 				                       on: BlClickEvent
 				                       do: [ :anEvent | 
@@ -278,6 +293,10 @@ MolTimeTravel >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	buttonOneStepAfter addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		buttonOneStepAfter relocate: timeTravelPanel size x / 10 * 7 @ 80 ].
 	timeTravelPanel addChild: buttonOneStepAfter.
 
 
@@ -302,7 +321,6 @@ MolTimeTravel >> createTimeTravelPanel [
 		                      constraintsDo: [ :c | 
 			                      c horizontal fitContent.
 			                      c vertical fitContent ];
-		                      relocate: mySpace width / 10 * 3 @ 130;
 		                      addEventHandler: (BlEventHandler
 				                       on: BlClickEvent
 				                       do: [ :anEvent | 
@@ -317,6 +335,10 @@ MolTimeTravel >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	buttonPlayBackward addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+		buttonPlayBackward relocate: timeTravelPanel size x / 10 * 3 @ 130 ].
 	timeTravelPanel addChild: buttonPlayBackward.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
@@ -340,7 +362,6 @@ MolTimeTravel >> createTimeTravelPanel [
 		                constraintsDo: [ :c | 
 			                c horizontal fitContent.
 			                c vertical fitContent ];
-		                relocate: mySpace width / 10 * 5 @ 130;
 		                addEventHandler: (BlEventHandler
 				                 on: BlClickEvent
 				                 do: [ :anEvent | 
@@ -354,37 +375,38 @@ MolTimeTravel >> createTimeTravelPanel [
 	label := BlTextElement new.
 	label text: labelText.
 	buttonReplay addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ buttonReplay relocate: timeTravelPanel size x / 10 * 5 @ 130 ].
 	timeTravelPanel addChild: buttonReplay.
 
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding Stop button"
-	button := BlElement new
-		          background: Color red;
-		          geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
-		          padding: (BlInsets
-				           top: 8
-				           right: 16
-				           bottom: 8
-				           left: 16);
-		          layout: BlLinearLayout horizontal;
-		          effect: (BlGaussianShadowEffect
-				           color: (Color black alpha: 0.3)
-				           width: 1
-				           offset: 0 @ 2);
-		          constraintsDo: [ :c | 
-			          c horizontal fitContent.
-			          c vertical fitContent ];
-		          relocate:
-			          MASimulationManager simulationWidth / 10 * 9 @ 160;
-		          addEventHandler: (BlEventHandler
-				           on: BlClickEvent
-				           do: [ :anEvent | 
-					           button isVisible ifTrue: [ 
-										self stopTimeTravel .
-							           self class stop: self componentName ].
-					           anEvent consumed: true ]).
+	buttonStop := BlElement new
+		              background: Color red;
+		              geometry: (BlRoundedRectangleGeometry cornerRadius: 2);
+		              padding: (BlInsets
+				               top: 8
+				               right: 16
+				               bottom: 8
+				               left: 16);
+		              layout: BlLinearLayout horizontal;
+		              effect: (BlGaussianShadowEffect
+				               color: (Color black alpha: 0.3)
+				               width: 1
+				               offset: 0 @ 2);
+		              constraintsDo: [ :c | 
+			              c horizontal fitContent.
+			              c vertical fitContent ];
+		              addEventHandler: (BlEventHandler
+				               on: BlClickEvent
+				               do: [ :anEvent | 
+					               buttonStop isVisible ifTrue: [ 
+							               self stopTimeTravel.
+							               self class stop: self componentName ].
+					               anEvent consumed: true ]).
 	labelText := 'Stop' asRopedText
 		             foreground: Color black;
 		             fontSize: 16;
@@ -392,8 +414,11 @@ MolTimeTravel >> createTimeTravelPanel [
 		             thin.
 	label := BlTextElement new.
 	label text: labelText.
-	button addChild: label.
-	timeTravelPanel addChild: button.
+	buttonStop addChild: label.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ buttonStop relocate: timeTravelPanel size x / 10 * 9 @ 160 ].
+	timeTravelPanel addChild: buttonStop.
 
 	self startTimeTravelPanelLoop
 ]
@@ -646,8 +671,8 @@ MolTimeTravel >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
-	lastStepView   text: lastStep   asRopedText.
-	currentStepView  text: currentStep  asRopedText.
+	lastStepView text: lastStep asRopedText.
+	currentStepView text: currentStep asRopedText.
 
 	isRestoring
 		ifTrue: [ 
