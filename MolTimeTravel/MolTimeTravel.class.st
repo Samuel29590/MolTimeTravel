@@ -711,7 +711,7 @@ MolTimeTravel >> updatePanelView [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	isSaving
-		ifTrue: [ logsText text: 'Is Saving ....' asRopedText ]
+		ifTrue: [ logsText text: 'Is Saving ...' asRopedText ]
 		ifFalse: [ 
 			stringTemp := ''.
 			(history at: currentStep) mementos do: [ :x | 
@@ -741,11 +741,10 @@ MolTimeTravel >> updatePanelView [
 				              , '->' , x componentReference componentName asString
 				              , '. ' ].
 			eventSize := ' Events '
-			            ,
-			            (history at: currentStep) events size
-				            asString , ' [ ' , stringTemp , '] '.
+			             , (history at: currentStep) events size asString
+			             , ' [ ' , stringTemp , '] '.
 
-			blRopedText := BlRopedText string: memSize , creaSize , eventSize .
+			blRopedText := BlRopedText string: memSize , creaSize , eventSize.
 
 			logsText text: blRopedText ]
 ]
