@@ -45,5 +45,20 @@ MolComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withPar
 { #category : #'undo - undo' }
 MolComponentEventMemento >> undo [
 
+		| realParameters |
+	realParameters := OrderedCollection new.
 
+	parameters do: [ :parameter | 
+		parameter isAssociation
+			ifTrue: [ 
+				realParameters add:
+					(MolUtils instanceOf: parameter key named: parameter value) ]
+			ifFalse: [ realParameters add: parameter ] ].
+	realParameters := realParameters asArray.
+
+	(MolUtils
+		 instanceOf: componentReference componentClass
+		 named: componentReference componentName)
+		perform: eventName
+		withArguments: realParameters
 ]

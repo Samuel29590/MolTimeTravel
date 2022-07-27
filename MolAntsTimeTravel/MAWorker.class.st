@@ -188,8 +188,8 @@ MAWorker >> doSimulationStepReturn: anAnt [
 
 	| antRectangle antHillRectangle |
 	antRectangle := BlBounds
-		                origin: anAnt getPosition - (20 @ 20)
-		                extent: 40 @ 40.
+		                origin: anAnt getPosition - (30 @ 30)
+		                extent: 60 @ 60.
 	antHillRectangle := BlBounds
 		                    origin:
 		                    MASimulationManager simulationAntHillPosition

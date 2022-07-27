@@ -578,10 +578,10 @@ MASimulationManager >> startSimulationLoop [
 					                    | memento |
 					                    memento := MolSimulationMemento new.
 					                    step := step + 1.
-					
+
 					                    self getTMASimulationToGlobalEventsNotifier 
 						                    simulationStepSent: step.
-
+											
 					                    self getTimeTravelServicesProvider
 						                    saveTheApplication.
 
