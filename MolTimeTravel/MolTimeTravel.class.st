@@ -26,7 +26,9 @@ Class {
 		'currentStepText',
 		'buttonStop',
 		'lastStepText',
-		'lastStepView'
+		'lastStepView',
+		'logsView',
+		'logsText'
 	],
 	#category : #MolTimeTravel
 }
@@ -83,7 +85,7 @@ MolTimeTravel >> createTimeTravelPanel [
 
 	| labelText label |
 	mySpace := BlSpace new
-		           extent: 800 @ 200;
+		           extent: 800 @ 300;
 		           title: 'TimeTravel Panel'.
 
 	timeTravelPanel := BlElement new
@@ -99,14 +101,14 @@ MolTimeTravel >> createTimeTravelPanel [
 	"Adding returningStep to the panel."
 
 	lastStepText := (BlTextElement new background: Color transparent) 
-		                     text: 'Last Step :' asRopedText.
+		                text: 'Last Step :' asRopedText.
 	timeTravelPanel
 		addEventHandlerOn: BlElementExtentChangedEvent
 		do: [ lastStepText relocate: timeTravelPanel size x / 10 @ 20 ].
 	timeTravelPanel addChild: lastStepText.
 	lastStepView := BlTextElement new
-		                     background: Color transparent;
-		                     text: '000' asRopedText.
+		                background: Color transparent;
+		                text: '000' asRopedText.
 	timeTravelPanel
 		addEventHandlerOn: BlElementExtentChangedEvent
 		do: [ lastStepView relocate: timeTravelPanel size x / 10 @ 40 ].
@@ -162,11 +164,7 @@ MolTimeTravel >> createTimeTravelPanel [
 					                          buttonStartTimeTravel isVisible 
 						                          ifTrue: [ self startTimeTravel ].
 					                          anEvent consumed: true ]).
-	labelText := 'Start time travel' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'Start time travel' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonStartTimeTravel addChild: label.
@@ -203,11 +201,7 @@ MolTimeTravel >> createTimeTravelPanel [
 					                         buttonStopTimeTravel isVisible ifTrue: [ 
 							                         self stopTimeTravel ].
 					                         anEvent consumed: true ]).
-	labelText := 'Stop time travel' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'Stop time travel' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonStopTimeTravel addChild: label.
@@ -244,11 +238,7 @@ MolTimeTravel >> createTimeTravelPanel [
 					                        buttonOneStepBefore isVisible ifTrue: [ 
 							                        self restoreOneStepBefore ].
 					                        anEvent consumed: true ]).
-	labelText := 'One step before' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'One step before' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonOneStepBefore addChild: label.
@@ -285,11 +275,7 @@ MolTimeTravel >> createTimeTravelPanel [
 					                       buttonOneStepAfter isVisible ifTrue: [ 
 							                       self restoreOneStepAfter ].
 					                       anEvent consumed: true ]).
-	labelText := 'One step after' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'One step after' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonOneStepAfter addChild: label.
@@ -327,11 +313,7 @@ MolTimeTravel >> createTimeTravelPanel [
 					                       buttonPlayBackward isVisible ifTrue: [ 
 							                       self playBackward ].
 					                       anEvent consumed: true ]).
-	labelText := 'Play Backward' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'Play Backward' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonPlayBackward addChild: label.
@@ -367,11 +349,7 @@ MolTimeTravel >> createTimeTravelPanel [
 				                 do: [ :anEvent | 
 					                 buttonReplay isVisible ifTrue: [ self replay ].
 					                 anEvent consumed: true ]).
-	labelText := 'Relay' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'Relay' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonReplay addChild: label.
@@ -407,19 +385,41 @@ MolTimeTravel >> createTimeTravelPanel [
 							               self stopTimeTravel.
 							               self class stop: self componentName ].
 					               anEvent consumed: true ]).
-	labelText := 'Stop' asRopedText
-		             foreground: Color black;
-		             fontSize: 16;
-		             fontName: 'Helvetica';
-		             thin.
+	labelText := 'Stop' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
 	buttonStop addChild: label.
 	timeTravelPanel
 		addEventHandlerOn: BlElementExtentChangedEvent
-		do: [ buttonStop relocate: timeTravelPanel size x / 10 * 9 @ 160 ].
+		do: [ 
+			buttonStop relocate:
+				timeTravelPanel size x - buttonStop size x - 5 @ 5 ].
 	timeTravelPanel addChild: buttonStop.
 
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"White space"
+
+	logsView := BlElement new
+		            background: Color white;
+		            relocate: 5 @ 200.
+	labelText := '...' asRopedText.
+	logsText := BlTextElement new
+		         text: labelText;
+		         relocate: 5 @ 5.
+	logsView addChild: logsText.
+	timeTravelPanel
+		addEventHandlerOn: BlElementExtentChangedEvent
+		do: [ 
+			logsView size:
+				timeTravelPanel size x - 10 @ (timeTravelPanel size y - 205) ].
+	mySpace addChild: logsView.
+
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
 	self startTimeTravelPanelLoop
 ]
 
@@ -671,6 +671,7 @@ MolTimeTravel >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
+	| blRopedText memSize creaSize eventSize stringTemp |
 	lastStepView text: lastStep asRopedText.
 	currentStepView text: currentStep asRopedText.
 
@@ -704,5 +705,47 @@ MolTimeTravel >> updatePanelView [
 			buttonOneStepBefore background: Color gray.
 			buttonOneStepAfter background: Color gray.
 			buttonPlayBackward background: Color gray.
-			buttonReplay background: Color gray ]
+			buttonReplay background: Color gray ].
+
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	"--------------------------------------------------------------------------------------------------------------------------"
+	isSaving
+		ifTrue: [ logsText text: 'Is Saving ....' asRopedText ]
+		ifFalse: [ 
+			stringTemp := ''.
+			(history at: currentStep) mementos do: [ :x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			memSize := ' Mementos: '
+			           , (history at: currentStep) mementos size asString
+			           , ' [ ' , stringTemp , '] '.
+
+			stringTemp := ''.
+			(history at: currentStep) creationsAndDeletions do: [ :x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			creaSize := ' CreationsOrDeletions: '
+			            ,
+			            (history at: currentStep) creationsAndDeletions size
+				            asString , ' [ ' , stringTemp , '] '.
+
+			stringTemp := ''.
+			(history at: currentStep) events do: [ :x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			eventSize := ' Events '
+			            ,
+			            (history at: currentStep) events size
+				            asString , ' [ ' , stringTemp , '] '.
+
+			blRopedText := BlRopedText string: memSize , creaSize , eventSize .
+
+			logsText text: blRopedText ]
 ]
