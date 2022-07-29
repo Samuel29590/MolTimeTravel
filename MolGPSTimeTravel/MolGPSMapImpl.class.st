@@ -54,17 +54,23 @@ MolGPSMapImpl >> currentPositionChanged: aGeoPosition [
 	"Display a circle on the map view at the current position"
 
 	| radius |
-	radius := self getMolGPSDataServicesProvider getAccuracyRadiusInMeters.
-
-	self updatePositionCircleOnMap: aGeoPosition radius: radius.
-	
-		"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
+	"--------------------------Time Travel--------------------------"
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
 			self getTimeTravelServicesProvider
 				saveEvent: #currentPositionChanged:
 				performBy: self
-				withParameters: { aGeoPosition } ] ]
+				withParameters: { aGeoPosition } ] ].
+	"---------------------------------------------------------------"
+	radius := self getMolGPSDataServicesProvider
+		          getAccuracyRadiusInMeters.
+
+	self updatePositionCircleOnMap: aGeoPosition radius: radius.
+
+	"--------------------------Time Travel--------------------------"
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
+			self saveForTimeTravel ] ]
 	"---------------------------------------------------------------"
 ]
 

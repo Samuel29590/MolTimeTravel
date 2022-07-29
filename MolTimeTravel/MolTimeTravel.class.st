@@ -281,24 +281,30 @@ MolTimeTravel >> save: aComponentMemento [
 MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 
 	| aComponentMemento |
+	
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
+
+	self getTimeTravelEventsNotifier saveForTimeTravel.
+	
 	aComponentMemento := MolComponentEventMemento new
 		                     saveEvent: aMethodName
 		                     performBy: aComponent
 		                     withParameters: someParameters.
 
-	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
-
 	(history at: currentStep) saveEvent: aComponentMemento.
+	
+	self nextStep
 
-	aComponent saveForTimeTravel.
 ]
 
 { #category : #services }
 MolTimeTravel >> saveTheApplication [
 
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
+
 	self getTimeTravelEventsNotifier saveForTimeTravel.
 
-	self nextStep.
+	self nextStep
 ]
 
 { #category : #'life cycle' }
