@@ -38,13 +38,13 @@ MolGPSDataImpl >> componentActivate [
 	                             [ true ] whileTrue: [ 
 		                             (Delay forMilliseconds: 50) wait.
 
-		                           	"--------------------------Time Travel--------------------------"
-		                             (MolUtils
-			                              instanceOf: MolTimeTravel
-			                              named: #default)
-			                             ifNotNil: [ 
+		                             "--------------------------Time Travel--------------------------"
+
+		                             self getTimeTravelServicesProvider
+			                             isNotFoundServices
+			                             ifFalse: [ 
 				                             self getTimeTravelServicesProvider
-					                             isRestoring ifFalse: [ 
+					                             isRestoring ifFalse: [
 											"---------------------------------------------------------------"
 					                             self getMolGPSDataEventsNotifier 
 						                             currentPositionChanged:
@@ -57,7 +57,7 @@ MolGPSDataImpl >> componentActivate [
 					                             self getTimeTravelServicesProvider
 						                             saveTheApplication
 					                             "---------------------------------------------------------------" ] ]
-			                             ifNil: [ 
+			                             ifTrue: [ 
 				                             self getMolGPSDataEventsNotifier 
 					                             currentPositionChanged:
 					                             self getRandomizedGPSPosition.
@@ -70,9 +70,9 @@ MolGPSDataImpl >> componentActivate [
 MolGPSDataImpl >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service." 
+		self forServices: TimeTravelServices useProvider: #default ].
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ "Subscription to the Time Travel event"
 		self getTimeTravelEventsSubscriber subscribe: self.
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
 			self getTimeTravelServicesProvider creationOf: self ] ].
@@ -82,7 +82,7 @@ MolGPSDataImpl >> componentInitialize [
 	self accuracy: 1000.
 	
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
@@ -104,7 +104,7 @@ MolGPSDataImpl >> componentPassivate [
 MolGPSDataImpl >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"

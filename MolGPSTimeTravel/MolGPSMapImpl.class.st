@@ -21,9 +21,9 @@ MolGPSMapImpl >> componentActivate [
 MolGPSMapImpl >> componentInitialize [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service." 
+		self forServices: TimeTravelServices useProvider: #default ].
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ "Subscription to the Time Travel event"
 		self getTimeTravelEventsSubscriber subscribe: self.
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
 			self getTimeTravelServicesProvider creationOf: self ] ].
@@ -32,7 +32,7 @@ MolGPSMapImpl >> componentInitialize [
 	super componentInitialize.
 	
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
 			self saveForTimeTravel ] ].
 	"---------------------------------------------------------------"
@@ -53,7 +53,7 @@ MolGPSMapImpl >> componentPassivate [
 MolGPSMapImpl >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
@@ -74,7 +74,7 @@ MolGPSMapImpl >> currentPositionChanged: aGeoPosition [
 	self updatePositionCircleOnMap: aGeoPosition radius: radius.
 	
 		"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
 			self getTimeTravelServicesProvider
 				saveEvent: #currentPositionChanged:
