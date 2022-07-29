@@ -107,14 +107,6 @@ MAWorker >> componentPassivate [
 
 { #category : #'life cycle' }
 MAWorker >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
 	
 	"Removing the MAWorker component."
 

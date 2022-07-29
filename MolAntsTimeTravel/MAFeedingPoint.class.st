@@ -62,14 +62,6 @@ MAFeedingPoint >> componentPassivate [
 { #category : #'life cycle' }
 MAFeedingPoint >> componentRemove [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-	
 	"Removing the MAFeedingPoint component."
 
 	position := nil.

@@ -59,14 +59,6 @@ MAInsect >> componentPassivate [
 { #category : #'life cycle' }
 MAInsect >> componentRemove [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-	
 	"Removing the MAInsect component."
 
 	position := nil.

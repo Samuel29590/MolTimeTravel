@@ -44,14 +44,6 @@ MolRandomReceiverImpl >> componentPassivate [
 { #category : #'life cycle' }
 MolRandomReceiverImpl >> componentRemove [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-
 	spaceReference isNull ifFalse:[ spaceReference space close ].
 ]
 

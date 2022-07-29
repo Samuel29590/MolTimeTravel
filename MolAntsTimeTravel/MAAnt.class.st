@@ -64,14 +64,6 @@ MAAnt >> componentPassivate [
 { #category : #'life cycle' }
 MAAnt >> componentRemove [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-
 	"Removing the MAAnt component."
 
 	position := nil.

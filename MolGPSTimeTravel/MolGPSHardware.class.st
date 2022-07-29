@@ -54,19 +54,6 @@ MolGPSHardware >> componentPassivate [
 	"---------------------------------------------------------------"
 ]
 
-{ #category : #'life cycle' }
-MolGPSHardware >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-	
-]
-
 { #category : #services }
 MolGPSHardware >> getAccuracyRadiusInMeters [
 	"Get and return the accuracy of the GPS depending quality of signal and quantity of connected satellites"

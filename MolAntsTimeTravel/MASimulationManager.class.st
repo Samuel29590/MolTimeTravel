@@ -172,14 +172,6 @@ MASimulationManager >> componentPassivate [
 { #category : #'component life cycle' }
 MASimulationManager >> componentRemove [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-
 	"Removing the MASimulationManager component."
 
 	self stop

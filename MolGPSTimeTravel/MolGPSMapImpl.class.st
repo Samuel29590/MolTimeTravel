@@ -34,20 +34,6 @@ MolGPSMapImpl >> componentPassivate [
 	"---------------------------------------------------------------"
 ]
 
-{ #category : #'component life cycle' }
-MolGPSMapImpl >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-
-	super componentRemove.
-]
-
 { #category : #events }
 MolGPSMapImpl >> currentPositionChanged: aGeoPosition [
 

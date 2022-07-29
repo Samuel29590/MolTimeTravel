@@ -58,14 +58,6 @@ MAStage >> componentPassivate [
 { #category : #'life cycle' }
 MAStage >> componentRemove [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-
 	"Removing of the MAStage component."
 
 	eggStateDurationInMs := nil.

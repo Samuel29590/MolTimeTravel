@@ -35,18 +35,6 @@ MAQueen >> componentPassivate [
 	"---------------------------------------------------------------"
 ]
 
-{ #category : #'life cycle' }
-MAQueen >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-]
-
 { #category : #role }
 MAQueen >> doSimulationStepFor: anAnt [
 

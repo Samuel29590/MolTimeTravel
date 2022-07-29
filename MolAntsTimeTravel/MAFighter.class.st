@@ -36,18 +36,6 @@ MAFighter >> componentPassivate [
 ]
 
 { #category : #role }
-MAFighter >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-]
-
-{ #category : #role }
 MAFighter >> doSimulationStepFor: anAnt [
 
 	"For the moment fighter don't do nothing."
