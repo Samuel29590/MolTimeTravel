@@ -18,30 +18,12 @@ MAFighter >> componentActivate [
 
 { #category : #role }
 MAFighter >> componentInitialize [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
 	
 	"Initialization of the MAFighter component."
 
 	self forServices: TMASimulationServices useProvider: #default.
 	
 	roleName := #fighter.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -57,9 +39,8 @@ MAFighter >> componentPassivate [
 MAFighter >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
 			self getTimeTravelServicesProvider deletionOf: self ] ].
@@ -81,6 +62,12 @@ MAFighter >> doSimulationStepFor: anAnt [
 		insectRectangle := BlBounds origin: each extent: 0 @ 0.
 		(antRectangle intersects: insectRectangle) ifTrue: [ 
 			self getTMARoleEventsNotifier ant: anAnt killAt: each ] ]
+]
+
+{ #category : #events }
+MAFighter >> isUsingTimeTravel [
+
+	^ true.
 ]
 
 { #category : #role }

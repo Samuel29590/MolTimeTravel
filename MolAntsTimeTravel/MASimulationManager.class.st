@@ -139,25 +139,10 @@ MASimulationManager >> componentActivate [
 { #category : #'component life cycle' }
 MASimulationManager >> componentInitialize [
 
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
-
 	"Initialization of the MASimulationManager component."
 	super componentInitialize.
 
 	self start.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
@@ -180,7 +165,7 @@ MASimulationManager >> componentPassivate [
 MASimulationManager >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
@@ -419,6 +404,12 @@ MASimulationManager >> insectDelivered [
 MASimulationManager >> isRunning [
 
 	^ isRunning ifNil: [ isRunning := false ].
+]
+
+{ #category : #testing }
+MASimulationManager >> isUsingTimeTravel [
+
+	^ true.
 ]
 
 { #category : #services }

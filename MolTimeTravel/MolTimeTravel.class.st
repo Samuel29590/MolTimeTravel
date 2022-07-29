@@ -44,7 +44,7 @@ MolTimeTravel >> componentInitialize [
 { #category : #'life cycle' }
 MolTimeTravel >> componentRemove [
 
-	timeTravelView stop.
+	timeTravelView ifNotNil: [ timeTravelView stop. ].
 
 	history := nil.
 	lastStep := nil.

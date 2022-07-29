@@ -35,17 +35,6 @@ MAAnt >> componentActivate [
 { #category : #'life cycle' }
 MAAnt >> componentInitialize [
 
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
-	
 	"Initialization of the MAAnt component."
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -57,13 +46,6 @@ MAAnt >> componentInitialize [
 	self initializeStage.
 	ageInMs := 0.
 	position := MASimulationManager simulationAntHillPosition.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -83,8 +65,7 @@ MAAnt >> componentPassivate [
 MAAnt >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"

@@ -33,16 +33,6 @@ MAStage >> componentActivate [
 { #category : #'life cycle' }
 MAStage >> componentInitialize [
 
-	"--------------------------Time Travel--------------------------"
-
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
-
 	"Initialization of the MAStage component."
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -54,11 +44,6 @@ MAStage >> componentInitialize [
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
 	adultStateDurationInMs := (Random new next * 10000) rounded + 10000.
 	self initializeRole.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
-			self saveForTimeTravel ] ]
 ]
 
 { #category : #'life cycle' }
@@ -74,9 +59,8 @@ MAStage >> componentPassivate [
 MAStage >> componentRemove [
 
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
 			self saveForTimeTravel.
 			"Component notifies its deletion"
 			self getTimeTravelServicesProvider deletionOf: self ] ].
