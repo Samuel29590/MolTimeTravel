@@ -26,6 +26,7 @@ MAAnt >> componentActivate [
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
 	
+	
 	"--------------------------Time Travel--------------------------"
 	"Subscription to the Time Travel event"
 	self getTimeTravelEventsSubscriber subscribe: self.
