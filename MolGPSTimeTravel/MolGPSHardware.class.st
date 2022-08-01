@@ -12,13 +12,6 @@ Class {
 { #category : #'life cycle' }
 MolGPSHardware >> componentActivate [
 
-	"--------------------------Time Travel--------------------------"
-
-	"Subscription to the Time Travel event"
-
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-
 	"Start a thread to simulate sending of a fixed geo position each 2 seconds"
 	sendCurrentPositionThread := [ 
 	                             [ true ] whileTrue: [ 
@@ -47,11 +40,6 @@ MolGPSHardware >> componentPassivate [
 	
 	sendCurrentPositionThread ifNotNil: [ :e | e terminate ].
 	sendCurrentPositionThread := nil.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #services }

@@ -20,17 +20,6 @@ Class {
 }
 
 { #category : #'life cycle' }
-MAStage >> componentActivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-
-	
-]
-
-{ #category : #'life cycle' }
 MAStage >> componentInitialize [
 
 	"Initialization of the MAStage component."
@@ -44,15 +33,6 @@ MAStage >> componentInitialize [
 	eggStateDurationInMs := (Random new next * 5000) rounded + 1000.
 	adultStateDurationInMs := (Random new next * 10000) rounded + 10000.
 	self initializeRole.
-]
-
-{ #category : #'life cycle' }
-MAStage >> componentPassivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

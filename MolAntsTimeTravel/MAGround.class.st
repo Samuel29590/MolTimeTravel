@@ -65,11 +65,6 @@ MAGround >> componentActivate [
 	"Activation of the MAGround component."
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -95,11 +90,6 @@ MAGround >> componentPassivate [
 	"Passivating the MAGround component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

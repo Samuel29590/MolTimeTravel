@@ -9,7 +9,7 @@ Trait {
 MolRandomReceiver classSide >> consumedComponentEvents [
 
 	<componentContract>
-	^ { MolRandomSenderEvents.TimeTravelEvents }
+	^ { MolRandomSenderEvents . TimeTravelEvents }
 ]
 
 { #category : #'accessing - services' }

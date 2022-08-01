@@ -36,11 +36,6 @@ MAPheromones >> componentActivate [
 	"Activation of the MAPheromones component."
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -61,11 +56,6 @@ MAPheromones >> componentPassivate [
 	"Passivating the MAPheromones component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

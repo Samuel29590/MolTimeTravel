@@ -1,6 +1,50 @@
 Extension { #name : #MolHomeServices }
 
 { #category : #'*MolTimeTravel' }
+MolHomeServices >> activateComponent: aComponentClass named: aName [
+
+	| component |
+	self
+		assert: [ aComponentClass isNotNil ]
+		description: [ '[Molecule] Component class should be not nil.' ].
+	self
+		assert: [ aName isNotNil ]
+		description: [ '[Molecule] Component name should be not nil.' ].
+
+	"get to be activated component instance"
+	component := self instanceOf: aComponentClass named: aName.
+	component ifNil: [ 
+		^ ComponentNotFoundError signal:
+			  'Can not activate a non instanciated component' ].
+
+	"remove from waiting activation list"
+	waitingForActivation remove: component ifAbsent: [ 
+		^ ComponentAlreadyActivatedError signal:
+			  'Component is already activated.' ].
+
+	component componentConnector activateComponent.
+
+	"--------------------------Time Travel--------------------------"
+	component isUsingTimeTravel ifTrue: [ 
+		component getTimeTravelServicesProvider isNotFoundServices ifFalse: [ "Subscription to the Time Travel event" 
+			component getTimeTravelEventsSubscriber subscribe: component ] ].
+	"---------------------------------------------------------------"
+	component componentActivate.
+
+	component triggerEvent: #activateComponent with: component.
+
+	MolUtils log:
+		aComponentClass printString , ' named: ' , aName printString
+		, ' is activated.'.
+
+	"manage connexion between components"
+	MolComponentManager default locatorServices 
+		resolveWaitingSubscriptions: component.
+
+	^ component
+]
+
+{ #category : #'*MolTimeTravel' }
 MolHomeServices >> instanciateComponent: aComponentClass named: aName [
 	| error component connector deployed |
 	
@@ -41,6 +85,40 @@ MolHomeServices >> instanciateComponent: aComponentClass named: aName [
 	waitingForActivation add: component.
 	
 	^component
+]
+
+{ #category : #'*MolTimeTravel' }
+MolHomeServices >> passivateComponent: aComponentClass named: aName [
+	| component |
+	
+	(aComponentClass isNil or:[aName isNil]) ifTrue:[^self].
+		
+	"get to be passivated component instance"
+	component := self instanceOf: aComponentClass named: aName.
+	component ifNil: [
+		^ComponentNotFoundError signal: 'Can not passivate a non instanciated component'.
+	].
+
+	(self isWaitingForActivation: aComponentClass named: aName) ifTrue:[
+		^ComponentAlreadyPassivatedError signal: 'Component is already passivated.' 
+	].
+
+	component componentPassivate.
+	"--------------------------Time Travel--------------------------"
+	component isUsingTimeTravel ifTrue: [ 
+		component getTimeTravelServicesProvider isNotFoundServices ifFalse: [ "Subscription to the Time Travel event" 
+			component getTimeTravelEventsSubscriber unsubscribe: component ] ].
+	"---------------------------------------------------------------"
+	
+	component componentConnector passivateComponent.
+	component triggerEvent: #passivateComponent with: component.
+	
+	MolUtils log: aComponentClass printString , ' named: ' , aName printString, ' is passivated.'.
+
+	"add in waiting activation list"
+	waitingForActivation add: component.
+	
+	^ component
 ]
 
 { #category : #'*MolTimeTravel' }

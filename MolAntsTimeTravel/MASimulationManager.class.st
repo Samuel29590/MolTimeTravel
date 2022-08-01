@@ -133,22 +133,15 @@ MASimulationManager >> componentActivate [
 
 	"Activation of the MASimulationManager component."
 
-	super componentActivate.
 	self getTMAStageEventsSubscriber subscribe: self.
 	self getTMARoleEventsSubscriber subscribe: self.
 	self getTMAInsectEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
 MASimulationManager >> componentInitialize [
 
 	"Initialization of the MASimulationManager component."
-	super componentInitialize.
 
 	self start.
 ]
@@ -157,16 +150,10 @@ MASimulationManager >> componentInitialize [
 MASimulationManager >> componentPassivate [
 
 	"Passivating the MASimulationManager component."
-
-	super componentPassivate.
+	
 	self getTMAStageEventsSubscriber unsubscribe: self.
 	self getTMARoleEventsSubscriber unsubscribe: self.
 	self getTMAInsectEventsSubscriber unsubscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }

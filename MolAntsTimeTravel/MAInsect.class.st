@@ -25,11 +25,6 @@ MAInsect >> componentActivate [
 	"Activation of the MAInsect component."
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -49,11 +44,6 @@ MAInsect >> componentPassivate [
 	"Passivating the MAInsect component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

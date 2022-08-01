@@ -14,8 +14,9 @@ MolRandomSender classSide >> consumedComponentEvents [
 
 { #category : #'accessing - events' }
 MolRandomSender classSide >> producedComponentEvents [
+
 	<componentContract>
-	^ {MolRandomSenderEvents} 
+	^ { MolRandomSenderEvents } 
 ]
 
 { #category : #'accessing - services' }

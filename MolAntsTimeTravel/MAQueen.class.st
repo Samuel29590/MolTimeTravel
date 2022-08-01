@@ -8,15 +8,6 @@ Class {
 }
 
 { #category : #'life cycle' }
-MAQueen >> componentActivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'life cycle' }
 MAQueen >> componentInitialize [
 	
 	"Initialization of the MAQueen component."
@@ -24,15 +15,6 @@ MAQueen >> componentInitialize [
 	self forServices: TMASimulationServices useProvider: #default.
 	
 	roleName := #queen.
-]
-
-{ #category : #'life cycle' }
-MAQueen >> componentPassivate [
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #role }

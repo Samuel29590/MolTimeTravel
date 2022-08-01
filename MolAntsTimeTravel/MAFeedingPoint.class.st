@@ -23,11 +23,6 @@ Class {
 MAFeedingPoint >> componentActivate [
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -52,11 +47,6 @@ MAFeedingPoint >> componentPassivate [
 	"Passivating the MAFeedingPoint component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

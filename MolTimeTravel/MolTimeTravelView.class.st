@@ -643,11 +643,6 @@ MolTimeTravelView >> createTimeTravelPanel [
 			logsView size:
 				timeTravelPanel size x - 10 @ (timeTravelPanel size y - 255) ].
 	mySpace addChild: logsView.
-
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	"--------------------------------------------------------------------------------------------------------------------------"
-	self startTimeTravelPanelLoop
 ]
 
 { #category : #initialization }
@@ -675,7 +670,7 @@ MolTimeTravelView >> startTimeTravelPanelLoop [
 		             self updatePanelView.
 		             (Delay forMilliseconds: 50) wait ] ]] forkAt:
 		             Processor userBackgroundPriority.
-	panelLoop name: 'Molecule ViewLoop Process'.
+	panelLoop name: 'TimeTravel ViewLoop Process'.
 	panelLoop resume
 ]
 

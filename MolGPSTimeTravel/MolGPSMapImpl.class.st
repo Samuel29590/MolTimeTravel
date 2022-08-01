@@ -10,28 +10,12 @@ Class {
 MolGPSMapImpl >> componentActivate [
 
 	self getMolGPSDataEventsSubscriber subscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'component life cycle' }
-MolGPSMapImpl >> componentInitialize [
-	
-	super componentInitialize.
 ]
 
 { #category : #'component life cycle' }
 MolGPSMapImpl >> componentPassivate [
 
 	self getMolGPSDataEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #events }

@@ -11,7 +11,6 @@ MolRandomReceiverImpl >> componentActivate [
 
 	"here write the code corresponding to component activation phase"
 
-	
 	self getMolRandomSenderEventsSubscriber subscribe: self
 ]
 

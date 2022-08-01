@@ -25,11 +25,6 @@ MAAnt >> componentActivate [
 	"Activation of the MAAnt component."
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -54,11 +49,6 @@ MAAnt >> componentPassivate [
 	"Passivating the MAAnt component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

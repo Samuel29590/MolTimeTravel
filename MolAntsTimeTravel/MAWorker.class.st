@@ -76,15 +76,6 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 ]
 
 { #category : #'life cycle' }
-MAWorker >> componentActivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'life cycle' }
 MAWorker >> componentInitialize [
 
 	"Initialization of the MAWorker component."
@@ -94,15 +85,6 @@ MAWorker >> componentInitialize [
 	roleName := #worker.
 	phase := #explore.
 	oldPositions := OrderedCollection new.
-]
-
-{ #category : #'life cycle' }
-MAWorker >> componentPassivate [
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }

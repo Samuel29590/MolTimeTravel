@@ -27,13 +27,6 @@ MolGPSDataImpl >> componentActivate [
 
 	"Start a thread to simulate sending of the geo position each seconds and accuracy precision"
 
-	"--------------------------Time Travel--------------------------"
-
-	"Subscription to the Time Travel event"
-
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-
 	sendCurrentPositionThread := [ 
 	                             [ true ] whileTrue: [ 
 		                             (Delay forMilliseconds: 50) wait.
@@ -78,11 +71,6 @@ MolGPSDataImpl >> componentPassivate [
 
 	sendCurrentPositionThread ifNotNil: [ :e | e terminate ].
 	sendCurrentPositionThread := nil.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #services }

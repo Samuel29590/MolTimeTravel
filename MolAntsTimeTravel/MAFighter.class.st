@@ -7,15 +7,6 @@ Class {
 	#category : #MolAntsTimeTravel
 }
 
-{ #category : #'life cycle' }
-MAFighter >> componentActivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-]
-
 { #category : #role }
 MAFighter >> componentInitialize [
 	
@@ -24,15 +15,6 @@ MAFighter >> componentInitialize [
 	self forServices: TMASimulationServices useProvider: #default.
 	
 	roleName := #fighter.
-]
-
-{ #category : #'life cycle' }
-MAFighter >> componentPassivate [
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #role }
@@ -68,14 +50,14 @@ MAFighter >> moveFrom: anAnt [
 	           @ (Random new next * 10 - 5) rounded).
 	antHillPos := MASimulationManager simulationAntHillPosition.
 
-	newPos x < (antHillPos x - 50) ifTrue: [ 
-		newPos := antHillPos x - 50 @ newPos y ].
-	newPos y < (antHillPos y - 50) ifTrue: [ 
-		newPos := newPos x @ (antHillPos y - 50) ].
-	newPos x > (antHillPos x + 50) ifTrue: [ 
-		newPos := antHillPos x + 50 @ newPos y ].
-	newPos y > (antHillPos y + 50) ifTrue: [ 
-		newPos := newPos x @ (antHillPos y + 50) ].
+	newPos x < (antHillPos x - 40) ifTrue: [ 
+		newPos := antHillPos x - 40 @ newPos y ].
+	newPos y < (antHillPos y - 40) ifTrue: [ 
+		newPos := newPos x @ (antHillPos y - 40) ].
+	newPos x > (antHillPos x + 40) ifTrue: [ 
+		newPos := antHillPos x + 40 @ newPos y ].
+	newPos y > (antHillPos y + 40) ifTrue: [ 
+		newPos := newPos x @ (antHillPos y + 40) ].
 
 	^ newPos.
 
