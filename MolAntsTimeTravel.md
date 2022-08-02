@@ -234,3 +234,10 @@ The actual implementation of the *TMAGroundType*: *MAGround* is the implementati
  -*nbAntView*, is a *BlTextElement* used to print the actual number of ants on the view.
  
  -*nbFeedingPointView*, is a *BlTextElement* used to print the actual number of feedingPoints on the view.
+
+## Illustrations
+![2022-07-04 14-31-40](https://user-images.githubusercontent.com/64481702/177515569-c6d831f3-37b2-4d56-8a6c-50dcd4202a7f.gif)
+
+<img src="https://user-images.githubusercontent.com/64481702/178459438-4a5fa818-551f-4784-9dfc-c9f6e39e3365.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/178459444-17020844-17b0-4cec-9e29-6fc8d2d2d57f.png" width="50%">
+
+<img src="https://user-images.githubusercontent.com/64481702/178459447-f7c8b35d-2658-4264-99df-0f14a9d7e4a9.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/178459449-e2bceebc-c3d1-485f-a375-566183e0bdf2.png" width="50%">
