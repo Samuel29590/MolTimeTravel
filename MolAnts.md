@@ -1,4 +1,25 @@
+# MolAntsTimeTravel
  
+MolAntsTimeTravel like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill. 
+
+If you want to know more about the organization of components of [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md) or [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md), click on the hyperlink.
+
+### How to start the simulation ?
+
+To start the simulation, go to the *MolAnts* package, on the class side of the MASimulationManager class and launch the start method.
+
+![Screenshot from 2022-07-07 14-48-12](https://user-images.githubusercontent.com/64481702/177777229-fa0a1e0e-b613-44bf-b083-ac8aeafb1914.png)
+
+When the simulation is launched, three windows are opened:
+
+1- Is the simulation.
+
+2- Is the time travel panel.
+
+3- Is an inspector on *MolComponentManager* and it allows to inspect each component of the simulation and their data.
+
+![draw(2)](https://user-images.githubusercontent.com/64481702/178457974-c9afbe47-023f-48c3-868b-82fe07949b91.png)
+
 ## Overview of the Components, Types, Services and Events organisation with Molecule
 
 ![MolAnts_schema](https://user-images.githubusercontent.com/64481702/171402823-bd2f56b7-c43c-42ca-8568-42426c1a7f29.svg)
