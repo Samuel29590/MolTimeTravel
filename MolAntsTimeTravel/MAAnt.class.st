@@ -25,7 +25,7 @@ MAAnt >> componentActivate [
 	"Activation of the MAAnt component."
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-]
+
 
 { #category : #'life cycle' }
 MAAnt >> componentInitialize [
