@@ -85,7 +85,7 @@ And in redo on the contrary with undo we interpret the creations and deletions o
 
 When we time travel on the simulation, the *TimeTravel* component will execute the *undo* or *redo* methods of the mementos at each restored step. These methods will tell the mementos to restore the variables of their associated component, using the *restorFrom: aMemento* method present in the components. The components receive the mementos and restore their variables using the values saved on the mementos.
 
-#### Example of an undo and a restoration from a memento (example non exhaustive)
+#### Example of an undo and a restoration from a memento (example non exhaustive)(example on MolAntsTimeTravel)
 
 ![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/177521067-61e1f0ad-5454-4f1e-a0cc-2d5e12de7874.png)
 
