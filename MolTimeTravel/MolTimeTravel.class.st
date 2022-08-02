@@ -247,7 +247,7 @@ MolTimeTravel >> replaySpeed: anInteger [
 { #category : #'life cycle' }
 MolTimeTravel >> restoreAtStep: aStep [
 
-	| componentsLifeCycles mementos events |
+	| componentsLifeCycles mementos events services |
 	isRestoring ifFalse: [ ^ self ].
 
 	currentStep < 1 | (currentStep > lastStep) ifTrue: [ ^ self ].
@@ -279,7 +279,11 @@ MolTimeTravel >> restoreAtStep: aStep [
 
 		"events undo"
 		events := (history at: aStep) events.
-		events do: [ :event | event undo ] ].
+		events do: [ :event | event undo ].
+		 
+		"services undo"
+		services := (history at: aStep) services.
+		services do: [ :service | service undo ] ].
 
 	"Redo"
 	currentStep < aStep ifTrue: [ "Create components"
@@ -308,7 +312,11 @@ MolTimeTravel >> restoreAtStep: aStep [
 
 		"Replay the events"
 		events := (history at: aStep) events.
-		events do: [ :event | event redo ] ]
+		events do: [ :event | event redo ].
+
+		"Replay the services"
+		services := (history at: aStep) services.
+		services do: [ :service | service redo ] ]
 ]
 
 { #category : #'life cycle' }
