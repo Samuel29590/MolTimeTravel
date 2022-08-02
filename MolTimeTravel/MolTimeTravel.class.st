@@ -19,6 +19,19 @@ Class {
 	#category : #MolTimeTravel
 }
 
+{ #category : #services }
+MolTimeTravel >> activationOf: aComponent [
+
+	| aComponentMemento |
+	aComponentMemento := MolComponentActivateMemento new save: aComponent.
+
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
+
+	(history at: currentStep) saveActivationOf: aComponentMemento.
+
+	self saveTheApplication
+]
+
 { #category : #'life cycle' }
 MolTimeTravel >> componentInitialize [
 
@@ -66,7 +79,7 @@ MolTimeTravel >> creationOf: aComponent [
 
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 
-	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
+	(history at: currentStep) saveCreationOf: aComponentMemento.
 
 	self saveTheApplication
 ]
@@ -84,8 +97,8 @@ MolTimeTravel >> deletionOf: aComponent [
 	aComponentMemento := MolComponentDeletionMemento new save: aComponent.
 
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
-	
-	(history at: currentStep) saveCreationOrDeletionOf: aComponentMemento.
+
+	(history at: currentStep) saveDeletionOf: aComponentMemento.
 
 	self saveTheApplication
 ]
@@ -149,6 +162,19 @@ MolTimeTravel >> nextStep [
 	currentStep := currentStep + 1.
 	lastStep := lastStep + 1.
 	history add: MolComponentStep new
+]
+
+{ #category : #services }
+MolTimeTravel >> passivationOf: aComponent [
+
+	| aComponentMemento |
+	aComponentMemento := MolComponentPassivateMemento new save: aComponent.
+
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
+
+	(history at: currentStep) savePassivationOf: aComponentMemento.
+
+	self saveTheApplication
 ]
 
 { #category : #'life cycle' }
@@ -227,8 +253,23 @@ MolTimeTravel >> restoreAtStep: aStep [
 	currentStep < 1 | (currentStep > lastStep) ifTrue: [ ^ self ].
 
 	"Undo"
-	aStep < currentStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: (aStep + 1)) creationsAndDeletions.
+	aStep < currentStep ifTrue: [ "Remove components"
+		componentsLifeCycles := (history at: aStep + 1) deletions.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle undo ].
+
+		"Passivate components"
+		componentsLifeCycles := (history at: aStep + 1) passivations.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle undo ].
+
+		"Activate components"
+		componentsLifeCycles := (history at: aStep + 1) activations.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle undo ].
+
+		"Create components"
+		componentsLifeCycles := (history at: aStep + 1) creations.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle undo ].
 
@@ -241,8 +282,23 @@ MolTimeTravel >> restoreAtStep: aStep [
 		events do: [ :event | event undo ] ].
 
 	"Redo"
-	currentStep < aStep ifTrue: [ "Remove or create components"
-		componentsLifeCycles := (history at: aStep) creationsAndDeletions.
+	currentStep < aStep ifTrue: [ "Create components"
+		componentsLifeCycles := (history at: aStep) creations.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle redo ].
+
+		"Activate components"
+		componentsLifeCycles := (history at: aStep) activations.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle redo ].
+
+		"Passivate components"
+		componentsLifeCycles := (history at: aStep) passivations.
+		componentsLifeCycles do: [ :componentLifeCycle | 
+			componentLifeCycle redo ].
+
+		"Remove components"
+		componentsLifeCycles := (history at: aStep) deletions.
 		componentsLifeCycles do: [ :componentLifeCycle | 
 			componentLifeCycle redo ].
 
@@ -299,8 +355,6 @@ MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: so
 
 { #category : #services }
 MolTimeTravel >> saveTheApplication [
-
-	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 
 	self getTimeTravelEventsNotifier saveForTimeTravel.
 

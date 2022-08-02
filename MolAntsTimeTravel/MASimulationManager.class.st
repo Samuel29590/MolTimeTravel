@@ -42,6 +42,20 @@ Class {
 	#category : #MolAntsTimeTravel
 }
 
+{ #category : #scripts }
+MASimulationManager class >> activateSimulation [
+
+	<script>
+	self activate
+]
+
+{ #category : #scripts }
+MASimulationManager class >> passivateSimulation [
+
+	<script>
+	self passivate
+]
+
 { #category : #properties }
 MASimulationManager class >> simulationAntHillPosition [
 

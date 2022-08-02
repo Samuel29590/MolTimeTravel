@@ -699,7 +699,7 @@ MolTimeTravelView >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
-	| blRopedText memSize creaSize eventSize stringTemp |
+	| blRopedText stringTemp mementosSize creationSize deletionSize activationSize passivationSize eventSize serviceSize |
 	lastStepView text: timeTravel lastStep asRopedText.
 	currentStepView text: timeTravel currentStep asRopedText.
 
@@ -769,24 +769,71 @@ MolTimeTravelView >> updatePanelView [
 				              , x componentReference componentClass asString
 				              , '->' , x componentReference componentName asString
 				              , '. ' ].
-			memSize := ' Mementos: '
-			           ,
-			           (timeTravel history at: timeTravel currentStep) mementos
-				           size asString , ' [ ' , stringTemp , '] '.
+			mementosSize := ' Mementos: '
+			                ,
+			                (timeTravel history at: timeTravel currentStep)
+				                mementos size asString , ' [ ' , stringTemp , '] '.
 
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep)
-				creationsAndDeletions do: [ :x | 
+			(timeTravel history at: timeTravel currentStep) creations do: [ :x | 
 				stringTemp := stringTemp
 				              , x componentReference componentClass asString
 				              , '->' , x componentReference componentName asString
 				              , '. ' ].
-			creaSize := ' CreationsOrDeletions: '
-			            ,
-				            (timeTravel history at: timeTravel currentStep)
-					            creationsAndDeletions size asString , ' [ '
-			            , stringTemp , '] '.
+			creationSize := ' Creations: '
+			                ,
+				                (timeTravel history at: timeTravel currentStep)
+					                creations size asString , ' [ ' , stringTemp
+			                , '] '.
 
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
+			stringTemp := ''.
+			(timeTravel history at: timeTravel currentStep) deletions do: [ :x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			deletionSize := ' Deletions: '
+			                ,
+				                (timeTravel history at: timeTravel currentStep)
+					                deletions size asString , ' [ ' , stringTemp
+			                , '] '.
+
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
+			stringTemp := ''.
+			(timeTravel history at: timeTravel currentStep) activations do: [ 
+				:x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			activationSize := ' Activations '
+			                  ,
+				                  (timeTravel history at: timeTravel currentStep)
+					                  activations size asString , ' [ ' , stringTemp
+			                  , '] '.
+
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
+			stringTemp := ''.
+			(timeTravel history at: timeTravel currentStep) passivations do: [ 
+				:x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			passivationSize := ' Passivations '
+			                   ,
+				                   (timeTravel history at: timeTravel currentStep)
+					                   passivations size asString , ' [ '
+			                   , stringTemp , '] '.
+
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
 			(timeTravel history at: timeTravel currentStep) events do: [ :x | 
 				stringTemp := stringTemp
@@ -798,7 +845,22 @@ MolTimeTravelView >> updatePanelView [
 			             (timeTravel history at: timeTravel currentStep) events
 				             size asString , ' [ ' , stringTemp , '] '.
 
-			blRopedText := BlRopedText string: memSize , creaSize , eventSize.
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
+			stringTemp := ''.
+			(timeTravel history at: timeTravel currentStep) services do: [ :x | 
+				stringTemp := stringTemp
+				              , x componentReference componentClass asString
+				              , '->' , x componentReference componentName asString
+				              , '. ' ].
+			serviceSize := ' Services '
+			               ,
+			               (timeTravel history at: timeTravel currentStep)
+				               services size asString , ' [ ' , stringTemp , '] '.
+
+			"--------------------------------------------------------------------------------------------------------------------------"
+			"--------------------------------------------------------------------------------------------------------------------------"
+			blRopedText := BlRopedText string: mementosSize , creationSize , deletionSize, activationSize, passivationSize, eventSize, serviceSize.
 
 			logsText text: blRopedText ]
 ]
