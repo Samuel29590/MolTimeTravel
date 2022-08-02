@@ -42,6 +42,20 @@ Class {
 	#category : #MolAntsTimeTravel
 }
 
+{ #category : #scripts }
+MASimulationManager class >> activateSimulation [
+
+	<script>
+	self activate
+]
+
+{ #category : #scripts }
+MASimulationManager class >> passivateSimulation [
+
+	<script>
+	self passivate
+]
+
 { #category : #properties }
 MASimulationManager class >> simulationAntHillPosition [
 
@@ -96,6 +110,18 @@ MASimulationManager class >> stopSimulation [
 MASimulationManager >> ant: anAnt killAt: aPoint [
 
 	| insect |
+	
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTimeTravelServicesProvider
+				saveEvent: #ant:killAt:
+				performBy: self
+				withParameters: { 
+						anAnt.
+						aPoint } ] ].
+	"---------------------------------------------------------------"
+	
 	Transcript
 		show: anAnt componentName;
 		show: ' kill at ';
@@ -108,15 +134,11 @@ MASimulationManager >> ant: anAnt killAt: aPoint [
 		MAInsect stop: insect componentName.
 		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
 
+
 	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #ant:killAt:
-				performBy: self
-				withParameters: { 
-						anAnt.
-						aPoint } ] ]
+			self saveForTimeTravel ] ]
 	"---------------------------------------------------------------"
 ]
 
@@ -125,67 +147,31 @@ MASimulationManager >> componentActivate [
 
 	"Activation of the MASimulationManager component."
 
-	super componentActivate.
 	self getTMAStageEventsSubscriber subscribe: self.
 	self getTMARoleEventsSubscriber subscribe: self.
 	self getTMAInsectEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
 MASimulationManager >> componentInitialize [
 
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
-
 	"Initialization of the MASimulationManager component."
-	super componentInitialize.
 
 	self start.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
 MASimulationManager >> componentPassivate [
 
 	"Passivating the MASimulationManager component."
-
-	super componentPassivate.
+	
 	self getTMAStageEventsSubscriber unsubscribe: self.
 	self getTMARoleEventsSubscriber unsubscribe: self.
 	self getTMAInsectEventsSubscriber unsubscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
 MASimulationManager >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
 
 	"Removing the MASimulationManager component."
 
@@ -421,6 +407,12 @@ MASimulationManager >> isRunning [
 	^ isRunning ifNil: [ isRunning := false ].
 ]
 
+{ #category : #testing }
+MASimulationManager >> isUsingTimeTravel [
+
+	^ true.
+]
+
 { #category : #services }
 MASimulationManager >> pauseSimulation [
 
@@ -438,10 +430,21 @@ MASimulationManager >> playSimulation [
 { #category : #events }
 MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anotherPoint [
 
+	"--------------------------Time Travel--------------------------"
+	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
+			self getTimeTravelServicesProvider
+				saveEvent: #positionChangedFor:oldPos:newPos:
+				performBy: self
+				withParameters: { 
+						anInsect.
+						aPoint.
+						anotherPoint } ] ].
+	"---------------------------------------------------------------"
+
 	"Add or update the insect position in the dictionary."
-
+	
 	"remove the old position."
-
 	(insects includesKey: aPoint) ifTrue: [ 
 		(insects at: aPoint) remove: anInsect ifAbsent: [  ].
 		(insects at: aPoint) isEmpty ifTrue: [ 
@@ -454,7 +457,13 @@ MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anoth
 			collection := OrderedCollection new.
 			collection add: anInsect.
 			insects add: anotherPoint -> collection ]
-		ifTrue: [ (insects at: anotherPoint) addLast: anInsect ]
+		ifTrue: [ (insects at: anotherPoint) addLast: anInsect ].
+		
+	"--------------------------Time Travel--------------------------"
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
+			self saveForTimeTravel ] ]
+	"---------------------------------------------------------------"
 ]
 
 { #category : #events }

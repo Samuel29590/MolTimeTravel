@@ -27,24 +27,17 @@ MolGPSDataImpl >> componentActivate [
 
 	"Start a thread to simulate sending of the geo position each seconds and accuracy precision"
 
-	"--------------------------Time Travel--------------------------"
-
-	"Subscription to the Time Travel event"
-
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-
 	sendCurrentPositionThread := [ 
 	                             [ true ] whileTrue: [ 
 		                             (Delay forMilliseconds: 50) wait.
 
-		                           	"--------------------------Time Travel--------------------------"
-		                             (MolUtils
-			                              instanceOf: MolTimeTravel
-			                              named: #default)
-			                             ifNotNil: [ 
+		                             "--------------------------Time Travel--------------------------"
+
+		                             self getTimeTravelServicesProvider
+			                             isNotFoundServices
+			                             ifFalse: [ 
 				                             self getTimeTravelServicesProvider
-					                             isRestoring ifFalse: [ 
+					                             isRestoring ifFalse: [
 											"---------------------------------------------------------------"
 					                             self getMolGPSDataEventsNotifier 
 						                             currentPositionChanged:
@@ -57,7 +50,7 @@ MolGPSDataImpl >> componentActivate [
 					                             self getTimeTravelServicesProvider
 						                             saveTheApplication
 					                             "---------------------------------------------------------------" ] ]
-			                             ifNil: [ 
+			                             ifTrue: [ 
 				                             self getMolGPSDataEventsNotifier 
 					                             currentPositionChanged:
 					                             self getRandomizedGPSPosition.
@@ -68,24 +61,9 @@ MolGPSDataImpl >> componentActivate [
 
 { #category : #'life cycle' }
 MolGPSDataImpl >> componentInitialize [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
 	
 	"Set starting accuracy"
 	self accuracy: 1000.
-	
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
@@ -93,23 +71,6 @@ MolGPSDataImpl >> componentPassivate [
 
 	sendCurrentPositionThread ifNotNil: [ :e | e terminate ].
 	sendCurrentPositionThread := nil.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'life cycle' }
-MolGPSDataImpl >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #services }
@@ -165,6 +126,12 @@ MolGPSDataImpl >> increaseAccuracy [
 		nextAccuracy < 1 ifTrue: [ "stay to 1" nextAccuracy := 1 ].
 		self accuracy: nextAccuracy 
 	]
+]
+
+{ #category : #events }
+MolGPSDataImpl >> isUsingTimeTravel [
+
+	^ true.
 ]
 
 { #category : #events }

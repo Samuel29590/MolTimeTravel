@@ -7,63 +7,14 @@ Class {
 	#category : #MolAntsTimeTravel
 }
 
-{ #category : #'life cycle' }
-MAFighter >> componentActivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-]
-
 { #category : #role }
 MAFighter >> componentInitialize [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
 	
 	"Initialization of the MAFighter component."
 
 	self forServices: TMASimulationServices useProvider: #default.
 	
 	roleName := #fighter.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'life cycle' }
-MAFighter >> componentPassivate [
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
-]
-
-{ #category : #role }
-MAFighter >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #role }
@@ -83,6 +34,12 @@ MAFighter >> doSimulationStepFor: anAnt [
 			self getTMARoleEventsNotifier ant: anAnt killAt: each ] ]
 ]
 
+{ #category : #events }
+MAFighter >> isUsingTimeTravel [
+
+	^ true.
+]
+
 { #category : #role }
 MAFighter >> moveFrom: anAnt [
 
@@ -93,14 +50,14 @@ MAFighter >> moveFrom: anAnt [
 	           @ (Random new next * 10 - 5) rounded).
 	antHillPos := MASimulationManager simulationAntHillPosition.
 
-	newPos x < (antHillPos x - 50) ifTrue: [ 
-		newPos := antHillPos x - 50 @ newPos y ].
-	newPos y < (antHillPos y - 50) ifTrue: [ 
-		newPos := newPos x @ (antHillPos y - 50) ].
-	newPos x > (antHillPos x + 50) ifTrue: [ 
-		newPos := antHillPos x + 50 @ newPos y ].
-	newPos y > (antHillPos y + 50) ifTrue: [ 
-		newPos := newPos x @ (antHillPos y + 50) ].
+	newPos x < (antHillPos x - 40) ifTrue: [ 
+		newPos := antHillPos x - 40 @ newPos y ].
+	newPos y < (antHillPos y - 40) ifTrue: [ 
+		newPos := newPos x @ (antHillPos y - 40) ].
+	newPos x > (antHillPos x + 40) ifTrue: [ 
+		newPos := antHillPos x + 40 @ newPos y ].
+	newPos y > (antHillPos y + 40) ifTrue: [ 
+		newPos := newPos x @ (antHillPos y + 40) ].
 
 	^ newPos.
 

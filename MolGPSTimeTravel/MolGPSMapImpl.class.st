@@ -10,57 +10,12 @@ Class {
 MolGPSMapImpl >> componentActivate [
 
 	self getMolGPSDataEventsSubscriber subscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'component life cycle' }
-MolGPSMapImpl >> componentInitialize [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
-	
-	super componentInitialize.
-	
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
 MolGPSMapImpl >> componentPassivate [
 
 	self getMolGPSDataEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'component life cycle' }
-MolGPSMapImpl >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
-
-	super componentRemove.
 ]
 
 { #category : #events }
@@ -69,17 +24,23 @@ MolGPSMapImpl >> currentPositionChanged: aGeoPosition [
 	"Display a circle on the map view at the current position"
 
 	| radius |
-	radius := self getMolGPSDataServicesProvider getAccuracyRadiusInMeters.
-
-	self updatePositionCircleOnMap: aGeoPosition radius: radius.
-	
-		"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
+	"--------------------------Time Travel--------------------------"
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
 			self getTimeTravelServicesProvider
 				saveEvent: #currentPositionChanged:
 				performBy: self
-				withParameters: { aGeoPosition } ] ]
+				withParameters: { aGeoPosition } ] ].
+	"---------------------------------------------------------------"
+	radius := self getMolGPSDataServicesProvider
+		          getAccuracyRadiusInMeters.
+
+	self updatePositionCircleOnMap: aGeoPosition radius: radius.
+
+	"--------------------------Time Travel--------------------------"
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
+		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
+			self saveForTimeTravel ] ]
 	"---------------------------------------------------------------"
 ]
 
@@ -129,6 +90,12 @@ MolGPSMapImpl >> getTimeTravelServicesProvider [
 
 	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
+]
+
+{ #category : #events }
+MolGPSMapImpl >> isUsingTimeTravel [
+
+	^ true.
 ]
 
 { #category : #events }

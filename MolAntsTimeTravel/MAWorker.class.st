@@ -76,28 +76,8 @@ MAWorker >> avoidPheromone: aPoint for: anAnt [
 ]
 
 { #category : #'life cycle' }
-MAWorker >> componentActivate [
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'life cycle' }
 MAWorker >> componentInitialize [
 
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		"Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
-	
 	"Initialization of the MAWorker component."
 
 	self forServices: TMASimulationServices useProvider: #default.
@@ -105,35 +85,10 @@ MAWorker >> componentInitialize [
 	roleName := #worker.
 	phase := #explore.
 	oldPositions := OrderedCollection new.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
-]
-
-{ #category : #'life cycle' }
-MAWorker >> componentPassivate [
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAWorker >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
 	
 	"Removing the MAWorker component."
 
@@ -321,6 +276,12 @@ MAWorker >> getPheromonesOfReturnAround: anAnt [
 	oldPositions do:[ :each | 
 	pheromonesVisibles remove: each ifAbsent: [  ].].
 	^ pheromonesVisibles
+]
+
+{ #category : #testing }
+MAWorker >> isUsingTimeTravel [
+
+	^ true.
 ]
 
 { #category : #position }

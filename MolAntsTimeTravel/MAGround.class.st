@@ -65,25 +65,10 @@ MAGround >> componentActivate [
 	"Activation of the MAGround component."
 
 	self getTMASimulationToGlobalEventsSubscriber subscribe: self.
-
-	"--------------------------Time Travel--------------------------"
-	"Subscription to the Time Travel event"
-	self getTimeTravelEventsSubscriber subscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAGround >> componentInitialize [
-
-	"--------------------------Time Travel--------------------------"
-
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "Connection to the TimeTravel service."
-		self forServices: TimeTravelServices useProvider: #default.
-		"Subscription to the Time Travel event"
-		self getTimeTravelEventsSubscriber subscribe: self.
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component notifies its creation" 
-			self getTimeTravelServicesProvider creationOf: self ] ].
-	"---------------------------------------------------------------"
 
 	"Initialization of the MAGround component."
 
@@ -97,11 +82,6 @@ MAGround >> componentInitialize [
 	self createInfoPanel.
 
 	self startViewLoop.
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ "---------------------------------------------------------------"
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ "Component saves its state." 
-			self saveForTimeTravel ] ]
 ]
 
 { #category : #'life cycle' }
@@ -110,24 +90,10 @@ MAGround >> componentPassivate [
 	"Passivating the MAGround component."
 
 	self getTMASimulationToGlobalEventsSubscriber unsubscribe: self.
-	
-	"--------------------------Time Travel--------------------------"
-	"Unsubscribe from the Time Travel event"
-	self getTimeTravelEventsSubscriber unsubscribe: self.
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'life cycle' }
 MAGround >> componentRemove [
-
-	"--------------------------Time Travel--------------------------"
-	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [
-			"Component saves its state."
-			self saveForTimeTravel.
-			"Component notifies its deletion"
-			self getTimeTravelServicesProvider deletionOf: self ] ].
-	"---------------------------------------------------------------"
 
 	"Removing the MAGround component."
 
