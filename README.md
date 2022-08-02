@@ -1,16 +1,17 @@
-# MolAntsTimeTravel
+# MolTimeTravel
 
-This is the experimental version of [MolAnts](https://github.com/Samuel29590/MolAnts) for time-traveling.
+This is an adaptation of time-traveling for [Molecule](https://github.com/OpenSmock/Molecule) (component oriented programming framework for [Pharo](https://pharo.org/)).
+
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
 ## Getting Started
 
 ### Prerequisites
 
-MolAntsTimeTravel require [Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and [Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
-So this is why this two frameworks are loaded with the baseline of MolAntsTimeTravel.
+MolTimeTravel require [Molecule](https://github.com/OpenSmock/Molecule) for the component aspect and [Bloc](https://github.com/pharo-graphics/Bloc) for the visual aspect.
+So this is why this two frameworks are loaded with the baseline of MolTimeTravel.
 
-### Installing MolAntsTimeTravel
+### Installing MolTimeTravel
 
 ```smalltalk
 Metacello new
@@ -21,7 +22,6 @@ Metacello new
 
 ## Documentation
 
-MolAntsTimeTravel like [MolAnts](https://github.com/Samuel29590/MolAnts) is a simulation of an anthill. The folder *MolAntsExperimental* is a lighter implementation of the anthill, it was created to test quickly the time travel component. The folder *MolAnts* the time travel has been added to the original simulation with all the features of the anthill. In this two folder the component *TimeTravel* is the same and it adds the possibility of returning in the past, and replay the simulation step-by-step.
 
 If you want to know more about the organization of components of [MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAnts.md) or [MolAntExperimental](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsExperimental.md), click on the hyperlink.
 
