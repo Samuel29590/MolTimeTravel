@@ -20,6 +20,8 @@ When the simulation is launched, three windows are opened:
 
 ![draw(2)](https://user-images.githubusercontent.com/64481702/178457974-c9afbe47-023f-48c3-868b-82fe07949b91.png)
 
+<br><br><br><br>
+
 ## Overview of the Components, Types, Services and Events organisation with Molecule
 
 ![MolAnts_schema](https://user-images.githubusercontent.com/64481702/171402823-bd2f56b7-c43c-42ca-8568-42426c1a7f29.svg)
