@@ -20,5 +20,6 @@ BaselineOfMolTimeTravel >> baseline: spec [
 
 		spec package: 'MolTimeTravel'.
 		spec package: 'MolAntsTimeTravel'.
-		spec package: 'MolGPSTimeTravel' ]
+		spec package: 'MolGPSTimeTravel'.
+		spec package: 'MolRandomPrinterTimeTravel' ]
 ]
