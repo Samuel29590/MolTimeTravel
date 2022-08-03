@@ -2,6 +2,8 @@
 
 This is an adaptation of time-traveling for [Molecule](https://github.com/OpenSmock/Molecule) (component oriented programming framework for [Pharo](https://pharo.org/)).
 
+**⚠️** At the moment, MolTimeTravel only works on deterministic systems, because we cannot determine where the non-deterministic sources are at this time.
+
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
 ## Getting Started
