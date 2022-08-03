@@ -110,7 +110,6 @@ MASimulationManager class >> stopSimulation [
 MASimulationManager >> ant: anAnt killAt: aPoint [
 
 	| insect |
-	
 	"--------------------------Time Travel--------------------------"
 	(MolUtils instanceOf: MolTimeTravel named: #default) ifNotNil: [ 
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
@@ -121,7 +120,7 @@ MASimulationManager >> ant: anAnt killAt: aPoint [
 						anAnt.
 						aPoint } ] ].
 	"---------------------------------------------------------------"
-	
+
 	Transcript
 		show: anAnt componentName;
 		show: ' kill at ';
@@ -134,12 +133,10 @@ MASimulationManager >> ant: anAnt killAt: aPoint [
 		MAInsect stop: insect componentName.
 		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
 
-
 	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
+	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ "---------------------------------------------------------------"
 		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
 			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }

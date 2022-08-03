@@ -19,7 +19,13 @@ Class {
 		'lastStepText',
 		'lastStepView',
 		'logsView',
-		'logsText',
+		'logsLine1',
+		'logsLine2',
+		'logsLine3',
+		'logsLine4',
+		'logsLine5',
+		'logsLine6',
+		'logsLine7',
 		'button0',
 		'button1',
 		'button5',
@@ -42,9 +48,9 @@ MolTimeTravelView >> createTimeTravelPanel [
 		             deployedComponents inspect.
 
 	mySpace := BlSpace new
-		           extent: 800 @ 350;
+		           extent: 800 @ 375;
 		           title: 'TimeTravel Panel'.
-		mySpace show.
+	mySpace show.
 
 	timeTravelPanel := BlElement new
 		                   background: Color gray;
@@ -633,16 +639,48 @@ MolTimeTravelView >> createTimeTravelPanel [
 		            background: Color white;
 		            relocate: 5 @ 250.
 	labelText := '...' asRopedText.
-	logsText := BlTextElement new
-		            text: labelText;
-		            relocate: 5 @ 5.
-	logsView addChild: logsText.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine1 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 5.
+	logsView addChild: logsLine1.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine2 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 20.
+	logsView addChild: logsLine2.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine3 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 35.
+	logsView addChild: logsLine3.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine4 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 50.
+	logsView addChild: logsLine4.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine5 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 65.
+	logsView addChild: logsLine5.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine6 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 80.
+	logsView addChild: logsLine6.
+	"--------------------------------------------------------------------------------------------------------------------------"
+	logsLine7 := BlTextElement new
+		             text: labelText;
+		             relocate: 5 @ 95.
+	logsView addChild: logsLine7.
+	"--------------------------------------------------------------------------------------------------------------------------"
 	timeTravelPanel
 		addEventHandlerOn: BlElementExtentChangedEvent
 		do: [ 
 			logsView size:
 				timeTravelPanel size x - 10 @ (timeTravelPanel size y - 255) ].
-	mySpace addChild: logsView.
+	mySpace addChild: logsView
 ]
 
 { #category : #initialization }
@@ -699,7 +737,7 @@ MolTimeTravelView >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
-	| blRopedText temp stringTemp mementosSize creationSize deletionSize activationSize passivationSize eventSize serviceSize |
+	| temp stringTemp mementosSize creationSize deletionSize activationSize passivationSize eventSize serviceSize |
 	lastStepView text: timeTravel lastStep asRopedText.
 	currentStepView text: timeTravel currentStep asRopedText.
 
@@ -761,7 +799,14 @@ MolTimeTravelView >> updatePanelView [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	timeTravel isSaving
-		ifTrue: [ logsText text: 'Is Saving ...' asRopedText ]
+		ifTrue: [ 
+			logsLine1 text: 'Is Saving ...' asRopedText.
+			logsLine2 text: '' asRopedText.
+			logsLine3 text: '' asRopedText.
+			logsLine4 text: '' asRopedText.
+			logsLine5 text: '' asRopedText.
+			logsLine6 text: '' asRopedText.
+			logsLine7 text: '' asRopedText ]
 		ifFalse: [ 
 			stringTemp := ''.
 			temp := (timeTravel history at: timeTravel currentStep) mementos.
@@ -772,23 +817,28 @@ MolTimeTravelView >> updatePanelView [
 					              , '->'
 					              , x componentReference componentName asString
 					              , '. ' ] ].
-			mementosSize := ' Mementos: '
-			                ,
-			                (timeTravel history at: timeTravel currentStep)
-				                mementosSize asString , ' [ ' , stringTemp , '] '.
+			mementosSize := (' Mementos: '
+			                 ,
+			                 (timeTravel history at: timeTravel currentStep)
+				                 mementosSize asString , ' [ ' , stringTemp , '] ')
+				                asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			temp := (timeTravel history at: timeTravel currentStep) creations. temp ifNotNil: [temp do: [ :x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ]].
-			creationSize := ' Creations: '
-			                ,
-			                (timeTravel history at: timeTravel currentStep)
-				                creationsSize asString , ' [ ' , stringTemp , '] '.
+			temp := (timeTravel history at: timeTravel currentStep) creations.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
+			creationSize := (' Creations: '
+			                 ,
+			                 (timeTravel history at: timeTravel currentStep)
+				                 creationsSize asString , ' [ ' , stringTemp
+			                 , '] ') asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
@@ -801,10 +851,11 @@ MolTimeTravelView >> updatePanelView [
 					              , '->'
 					              , x componentReference componentName asString
 					              , '. ' ] ].
-			deletionSize := ' Deletions: '
-			                ,
-			                (timeTravel history at: timeTravel currentStep)
-				                deletionsSize asString , ' [ ' , stringTemp , '] '.
+			deletionSize := (' Deletions: '
+			                 ,
+			                 (timeTravel history at: timeTravel currentStep)
+				                 deletionsSize asString , ' [ ' , stringTemp
+			                 , '] ') asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
@@ -817,11 +868,11 @@ MolTimeTravelView >> updatePanelView [
 					              , '->'
 					              , x componentReference componentName asString
 					              , '. ' ] ].
-			activationSize := ' Activations '
-			                  ,
-				                  (timeTravel history at: timeTravel currentStep)
-					                  activationsSize asString , ' [ ' , stringTemp
-			                  , '] '.
+			activationSize := (' Activations '
+			                   ,
+				                   (timeTravel history at: timeTravel currentStep)
+					                   activationsSize asString , ' [ ' , stringTemp
+			                   , '] ') asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
@@ -835,11 +886,11 @@ MolTimeTravelView >> updatePanelView [
 					              , '->'
 					              , x componentReference componentName asString
 					              , '. ' ] ].
-			passivationSize := ' Passivations '
-			                   ,
-				                   (timeTravel history at: timeTravel currentStep)
-					                   passivationsSize asString , ' [ ' , stringTemp
-			                   , '] '.
+			passivationSize := (' Passivations '
+			                    ,
+				                    (timeTravel history at: timeTravel currentStep)
+					                    passivationsSize asString , ' [ '
+			                    , stringTemp , '] ') asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
@@ -852,10 +903,11 @@ MolTimeTravelView >> updatePanelView [
 					              , '->'
 					              , x componentReference componentName asString
 					              , '. ' ] ].
-			eventSize := ' Events '
-			             ,
-			             (timeTravel history at: timeTravel currentStep)
-				             eventsSize asString , ' [ ' , stringTemp , '] '.
+			eventSize := (' Events '
+			              ,
+			              (timeTravel history at: timeTravel currentStep)
+				              eventsSize asString , ' [ ' , stringTemp , '] ')
+				             asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
@@ -868,17 +920,19 @@ MolTimeTravelView >> updatePanelView [
 					              , '->'
 					              , x componentReference componentName asString
 					              , '. ' ] ].
-			serviceSize := ' Services '
-			               ,
-			               (timeTravel history at: timeTravel currentStep)
-				               servicesSize asString , ' [ ' , stringTemp , '] '.
+			serviceSize := (' Services '
+			                ,
+			                (timeTravel history at: timeTravel currentStep)
+				                servicesSize asString , ' [ ' , stringTemp , '] ')
+				               asRopedText.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
-			blRopedText := BlRopedText string:
-				               mementosSize , creationSize , deletionSize
-				               , activationSize , passivationSize , eventSize
-				               , serviceSize.
-
-			logsText text: blRopedText ]
+			logsLine1 text: mementosSize.
+			logsLine2 text: creationSize.
+			logsLine3 text: deletionSize.
+			logsLine4 text: activationSize.
+			logsLine5 text: passivationSize.
+			logsLine6 text: eventSize.
+			logsLine7 text: serviceSize ]
 ]

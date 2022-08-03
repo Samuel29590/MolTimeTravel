@@ -66,18 +66,6 @@ MolComponentStep >> eventsSize [
 ]
 
 { #category : #initialization }
-MolComponentStep >> initialize [
-
-	mementos := OrderedCollection new.
-	events := OrderedCollection new.
-	services := OrderedCollection new.
-	creations := OrderedCollection new.
-	deletions := OrderedCollection new.
-	activations := OrderedCollection new.
-	passivations := OrderedCollection new
-]
-
-{ #category : #initialization }
 MolComponentStep >> isANewStep [
 
 	mementos isNotNil | creations isNotNil | deletions isNotNil | activations isNotNil | passivations isNotNil | events isNotNil | services isNotNil ifTrue: [ ^ false ].

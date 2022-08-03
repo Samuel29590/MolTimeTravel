@@ -32,6 +32,7 @@ MolGPSMapImpl >> currentPositionChanged: aGeoPosition [
 				performBy: self
 				withParameters: { aGeoPosition } ] ].
 	"---------------------------------------------------------------"
+	
 	radius := self getMolGPSDataServicesProvider
 		          getAccuracyRadiusInMeters.
 

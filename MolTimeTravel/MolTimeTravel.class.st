@@ -342,6 +342,25 @@ MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: so
 ]
 
 { #category : #services }
+MolTimeTravel >> saveService: aMethodName performBy: aComponent withParameters: someParameters [
+
+	| aComponentMemento |
+	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
+
+	"self getTimeTravelEventsNotifier saveForTimeTravel."
+	aComponent saveForTimeTravel.
+
+	aComponentMemento := MolComponentServiceMemento new
+		                     saveService: aMethodName
+		                     performBy: aComponent
+		                     withParameters: someParameters.
+
+	(history at: currentStep) saveService: aComponentMemento.
+
+	self nextStep
+]
+
+{ #category : #services }
 MolTimeTravel >> saveTheApplication [
 
 	self getTimeTravelEventsNotifier saveForTimeTravel.
