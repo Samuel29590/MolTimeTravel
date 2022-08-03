@@ -6,6 +6,12 @@ Trait {
 }
 
 { #category : #services }
+TimeTravelServices >> activationOf: aComponent [
+
+	
+]
+
+{ #category : #services }
 TimeTravelServices >> creationOf: aComponent [
 
 	
@@ -24,9 +30,23 @@ TimeTravelServices >> isRestoring [
 ]
 
 { #category : #services }
+TimeTravelServices >> passivationOf: aComponent [
+
+	
+]
+
+{ #category : #services }
 TimeTravelServices >> save: aComponentMemento [
 
 	
+]
+
+{ #category : #services }
+TimeTravelServices >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean [
+]
+
+{ #category : #services }
+TimeTravelServices >> saveService: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean [
 ]
 
 { #category : #services }

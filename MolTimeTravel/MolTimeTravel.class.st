@@ -323,7 +323,7 @@ MolTimeTravel >> save: aComponentMemento [
 ]
 
 { #category : #services }
-MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
+MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean [
 
 	| aComponentMemento |
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
@@ -334,7 +334,8 @@ MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: so
 	aComponentMemento := MolComponentEventMemento new
 		                     saveEvent: aMethodName
 		                     performBy: aComponent
-		                     withParameters: someParameters.
+		                     withParameters: someParameters
+								  	needToReplay: aBoolean.
 
 	(history at: currentStep) saveEvent: aComponentMemento.
 
@@ -342,7 +343,7 @@ MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: so
 ]
 
 { #category : #services }
-MolTimeTravel >> saveService: aMethodName performBy: aComponent withParameters: someParameters [
+MolTimeTravel >> saveService: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean [
 
 	| aComponentMemento |
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
@@ -353,7 +354,8 @@ MolTimeTravel >> saveService: aMethodName performBy: aComponent withParameters: 
 	aComponentMemento := MolComponentServiceMemento new
 		                     saveService: aMethodName
 		                     performBy: aComponent
-		                     withParameters: someParameters.
+		                     withParameters: someParameters
+									needToReplay: aBoolean.
 
 	(history at: currentStep) saveService: aComponentMemento.
 

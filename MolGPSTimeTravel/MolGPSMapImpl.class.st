@@ -30,7 +30,8 @@ MolGPSMapImpl >> currentPositionChanged: aGeoPosition [
 			self getTimeTravelServicesProvider
 				saveEvent: #currentPositionChanged:
 				performBy: self
-				withParameters: { aGeoPosition } ] ].
+				withParameters: { aGeoPosition }
+				needToReplay: true ] ].
 	"---------------------------------------------------------------"
 	
 	radius := self getMolGPSDataServicesProvider

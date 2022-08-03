@@ -91,7 +91,8 @@ MolRandomReceiverImpl >> printRandomIntegerSmallerThan: anInteger [
 			self getTimeTravelServicesProvider
 				saveEvent: #printRandomIntegerSmallerThan:
 				performBy: self
-				withParameters: { anInteger } ] ].
+				withParameters: { anInteger }
+				needToReplay: true ] ].
  	"---------------------------------------------------------------"
 	
 	self text:

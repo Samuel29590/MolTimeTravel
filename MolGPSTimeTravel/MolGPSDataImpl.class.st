@@ -75,7 +75,6 @@ MolGPSDataImpl >> componentPassivate [
 
 { #category : #services }
 MolGPSDataImpl >> getAccuracyRadiusInMeters [
-	"Get and return the accuracy of the GPS depending quality of signal and quantity of connected satellites"
 	
 	"--------------------------Time Travel--------------------------"
 	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
@@ -83,9 +82,11 @@ MolGPSDataImpl >> getAccuracyRadiusInMeters [
 			self getTimeTravelServicesProvider
 				saveService: #getAccuracyRadiusInMeters
 				performBy: self
-				withParameters: {} ] ].
+				withParameters: {}
+				needToReplay: false ] ].
 	"---------------------------------------------------------------"
 	
+	"Get and return the accuracy of the GPS depending quality of signal and quantity of connected satellites"
 	^self accuracy.
 ]
 
