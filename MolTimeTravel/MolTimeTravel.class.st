@@ -255,68 +255,49 @@ MolTimeTravel >> restoreAtStep: aStep [
 	"Undo"
 	aStep < currentStep ifTrue: [ "Remove components"
 		componentsLifeCycles := (history at: aStep + 1) deletions.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle undo ].
+		componentsLifeCycles ifNotNil: [ 
+			componentsLifeCycles do: [ :componentLifeCycle | 
+				componentLifeCycle undo ] ].
 
 		"Passivate components"
 		componentsLifeCycles := (history at: aStep + 1) passivations.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle undo ].
+		componentsLifeCycles ifNotNil: [ 
+			componentsLifeCycles do: [ :componentLifeCycle | 
+				componentLifeCycle undo ] ].
 
 		"Activate components"
 		componentsLifeCycles := (history at: aStep + 1) activations.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle undo ].
+		componentsLifeCycles ifNotNil: [ 
+			componentsLifeCycles do: [ :componentLifeCycle | 
+				componentLifeCycle undo ] ].
 
 		"Create components"
 		componentsLifeCycles := (history at: aStep + 1) creations.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle undo ].
+		componentsLifeCycles ifNotNil: [ 
+			componentsLifeCycles do: [ :componentLifeCycle | 
+				componentLifeCycle undo ] ].
 
 		"Restoration of the state of components"
 		mementos := (history at: aStep) mementos.
-		mementos do: [ :memento | memento undo ].
+		mementos ifNotNil: [ mementos do: [ :memento | memento undo ] ].
 
 		"events undo"
 		events := (history at: aStep) events.
-		events do: [ :event | event undo ].
-		 
+		events ifNotNil: [ 
+			events do: [ :event | event undo ].
+			"Restoration of the state of components before the events"
+			mementos := (history at: aStep) mementos.
+			mementos ifNotNil: [ mementos do: [ :memento | memento undo ] ] ].
+
 		"services undo"
 		services := (history at: aStep) services.
-		services do: [ :service | service undo ] ].
+		services ifNotNil: [ 
+			services do: [ :service | service undo ]. "Restoration of the state of components before the services"
+			mementos := (history at: aStep) mementos.
+			mementos ifNotNil: [ mementos do: [ :memento | memento undo ] ] ] ].
 
 	"Redo"
-	currentStep < aStep ifTrue: [ "Create components"
-		componentsLifeCycles := (history at: aStep) creations.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle redo ].
-
-		"Activate components"
-		componentsLifeCycles := (history at: aStep) activations.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle redo ].
-
-		"Passivate components"
-		componentsLifeCycles := (history at: aStep) passivations.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle redo ].
-
-		"Remove components"
-		componentsLifeCycles := (history at: aStep) deletions.
-		componentsLifeCycles do: [ :componentLifeCycle | 
-			componentLifeCycle redo ].
-
-		"Restoration of the state of components"
-		mementos := (history at: aStep) mementos.
-		mementos do: [ :memento | memento redo ].
-
-		"Replay the events"
-		events := (history at: aStep) events.
-		events do: [ :event | event redo ].
-
-		"Replay the services"
-		services := (history at: aStep) services.
-		services do: [ :service | service redo ] ]
+	currentStep < aStep ifTrue: [ (history at: aStep) redo ]
 ]
 
 { #category : #'life cycle' }
@@ -345,20 +326,19 @@ MolTimeTravel >> save: aComponentMemento [
 MolTimeTravel >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 
 	| aComponentMemento |
-	
 	(history at: currentStep) isANewStep ifFalse: [ self nextStep ].
 
-	self getTimeTravelEventsNotifier saveForTimeTravel.
-	
+	"self getTimeTravelEventsNotifier saveForTimeTravel."
+	aComponent saveForTimeTravel.
+
 	aComponentMemento := MolComponentEventMemento new
 		                     saveEvent: aMethodName
 		                     performBy: aComponent
 		                     withParameters: someParameters.
 
 	(history at: currentStep) saveEvent: aComponentMemento.
-	
-	self nextStep
 
+	self nextStep
 ]
 
 { #category : #services }

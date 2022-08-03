@@ -699,7 +699,7 @@ MolTimeTravelView >> updatePanelView [
 
 	"Modify each elements of the time travel panel. It permit to keep the view up to date with the simulation."
 
-	| blRopedText stringTemp mementosSize creationSize deletionSize activationSize passivationSize eventSize serviceSize |
+	| blRopedText temp stringTemp mementosSize creationSize deletionSize activationSize passivationSize eventSize serviceSize |
 	lastStepView text: timeTravel lastStep asRopedText.
 	currentStepView text: timeTravel currentStep asRopedText.
 
@@ -764,103 +764,121 @@ MolTimeTravelView >> updatePanelView [
 		ifTrue: [ logsText text: 'Is Saving ...' asRopedText ]
 		ifFalse: [ 
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) mementos do: [ :x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+			temp := (timeTravel history at: timeTravel currentStep) mementos.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
 			mementosSize := ' Mementos: '
 			                ,
 			                (timeTravel history at: timeTravel currentStep)
-				                mementos size asString , ' [ ' , stringTemp , '] '.
+				                mementosSize asString , ' [ ' , stringTemp , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) creations do: [ :x | 
+			temp := (timeTravel history at: timeTravel currentStep) creations. temp ifNotNil: [temp do: [ :x | 
 				stringTemp := stringTemp
 				              , x componentReference componentClass asString
 				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+				              , '. ' ]].
 			creationSize := ' Creations: '
 			                ,
-				                (timeTravel history at: timeTravel currentStep)
-					                creations size asString , ' [ ' , stringTemp
-			                , '] '.
+			                (timeTravel history at: timeTravel currentStep)
+				                creationsSize asString , ' [ ' , stringTemp , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) deletions do: [ :x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+			temp := (timeTravel history at: timeTravel currentStep) deletions.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
 			deletionSize := ' Deletions: '
 			                ,
-				                (timeTravel history at: timeTravel currentStep)
-					                deletions size asString , ' [ ' , stringTemp
-			                , '] '.
+			                (timeTravel history at: timeTravel currentStep)
+				                deletionsSize asString , ' [ ' , stringTemp , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) activations do: [ 
-				:x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+			temp := (timeTravel history at: timeTravel currentStep) activations.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
 			activationSize := ' Activations '
 			                  ,
 				                  (timeTravel history at: timeTravel currentStep)
-					                  activations size asString , ' [ ' , stringTemp
+					                  activationsSize asString , ' [ ' , stringTemp
 			                  , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) passivations do: [ 
-				:x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+			temp := (timeTravel history at: timeTravel currentStep)
+				        passivations.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
 			passivationSize := ' Passivations '
 			                   ,
 				                   (timeTravel history at: timeTravel currentStep)
-					                   passivations size asString , ' [ '
-			                   , stringTemp , '] '.
+					                   passivationsSize asString , ' [ ' , stringTemp
+			                   , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) events do: [ :x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+			temp := (timeTravel history at: timeTravel currentStep) events.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
 			eventSize := ' Events '
 			             ,
-			             (timeTravel history at: timeTravel currentStep) events
-				             size asString , ' [ ' , stringTemp , '] '.
+			             (timeTravel history at: timeTravel currentStep)
+				             eventsSize asString , ' [ ' , stringTemp , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
 			stringTemp := ''.
-			(timeTravel history at: timeTravel currentStep) services do: [ :x | 
-				stringTemp := stringTemp
-				              , x componentReference componentClass asString
-				              , '->' , x componentReference componentName asString
-				              , '. ' ].
+			temp := (timeTravel history at: timeTravel currentStep) services.
+			temp ifNotNil: [ 
+				temp do: [ :x | 
+					stringTemp := stringTemp
+					              , x componentReference componentClass asString
+					              , '->'
+					              , x componentReference componentName asString
+					              , '. ' ] ].
 			serviceSize := ' Services '
 			               ,
 			               (timeTravel history at: timeTravel currentStep)
-				               services size asString , ' [ ' , stringTemp , '] '.
+				               servicesSize asString , ' [ ' , stringTemp , '] '.
 
 			"--------------------------------------------------------------------------------------------------------------------------"
 			"--------------------------------------------------------------------------------------------------------------------------"
-			blRopedText := BlRopedText string: mementosSize , creationSize , deletionSize, activationSize, passivationSize, eventSize, serviceSize.
+			blRopedText := BlRopedText string:
+				               mementosSize , creationSize , deletionSize
+				               , activationSize , passivationSize , eventSize
+				               , serviceSize.
 
 			logsText text: blRopedText ]
 ]
