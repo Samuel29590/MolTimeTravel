@@ -25,11 +25,11 @@ Metacello new
 ## Documentation
 
 
-If you want to know more about [MolAntsTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsTimeTravel.md) or [MolGPSTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolGPSTimeTravel.md) or [MolRandomPrinterTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolRandomPrinterTimeTravel.md), click on the hyperlink.
+If you want to know more about the examples loaded with MolTimeTravel : [MolAntsTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsTimeTravel.md), [MolGPSTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolGPSTimeTravel.md) or [MolRandomPrinterTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolRandomPrinterTimeTravel.md), click on the hyperlink.
 
 <br>
 
-**⚠️** The following explanations may be outdated because work is still in progress on this repository. And some parts continue to evolve or are remake
+**⚠️** The following explanations may be outdated because work is still in progress on this repository. And some parts continue to evolve or to be remake
 
 <br>
 
@@ -41,25 +41,36 @@ Memento is a way of backing up components by backing up only the information tha
 
 ![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
 
-This is the component *TimeTravel* that store the history of the simulation, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the simulation state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
+This is the component *TimeTravel* that store the history of the simulation, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the application state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
-*MAComponentStep* is an object that aims to store the state of the simulation at one step. It has two variables, one to store data of components: *mementos*, and one to store creation or deletion of components: *creationsAndDeletions*. This two variables are ordered collections of *MAComponentMemento*'subclasses.
+*MAComponentStep* is an object that aims to store the state of the simulation at one step. It has seven variables : *mementos, creations, deletions activations, passivations, events* and *services*. These variables are nil or are ordered collections of *MAComponentMemento*'subclasses if they contain data.
+
+A stage of Moltimetravel can correspond to different actions that have taken place in the application. A new step is created as soon as there is an action in the application. These actions are: creations, deletions, activations, passivations, events or services. In addition, sometimes a backup of all components can be made, this also creates a new step.
 
 ![MomentosOrganization drawio](https://user-images.githubusercontent.com/64481702/177515528-54842cc5-8aac-43e9-bcb5-112513b9003c.png)
 
-So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
+#### Components recording
 
 For saving components state the process is different. The simulation manager in the execution loop send an event to all components of the simulation to do their action. When it's done the simulation manager call a service provided by the *TimeTravel* component : *saveTheSimulationAt: aStep*. This service will send an event (*saveForTimeTravel: aStep*) to all the components of the simulation to save their state at *aStep*. Each component of the simulation has its own version of *saveForTimeTravel: aStep* but they all has the same behavior. The component will create a memento and use the service : *save: aComponentMemento at: aStep*, provided by the *TimeTravel* component, to store the memento. The process to store them is almost the same as *creationsAndDeletions*, the component *TimeTravel* receive the notification to save the memento and look in the history to know if the step as already been created. After that it will store the *MAComponentMemento* on the variable *mementos*  of the *MAComponentsStep* associate to the step where the *MAComponentMemento* has been created. From there, the state of the component has been saved through its memento.
 
 The component *SimulationManager* will create a *MASimulationMemento*, the component *insect* will create a *MAInsectMemento*, the component *pheromones* will create a *MPheromonesMemento*, the component *feedingPoint* will create a *MAFeedingPointMemento*, the component *ant* will create a *MAAntMemento*, the component *stage* will create a *MAStageMemento*, the component *queen* will create a *MAQueenMemento*, the component *fighter* will create a *MAFighterMemento*, the component *worker* will create a *MAWorkerMemento*. All these mementos are all subclasses of *MAComponentMemento*.
 
-#### How to save reference of a component
+##### How to save reference of a component
 
 For saving objects that are instances of component the process is a little different. Saving the reference of the instance isn't a good idea because components can be created or removed during the simulation, so the instances saved will refer to old component instances. The solution to solve this problem is quite simple, with [Molecule](https://github.com/OpenSmock/Molecule), component names are unique for each component types. It means that two different component with different type can have the same name, but two components with the same type can't have the same name. Thanks to this feature, a solution to solve the problem of saving component instances is to save the component class and the component name instead of the reference. From there if the component instance is stopped and restarted we don't have the problem of an incorrect instance. The process to restore the correct instance is simple, using *MolUtils* (a feature of [Molecule](https://github.com/OpenSmock/Molecule)), we are able to retrieve any component instance by specifying the component class and component name (*instanceOf: aClass named: aName*).
 
-<br>
-
 ![collection_save](https://user-images.githubusercontent.com/64481702/175542288-49e089d1-a23c-4a98-8149-05f1ffc95e82.png)
+
+#### Creations and deletions recording
+
+So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
+
+#### Activations and passivations recording
+
+
+#### Events recording
+
+#### Services recording
 
 <br>
 
@@ -96,11 +107,9 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ### How is the Time Travel implemented ?
 
 If you want to know how time travel is implemented in the simulation and what are the steps to follow to make it go, see this document: [9 steps to implement TimeTravel in MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
+
 <br><br><br>
 
 ## Illustrations
-![2022-07-04 14-31-40](https://user-images.githubusercontent.com/64481702/177515569-c6d831f3-37b2-4d56-8a6c-50dcd4202a7f.gif)
 
-<img src="https://user-images.githubusercontent.com/64481702/178459438-4a5fa818-551f-4784-9dfc-c9f6e39e3365.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/178459444-17020844-17b0-4cec-9e29-6fc8d2d2d57f.png" width="50%">
-
-<img src="https://user-images.githubusercontent.com/64481702/178459447-f7c8b35d-2658-4264-99df-0f14a9d7e4a9.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/178459449-e2bceebc-c3d1-485f-a375-566183e0bdf2.png" width="50%">
+<img src="https://user-images.githubusercontent.com/64481702/182809344-0d3c1ca8-7798-463c-814a-bb4b3f6730ef.png" width="33%"><img src="https://user-images.githubusercontent.com/64481702/182809352-9c755768-2b59-4039-b826-63354c33722e.png" width="33%"><img src="https://user-images.githubusercontent.com/64481702/182809357-1457329f-7716-488c-8f19-b646ae8b386e.png" width="33%">
