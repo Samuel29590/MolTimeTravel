@@ -1,8 +1,8 @@
 # MolTimeTravel
 
-MolTimeTravel is an adaptation of time-traveling for [Molecule](https://github.com/OpenSmock/Molecule) (component oriented programming framework for [Pharo](https://pharo.org/)).
+MolTimeTravel is an adaptation of time-traveling for [Molecule](https://github.com/OpenSmock/Molecule) (a component oriented programming framework for [Pharo](https://pharo.org/)).
 
-**⚠️** At the moment, MolTimeTravel only works on deterministic systems, because we cannot determine where the non-deterministic sources are at this time.
+**⚠️** MolTimeTravel only works on deterministic systems, because we cannot determine where the non-deterministic sources are at this time.
 
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
@@ -35,7 +35,7 @@ If you want to know more about the examples loaded with MolTimeTravel : [MolAnts
 
 ### How is the data recorded with the *TimeTravel* component ?
 
-Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this application as been adapted to fit with components. 
+Data of the simulation are recorded following the [Momento Pattern](https://en.wikipedia.org/wiki/Memento_pattern), this pattern as been adapted to fit with components. 
 
 Memento is a way of backing up components by backing up only the information that is needed to be able to restore it later. With this method we do not save the components but only their data.
 
@@ -55,21 +55,21 @@ A step in Moltimetravel can correspond to different actions that have taken plac
 
 For the backup of the components of an application there are several possibilities, either there is a backup of a creation, deletion, activation or passivation of a component which means that all the components of the application are saved. Either there is a save of an event or a service and then the concerned component is saved before and after the event or service. Finally there is always the possibility that the developer indicates when a component should be saved or when the entire application should be saved. To save the entire application the service *saveTheApplication* provided by the MolTimeTravel component can be used. This service will send an event (*saveForTimeTravel*) to all the components of the simulation to save their state. Or each component of an application using time travel can use the *saveForTimeTravel* method which saves its state.
 
-Each component of an applications using time travel has its own version of *saveForTimeTravel* but they all has the same behavior. The component will create a memento and use the service : *save: aComponentMemento*, provided by the *TimeTravel* component, to store the memento.
+Each component of an applications using time travel has its own version of *saveForTimeTravel* but they all has the same behavior. The component will first create a memento and then use the service : *save: aComponentMemento*, provided by the *TimeTravel* component, to store the memento.
 
-In the component **TimeTravel** the process to store them is almost the same for all the mementos (mementos, creations, deletions, activations, passivations, events, services). The component *TimeTravel* receive the notification to save the memento and look in the history to know if the step already contains this memento, if yes a new step is created, and after the component memento is send to the *MolComponentStep* to be saved in the variable *mementos*. From there, the state of the component has been saved through its memento.
+In the component **TimeTravel** the process to store a component memento is almost the same for all the mementos (component status, creations, deletions, activations, passivations, events, services). The component *TimeTravel* receive the notification to save the memento and look in the history to know if the step already contains this memento, if yes a new step is created, after the component memento is send to the *MolComponentStep* to be saved in the variable *mementos*. From there, the state of the component has been saved through its memento.
 
 ##### How to save reference of a component
 
-For saving variables of components that are or contain instances of component the process is a little different. Saving the reference of the instance isn't a good idea because components can be created or removed during the simulation, so the instances saved will refer to old component instances. The solution to solve this problem is quite simple, with [Molecule](https://github.com/OpenSmock/Molecule), component names are unique for each component types. It means that two different component with different type can have the same name, but two components with the same type can't have the same name. Thanks to this feature, a solution to solve the problem of saving component instances is to save the component class and the component name instead of the reference. From there if the component instance is stopped and restarted we don't have the problem of an incorrect instance. The process to restore the correct instance is simple, using *MolUtils* (a feature of [Molecule](https://github.com/OpenSmock/Molecule)), we are able to retrieve any component instance by specifying the component class and component name (*instanceOf: aClass named: aName*).
-So when a variable of a component is or contains reference to an other component, we save it through a *MolComponentReference* wich is an object that store the class and the name of the component.
+For saving variables of components that are or contain instances of component the process is a little different from a normal variable. Saving the reference of the instance isn't a good idea because components can be created or removed during the simulation, so the instances saved will refer to old component instances. The solution to solve this problem is quite simple, with [Molecule](https://github.com/OpenSmock/Molecule), component names are unique for each component types. It means that two different component with different type can have the same name, but two components with the same type can't have the same name. Thanks to this feature, a solution to solve the problem of saving component instances is to save the component class and the component name instead of the reference. From there if the component instance is stopped and restarted we don't have the problem of an incorrect instance. The process to restore the correct instance is simple, using *MolUtils* (a feature of [Molecule](https://github.com/OpenSmock/Molecule)), we are able to retrieve any component instance by specifying the component class and component name (*instanceOf: aClass named: aName*).
+So when a variable of a component is or contains reference to an other component, we save it through a *MolComponentReference* wich is an object that store the class and the name of the component reference.
 
 **⚠️** this image needs to be redraw.
 ![collection_save](https://user-images.githubusercontent.com/64481702/175542288-49e089d1-a23c-4a98-8149-05f1ffc95e82.png)
 
 #### Creations and deletions recording
 
-So when a component is created or deleted from the simulation, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step as already been created, if not it will create the *MAComponentsStep* associate to the step, and add it to the *history* collection. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creationsAndDeletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
+When a component is created or deleted, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step is an empty step, if not it will create a new step. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creations* or in the variable *deletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
 
 #### Activations and passivations recording
 
