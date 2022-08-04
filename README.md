@@ -62,8 +62,9 @@ In the component **TimeTravel** the process to store a component memento is almo
 For saving variables of components that are or contain instances of component the process is a little different from a normal variable. Saving the reference of the instance isn't a good idea because components can be created or removed during the simulation, so the instances saved will refer to old component instances. The solution to solve this problem is quite simple, with [Molecule](https://github.com/OpenSmock/Molecule), component names are unique for each component types. It means that two different component with different type can have the same name, but two components with the same type can't have the same name. Thanks to this feature, a solution to solve the problem of saving component instances is to save the component class and the component name instead of the reference. From there if the component instance is stopped and restarted we don't have the problem of an incorrect instance. The process to restore the correct instance is simple, using *MolUtils* (a feature of [Molecule](https://github.com/OpenSmock/Molecule)), we are able to retrieve any component instance by specifying the component class and component name (*instanceOf: aClass named: aName*).
 So when a variable of a component is or contains reference to an other component, we save it through a *MolComponentReference* wich is an object that store the class and the name of the component reference.
 
-**⚠️** this image needs to be redraw.
-![collection_save](https://user-images.githubusercontent.com/64481702/175542288-49e089d1-a23c-4a98-8149-05f1ffc95e82.png)
+![MolComponentReference(1)](https://user-images.githubusercontent.com/64481702/182854616-a2d72134-71ef-4b6e-a928-d107b3dc86d8.png)
+
+<br>
 
 #### Creations and deletions recording
 
