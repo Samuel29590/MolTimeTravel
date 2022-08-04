@@ -1,4 +1,4 @@
-# 9 steps to implement TimeTravel in MolAnts
+# Steps to implement TimeTravel in MolAnts
 
 
 ### 1 : Connect the component TimeTravel to all the other components
@@ -34,19 +34,33 @@ Each component must describe the *restoreFrom: aMemento* method, which is a meth
 
 ### 6 : Creation of components
 
-In the methods *componentInitialize* of each component, it is necessary to add the sends to the component *TimeTravel* of the creation of the component.
+To record creation of components, the following code as been added directly to Molecule in MolHomeServices, where component are created.
 
-###### Example:
-<img src="https://user-images.githubusercontent.com/64481702/177967312-c99015e4-21dd-4c8c-8717-26726d22c942.png" width="75%">
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182857469-ed42d144-001b-4935-b142-a87834e28def.png" width="75%">
 
 ### 7 : Deletion of components
 
-In the methods *componentRemove* of each component, it is necessary to add the sends to the component *TimeTravel* of the deletion of the component.
+To record deletion of components, the following code as been added directly to Molecule in MolHomeServices, where component are removed.
 
-###### Example:
-<img src="https://user-images.githubusercontent.com/64481702/177967762-95569d21-7c59-4855-855a-33a6a8246af0.png" width="75%">
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182857487-6f622c0a-dd79-4b73-9646-18e5eeac6863.png" width="75%">
 
-### 8 : Know where to save the simulation at a step
+### 8 : Activation of components
+
+To record activation of components, the following code as been added directly to Molecule in MolHomeServices, where component are activate.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182858848-fe3755db-e9bf-49da-bff4-e910626054f1.png" width="75%">
+
+### 9 : Passivation of components
+
+To record passivation of components, the following code as been added directly to Molecule in MolHomeServices, where component are passivate.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182858833-c374bfde-a605-4a7b-8e43-317c5720bded.png" width="75%">
+
+### 10 : Know where to save the simulation at a step
 
 Know where to put the call to the method *saveTheSimulationAt: aStep* which allows to tell all the components to save themselves for this step.
 
@@ -54,7 +68,7 @@ In MolAnts this call is placed in the main execution loop, at the end of each it
 
 <img src="https://user-images.githubusercontent.com/64481702/177966768-cd36972c-4d5a-4cb1-8883-17a384365b4c.png" width="75%">
 
-### 9 : Know where to pause and play 
+### 11 : Know where to pause and play 
 
 Knowing where the simulation breakpoints must be placed so that when the time travel begins, the simulation is paused. And when we stop the time travel the simulation play.
 
