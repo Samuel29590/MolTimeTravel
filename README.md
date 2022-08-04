@@ -69,10 +69,12 @@ So when a variable of a component is or contains reference to an other component
 
 #### Creations and deletions recording
 
-When a component is created or deleted, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on the history to know if the step is an empty step, if not it will create a new step. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creations* or in the variable *deletions* of the *MAComponentsStep*. From there, the creation or deletion has been saved.
+When a component is created or deleted, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on its variable *history* to know if the actual step is an empty step, if not it will create a new step. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creations* or in the variable *deletions* of the *MAComponentsStep*. In addition, a backup of all application components is performed. From there, the creation or deletion has been saved.
 
 #### Activations and passivations recording
 
+When a component is activated or passivated, the component create a *MAComponentActiveMemento* instance or a *MAComponentPassiveMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on its variable *history* to know if the actual step is an empty step, if not it will create a new step. After that it will store the *MAComponentActiveMemento* instance or the *MAComponentPassiveMemento* instance on the variable *activations* or in the variable *passivations* of the *MAComponentsStep*. In addition, a backup of all application components is performed. From there, the activation or the passivation has been saved.
+**❗** Activations and passivations performed when creating or deleting a component are not recorded by the TimeTravel. This is not necessary because a created component will always be directly activated and a deleted component will always be passivated before being deleted.
 
 #### Events recording
 
