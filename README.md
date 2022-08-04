@@ -27,8 +27,6 @@ Metacello new
 
 If you want to know more about the examples loaded with MolTimeTravel : [MolAntsTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsTimeTravel.md), [MolGPSTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolGPSTimeTravel.md) or [MolRandomPrinterTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolRandomPrinterTimeTravel.md), click on the hyperlink.
 
-<br>
-
 **⚠️** The following explanations may be outdated because work is still in progress on this repository. And some parts continue to evolve or to be remake
 
 <br>
@@ -69,16 +67,20 @@ So when a variable of a component is or contains reference to an other component
 
 #### Creations and deletions recording
 
-When a component is created or deleted, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on its variable *history* to know if the actual step is an empty step, if not it will create a new step. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creations* or in the variable *deletions* of the *MAComponentsStep*. In addition, a backup of all application components is performed. From there, the creation or deletion has been saved.
+When a component is created or deleted, the component create a *MAComponentCreationMemento* instance or a *MAComponentDeletionMemento* instance, and notifies the component *TimeTravel* to store it. Then the component *TimeTravel* will look on its variable *history* to know if the actual step is an empty step, if not it will create a new step. After that it will store the *MAComponentCreationMemento* instance or the *MAComponentDeletionMemento* instance on the variable *creations* or in the variable *deletions* of the *MAComponentsStep*. In addition, a backup of all application components is performed. From there, the creation or deletion has been saved.
 
 #### Activations and passivations recording
 
-When a component is activated or passivated, the component create a *MAComponentActiveMemento* instance or a *MAComponentPassiveMemento* instance, and notify the component *TimeTravel* to store it. Then the component *TimeTravel* will look on its variable *history* to know if the actual step is an empty step, if not it will create a new step. After that it will store the *MAComponentActiveMemento* instance or the *MAComponentPassiveMemento* instance on the variable *activations* or in the variable *passivations* of the *MAComponentsStep*. In addition, a backup of all application components is performed. From there, the activation or the passivation has been saved.
+When a component is activated or passivated, the component create a *MAComponentActiveMemento* instance or a *MAComponentPassiveMemento* instance, and notifies the component *TimeTravel* to store it. Then the component *TimeTravel* will look on its variable *history* to know if the actual step is an empty step, if not it will create a new step. After that it will store the *MAComponentActiveMemento* instance or the *MAComponentPassiveMemento* instance on the variable *activations* or in the variable *passivations* of the *MAComponentsStep*. In addition, a backup of all application components is performed. From there, the activation or the passivation has been saved. <br>
 **❗** Activations and passivations performed when creating or deleting a component are not recorded by the TimeTravel. This is not necessary because a created component will always be directly activated and a deleted component will always be passivated before being deleted.
 
 #### Events recording
 
+When an event is consumed by a component, this component notifies the *TimeTravel* component that this event has occurred, in order to save it. To notify, the component uses ***saveEvent: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean*** which is a service of the TimeTravel component. With this method, the *TimeTravel* component saves the state of the component before the event, then creates an instance of *MAComponentEventMemento* which can store event data like method name and parameters. This instance will be stored at the same step as the state before the event. Finally, the *TimeTravel* component saves the state of the component after the event on another step. From there the event is saved.
+
 #### Services recording
+
+When an service is provided by a component, this component notifies the *TimeTravel* component that this service has occurred, in order to save it. To notify, the component uses ***saveService: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean*** which is a service of the TimeTravel component. With this method, the *TimeTravel* component saves the state of the component before the service, then creates an instance of *MAComponentServiceMemento* which can store service data like method name and parameters. This instance will be stored at the same step as the state before the event. From there the service is saved.
 
 <br>
 
