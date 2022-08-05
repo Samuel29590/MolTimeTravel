@@ -8,13 +8,21 @@ Trait {
 { #category : #events }
 TimeTravelEvents >> restoreFrom: aMemento [
 
+	| variablesTemp |
 	
+	variablesTemp := aMemento getReproducedVariables.
+	
+	variablesTemp do: [ :var | self instVarNamed: (var key) put: (var value) ].
 ]
 
 { #category : #events }
 TimeTravelEvents >> saveForTimeTravel [
 
-	
+	| memento |
+	memento := MolUnspecifiedMemento new.
+
+	self getTimeTravelServicesProvider
+		save: (memento save: self)
 ]
 
 { #category : #events }

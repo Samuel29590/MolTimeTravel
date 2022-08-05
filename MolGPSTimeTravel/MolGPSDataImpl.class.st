@@ -37,8 +37,7 @@ MolGPSDataImpl >> componentActivate [
 			                             isNotFoundServices
 			                             ifFalse: [ 
 				                             self getTimeTravelServicesProvider
-					                             isRestoring ifFalse: [
-											"---------------------------------------------------------------"
+					                             isRestoring ifFalse: [ 											"---------------------------------------------------------------"
 					                             self getMolGPSDataEventsNotifier 
 						                             currentPositionChanged:
 						                             self getRandomizedGPSPosition.
@@ -149,7 +148,7 @@ MolGPSDataImpl >> restoreFrom: aMemento [
 
 	"Restore variables thanks to a memento."
 
-	accuracy  := aMemento getAccuracy.
+	accuracy := aMemento getAccuracy
 ]
 
 { #category : #events }
