@@ -2,7 +2,7 @@
 
 MolTimeTravel is an adaptation of time-traveling for [Molecule](https://github.com/OpenSmock/Molecule) (a component oriented programming framework for [Pharo](https://pharo.org/)).
 
-**⚠️** MolTimeTravel only works on deterministic systems, because we cannot determine where the non-deterministic sources are at this time.
+**⚠️** MolTimeTravel only works on deterministic systems, because for the moment we cannot determine where the non-deterministic sources are.
 
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
@@ -23,7 +23,6 @@ Metacello new
 ```
 
 ## Documentation
-
 
 If you want to know more about the examples loaded with MolTimeTravel : [MolAntsTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsTimeTravel.md), [MolGPSTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolGPSTimeTravel.md) or [MolRandomPrinterTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolRandomPrinterTimeTravel.md), click on the hyperlink.
 
