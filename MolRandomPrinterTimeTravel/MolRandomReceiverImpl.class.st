@@ -105,3 +105,10 @@ MolRandomReceiverImpl >> printRandomIntegerSmallerThan: anInteger [
 			self saveForTimeTravel ] ]
 	"---------------------------------------------------------------"
 ]
+
+{ #category : #events }
+MolRandomReceiverImpl >> saveForTimeTravel [
+
+	self getTimeTravelServicesProvider save:
+		(MolRandomReceiverMemento new save: self)
+]

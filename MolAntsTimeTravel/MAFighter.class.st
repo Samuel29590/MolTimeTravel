@@ -72,9 +72,5 @@ MAFighter >> restoreFrom: aMemento [
 { #category : #events }
 MAFighter >> saveForTimeTravel [
 
-	| memento |
-	memento := MolFighterMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolFighterMemento new save: self)
 ]

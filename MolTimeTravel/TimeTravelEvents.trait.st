@@ -18,11 +18,7 @@ TimeTravelEvents >> restoreFrom: aMemento [
 { #category : #events }
 TimeTravelEvents >> saveForTimeTravel [
 
-	| memento |
-	memento := MolUnspecifiedMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolUnspecifiedMemento new save: self)
 ]
 
 { #category : #events }
