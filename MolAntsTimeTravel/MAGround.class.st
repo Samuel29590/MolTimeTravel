@@ -742,11 +742,7 @@ MAGround >> restoreFrom: aMemento [
 { #category : #events }
 MAGround >> saveForTimeTravel [
 
-	| memento |
-	memento := MolGroundMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolGroundMemento new save: self)
 ]
 
 { #category : #initialization }

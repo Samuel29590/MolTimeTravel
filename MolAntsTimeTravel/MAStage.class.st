@@ -217,9 +217,5 @@ MAStage >> restoreFrom: aMemento [
 { #category : #events }
 MAStage >> saveForTimeTravel [
 
-		| memento |
-	memento := MolStageMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolStageMemento new save: self)
 ]

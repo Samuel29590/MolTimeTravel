@@ -154,7 +154,5 @@ MolGPSDataImpl >> restoreFrom: aMemento [
 { #category : #events }
 MolGPSDataImpl >> saveForTimeTravel [
 
-	| memento |
-	memento := MolDataMemento new.
-	self getTimeTravelServicesProvider save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolDataMemento new save: self)
 ]

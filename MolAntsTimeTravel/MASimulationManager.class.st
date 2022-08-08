@@ -553,9 +553,7 @@ MASimulationManager >> restoreFrom: aMemento [
 { #category : #events }
 MASimulationManager >> saveForTimeTravel [
 
-	| memento |
-	memento := MolSimulationMemento new.
-	self getTimeTravelServicesProvider save: (memento save: self)
+	self getTimeTravelServicesProvider save: ( MolSimulationMemento new save: self)
 ]
 
 { #category : #events }

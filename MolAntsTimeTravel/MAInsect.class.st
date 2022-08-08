@@ -165,11 +165,7 @@ MAInsect >> restoreFrom: aMemento [
 { #category : #events }
 MAInsect >> saveForTimeTravel [
 
-	| memento |
-	memento := MolInsectMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolInsectMemento new save: self)
 ]
 
 { #category : #'events - lifecycle' }

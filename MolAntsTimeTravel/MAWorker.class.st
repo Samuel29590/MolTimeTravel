@@ -486,9 +486,5 @@ MAWorker >> restoreFrom: aMemento [
 { #category : #events }
 MAWorker >> saveForTimeTravel [
 
-	| memento |
-	memento := MolWorkerMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: ( MolWorkerMemento new save: self)
 ]
