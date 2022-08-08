@@ -101,6 +101,11 @@ MolGPSMapImpl >> isUsingTimeTravel [
 ]
 
 { #category : #events }
+MolGPSMapImpl >> restoreFrom: aMemento [
+
+]
+
+{ #category : #events }
 MolGPSMapImpl >> saveForTimeTravel [
 
 	| memento |

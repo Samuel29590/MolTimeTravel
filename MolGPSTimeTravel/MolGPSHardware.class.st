@@ -98,6 +98,11 @@ MolGPSHardware >> precision [
 ]
 
 { #category : #events }
+MolGPSHardware >> restoreFrom: aMemento [
+
+]
+
+{ #category : #events }
 MolGPSHardware >> saveForTimeTravel [
 
 	| memento |
