@@ -36,8 +36,7 @@ Data of the simulation are recorded following the [Momento Pattern](https://en.w
 
 Memento is a way of backing up components by backing up only the information that is needed to be able to restore it later. With this method we do not save the components but only their data.
 
-**⚠️** this image needs to be redraw.
-![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
+![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/183430634-fafce9f8-7202-43c9-a957-346c07deb8de.png)
 
 This is the component *TimeTravel* that store the history of the simulation, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the application state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
