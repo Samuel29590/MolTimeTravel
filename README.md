@@ -117,6 +117,36 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 
 ### How is the Time Travel implemented ?
 
+--------------------------------------------------------------------------------------------------
+### 6 : Creation of components
+
+To record creation of components, the following code as been added directly to Molecule in MolHomeServices, where component are created.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182857469-ed42d144-001b-4935-b142-a87834e28def.png" width="75%">
+
+### 7 : Deletion of components
+
+To record deletion of components, the following code as been added directly to Molecule in MolHomeServices, where component are removed.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182857487-6f622c0a-dd79-4b73-9646-18e5eeac6863.png" width="75%">
+
+### 8 : Activation of components
+
+To record activation of components, the following code as been added directly to Molecule in MolHomeServices, where component are activate.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182858848-fe3755db-e9bf-49da-bff4-e910626054f1.png" width="75%">
+
+### 9 : Passivation of components
+
+To record passivation of components, the following code as been added directly to Molecule in MolHomeServices, where component are passivate.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182858833-c374bfde-a605-4a7b-8e43-317c5720bded.png" width="75%">
+--------------------------------------------------------------------------------------------------
+
 If you want to know how time travel is implemented in the simulation and what are the steps to follow to make it go, see this document: [Steps to implement TimeTravel in MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
 
 <br><br><br>
