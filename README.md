@@ -6,6 +6,8 @@ MolTimeTravel is an adaptation of time-traveling for [Molecule](https://github.c
 
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
 
+<br>
+
 ## Getting Started
 
 ### Prerequisites
@@ -21,14 +23,17 @@ Metacello new
         repository: 'github://Samuel29590/MolTimeTravel';
         load.
 ```
+### Tutorial / user guide
+
+If you want to know how to add time travel to a Molecule system, look at this document: [Steps to make TimeTravel work in a Molecule system](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
+
+<br>
 
 ## Documentation
 
 If you want to know more about the examples loaded with MolTimeTravel : [MolAntsTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsTimeTravel.md), [MolGPSTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolGPSTimeTravel.md) or [MolRandomPrinterTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolRandomPrinterTimeTravel.md), click on the hyperlink.
 
 **⚠️** The following explanations may be outdated because work is still in progress on this repository. And some parts continue to evolve or to be remake
-
-<br>
 
 ### How is the data recorded with the *TimeTravel* component ?
 
@@ -85,15 +90,14 @@ When an service is provided by a component, this component notifies the *TimeTra
 
 ### How is the data restored ?
 
-The process to restore data is quite simple. The component *TimeTravel* examine the history that was saved, step-by-step, during the execution and restore the data by updating all the other components directly. The component *TimeTravel* also restore or remove components that appear or disappear during the simulation. With this two feature it's possible to play backward the simulation and to replay it step-by-step.
+The data restoration process is quite simple. The *TimeTravel* component examines the history that was saved at runtime and restores the application state step by step. The *TimeTravel* component restores or deletes the components which appear or disappear during the simulation, activates and passives the components as during the first execution, restores the data of the components by directly changing their variables and finally replays the events and services if they must be replayed. Thanks to these features, it is possible to replay the simulation and replay it step by step.
 
 #### Creation and deletion of components
 
-During undo, components created and deleted during the simulation are also undo. When we go back, the creations (*MAComponentCreationMemento*) are replayed as a deletion, and the deletions (*MAComponentDeletionMemento*) are replayed as a creation. With this behavior, when we go back we have the same components present in the simulation.
+During undo, components created and deleted during the execution are also undo. When we go back, the creations (*MAComponentCreationMemento*) are replayed as a deletion, and the deletions (*MAComponentDeletionMemento*) are replayed as a creation. With this behavior, when we go back we have the same components present in the simulation.
 
-The specificity for creation and deletion during undo is that they are interpreted with a shift step. For example if we undo the step X , we will replay the creation and deletion of the step X+1. This specificity is necessary because if we interpret creation and deletion of the same step, we will create components that were not present during execution and delete components that were present during execution.
+The specificity of creation and deletion on undo is that they are interpreted with an offset step. For example, if step X is canceled, the creation and deletion of step X+1 will be replayed. This specificity is necessary because if we interpret creation and deletion of the same step, we will create components that were not present during execution and delete components that were present during execution. Also, if the creations and deletions were played at their stage when undone and the direction of time travel changes for a replay, the creations and deletions at the stage of the change would not be played.
 <br>*If you want to know more about this specificity click here : [undoProblem](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/undoProblem.md).*
-
 ![undo](https://user-images.githubusercontent.com/64481702/176385748-186ad58b-ef82-4dfc-a226-33aaefacfe90.png)
 
 <br>
@@ -102,6 +106,12 @@ In the case of redo, it's simpler, creations and deletions are replayed as they 
 And in redo on the contrary with undo we interpret the creations and deletions of the same step which is restored (For example if we redo step X , we will replay the creation and deletion of step X).
 
 ![redo](https://user-images.githubusercontent.com/64481702/176385734-b2bc4b42-5df8-4f17-8deb-1dd444c43bfc.png)
+
+#### Activation and passivation of components
+
+This is exactly the same process as for creations and deletions.
+During the undo, the activations are played in passivation and the passivations in activations, with always a shift step.
+And for the redo, no change just a replay.
 
 #### Values of components
 
@@ -116,6 +126,7 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 ### How is the Time Travel implemented ?
 
 --------------------------------------------------------------------------------------------------
+
 ### 6 : Creation of components
 
 To record creation of components, the following code as been added directly to Molecule in MolHomeServices, where component are created.
@@ -143,11 +154,10 @@ To record passivation of components, the following code as been added directly t
 
 ###### Code in Molecule:
 <img src="https://user-images.githubusercontent.com/64481702/182858833-c374bfde-a605-4a7b-8e43-317c5720bded.png" width="75%">
+
 --------------------------------------------------------------------------------------------------
 
-If you want to know how time travel is implemented in the simulation and what are the steps to follow to make it go, see this document: [Steps to implement TimeTravel in MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
-
-<br><br><br>
+<br><br>
 
 ## Illustrations
 
