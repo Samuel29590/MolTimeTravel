@@ -117,9 +117,15 @@ And for the redo, no change just a replay.
 
 When we time travel on the simulation, the *TimeTravel* component will execute the *undo* or *redo* methods of the mementos at each restored step. These methods will tell the mementos to restore the variables of their associated component, using the *restorFrom: aMemento* method present in the components. The components receive the mementos and restore their variables using the values saved on the mementos.
 
-#### Example of an undo and a restoration from a memento (example non exhaustive)(example on MolAntsTimeTravel)
+##### Example of an undo and a restoration from a memento (example non exhaustive)(example on MolAntsTimeTravel)
 
 ![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/177521067-61e1f0ad-5454-4f1e-a0cc-2d5e12de7874.png)
+
+#### Replay of events and services
+
+When saving events and services, it is indicated whether they should be replayed or not during the time travel.
+If they are not replayed then during the undo and redo nothing is done.
+But if they must be replayed then we first restore the state of the component before the event or the service and then we execute it using the method *perform: withArguments:*. And if it's an undo, we restore another time the state of the component before the event/service. If it is a redo, the next step contains the state after the event so that it is restored.
 
 <br><br><br>
 
@@ -127,28 +133,28 @@ When we time travel on the simulation, the *TimeTravel* component will execute t
 
 --------------------------------------------------------------------------------------------------
 
-### 6 : Creation of components
+### Creation of components
 
 To record creation of components, the following code as been added directly to Molecule in MolHomeServices, where component are created.
 
 ###### Code in Molecule:
 <img src="https://user-images.githubusercontent.com/64481702/182857469-ed42d144-001b-4935-b142-a87834e28def.png" width="75%">
 
-### 7 : Deletion of components
+### Deletion of components
 
 To record deletion of components, the following code as been added directly to Molecule in MolHomeServices, where component are removed.
 
 ###### Code in Molecule:
 <img src="https://user-images.githubusercontent.com/64481702/182857487-6f622c0a-dd79-4b73-9646-18e5eeac6863.png" width="75%">
 
-### 8 : Activation of components
+### Activation of components
 
 To record activation of components, the following code as been added directly to Molecule in MolHomeServices, where component are activate.
 
 ###### Code in Molecule:
 <img src="https://user-images.githubusercontent.com/64481702/182858848-fe3755db-e9bf-49da-bff4-e910626054f1.png" width="75%">
 
-### 9 : Passivation of components
+### Passivation of components
 
 To record passivation of components, the following code as been added directly to Molecule in MolHomeServices, where component are passivate.
 
