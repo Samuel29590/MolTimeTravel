@@ -7,13 +7,22 @@ Every component of the simulation needs to be connected to the *TimeTravel* comp
 ###### Example:
 <img src="https://user-images.githubusercontent.com/64481702/183368903-55c4ac56-94cd-45b4-acd3-324f9809adc0.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/183368802-8decb985-f805-4cb6-add8-4bf83bcec450.png" width="50%">
 
-### 11 : Know where to pause and play 
+### 2 : Know where to pause and play 
 
 Knowing where the simulation breakpoints must be placed so that when the time travel begins, the simulation is paused. And when we stop the time travel the simulation play.
 
 In MolAnts the management of the pause is carried out in the main loop, thanks to a condition on a variable of the *TimeTravel* component.
 
 <img src="https://user-images.githubusercontent.com/64481702/183370729-22868104-127a-41a5-a6aa-0642d216bf5a.png" width="75%">
+
+### 3 : Record events and services
+
+For each event or service of the system it is necessary to add the code below in the examples. For the moment this process is not automated and therefore remains to be done manually...
+
+###### Example:
+<img src="https://user-images.githubusercontent.com/64481702/183880154-08abebb5-e5b7-4ed3-9f8d-3e731694ca19.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/183880158-58ffc387-71f2-4f7c-9804-cc52e76aee97.png" width="50%">
+
+<br><br>
 
 ## The following steps are not mandatory, but allow to have better performance
 
@@ -23,7 +32,7 @@ In MolAnts the management of the pause is carried out in the main loop, thanks t
 
 For each component that uses a specific memento: each variable that is going to be saved must have an accessor. This accessor will be used by the memento associated to the component.
 
-##### 2 : Creation of the mementos
+#### 2 : Creation of the mementos
 
 When you have all the necessary accessors you can create the specific memento by extending "MolComponentMemento" or by copying an existing memento and redefine it.
 
