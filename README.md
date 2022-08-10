@@ -131,8 +131,6 @@ But if they must be replayed then we first restore the state of the component be
 
 ### How is the Time Travel implemented ?
 
---------------------------------------------------------------------------------------------------
-
 ### Creation of components
 
 To record creation of components, the following code as been added directly to Molecule in MolHomeServices, where component are created.
@@ -161,7 +159,9 @@ To record passivation of components, the following code as been added directly t
 ###### Code in Molecule:
 <img src="https://user-images.githubusercontent.com/64481702/182858833-c374bfde-a605-4a7b-8e43-317c5720bded.png" width="75%">
 
---------------------------------------------------------------------------------------------------
+### Events and Services recording
+
+Pour le moment les événements et les services sont sauvegardés manuellement. Il n'existe pas encore de mécanisme qui permet comme pour les creations ou autre d'avoir le code écrit dans Molecule
 
 <br><br>
 
