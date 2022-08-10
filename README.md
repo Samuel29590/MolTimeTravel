@@ -161,7 +161,10 @@ To record passivation of components, the following code as been added directly t
 
 ### Events and Services recording
 
-Pour le moment les événements et les services sont sauvegardés manuellement. Il n'existe pas encore de mécanisme qui permet comme pour les creations ou autre d'avoir le code écrit dans Molecule
+Currently, events and services must be backed up manually. There is not yet a mechanism that allows as for creations or other to have the code generalized and written in Molecule and not in each event or service.
+
+ ###### Example:
+<img src="https://user-images.githubusercontent.com/64481702/183880154-08abebb5-e5b7-4ed3-9f8d-3e731694ca19.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/183880158-58ffc387-71f2-4f7c-9804-cc52e76aee97.png" width="50%">
 
 <br><br>
 
