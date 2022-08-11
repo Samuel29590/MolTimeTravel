@@ -47,7 +47,7 @@ This is the component *TimeTravel* that store the history of the simulation, in 
 
 *MAComponentStep* is an object that aims to store the state of the simulation at one step. It has seven variables : *mementos, creations, deletions activations, passivations, events* and *services*. These variables are nil or are ordered collections of *MAComponentMemento*'subclasses if they contain data.
 
-A step in Moltimetravel can correspond to different actions that have taken place in the application. A new step is created as soon as there is an action in the application. These actions are: creations, deletions, activations, passivations, events or services. In addition, sometimes a backup of all components can be made, this also creates a new step.
+A step in *MolTimeTravel* can correspond to different actions that have taken place in the application. A new step is created as soon as there is an action in the application. These actions are: creations, deletions, activations, passivations, events or services. In addition, sometimes a backup of all components can be made, this also creates a new step.
 
 ![Mementos_Steps](https://user-images.githubusercontent.com/64481702/184111587-9e70bc42-e89c-4ed8-b6e4-6480ba4e8a80.png)
 
