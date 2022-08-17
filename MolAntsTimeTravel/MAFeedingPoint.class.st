@@ -137,12 +137,7 @@ MAFeedingPoint >> restoreFrom: aMemento [
 { #category : #events }
 MAFeedingPoint >> saveForTimeTravel [
 
-	
-	| memento |
-	memento := MolFeedingPointMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolFeedingPointMemento new save: self)
 ]
 
 { #category : #'events - lifecycle' }

@@ -76,3 +76,10 @@ MolRandomSenderImpl >> getTimeTravelServicesProvider [
 	servicesProvider := MolComponentManager default locatorServices searchServicesProviderFor: TimeTravelServices named: servicesSymbol.
 	^servicesProvider
 ]
+
+{ #category : #events }
+MolRandomSenderImpl >> saveForTimeTravel [
+
+	self getTimeTravelServicesProvider save:
+		(MolRandomSenderMemento new save: self)
+]

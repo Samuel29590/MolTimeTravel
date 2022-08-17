@@ -2,9 +2,11 @@
 
 MolTimeTravel is an adaptation of time-traveling for [Molecule](https://github.com/OpenSmock/Molecule) (a component oriented programming framework for [Pharo](https://pharo.org/)).
 
-**⚠️** MolTimeTravel only works on deterministic systems, because we cannot determine where the non-deterministic sources are at this time.
+**⚠️** MolTimeTravel only works on deterministic systems, because for the moment we cannot determine where the non-deterministic sources are.
 
 This repository aims to help the search in Time-Traveling debugging techniques with component oriented programming.
+
+<br>
 
 ## Getting Started
 
@@ -21,15 +23,17 @@ Metacello new
         repository: 'github://Samuel29590/MolTimeTravel';
         load.
 ```
+### Tutorial / user guide
+
+If you want to know how to add time travel to a Molecule system, look at this document: [Steps to make TimeTravel work in a Molecule system](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
+
+<br>
 
 ## Documentation
-
 
 If you want to know more about the examples loaded with MolTimeTravel : [MolAntsTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolAntsTimeTravel.md), [MolGPSTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolGPSTimeTravel.md) or [MolRandomPrinterTimeTravel](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/MolRandomPrinterTimeTravel.md), click on the hyperlink.
 
 **⚠️** The following explanations may be outdated because work is still in progress on this repository. And some parts continue to evolve or to be remake
-
-<br>
 
 ### How is the data recorded with the *TimeTravel* component ?
 
@@ -37,17 +41,15 @@ Data of the simulation are recorded following the [Momento Pattern](https://en.w
 
 Memento is a way of backing up components by backing up only the information that is needed to be able to restore it later. With this method we do not save the components but only their data.
 
-**⚠️** this image needs to be redraw.
-![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/176431453-dc1fa4e8-c242-49e6-b301-d262936b8744.png)
+![TimeTravel_DataStorage](https://user-images.githubusercontent.com/64481702/183430634-fafce9f8-7202-43c9-a957-346c07deb8de.png)
 
 This is the component *TimeTravel* that store the history of the simulation, in the variable *history*. This variable is an ordered collection of *MAComponentStep*. Each index of this collection represent the application state at one step (E.g. index 1 represent the state at step 0, index 2 represent the state at step 1, ...).
 
 *MAComponentStep* is an object that aims to store the state of the simulation at one step. It has seven variables : *mementos, creations, deletions activations, passivations, events* and *services*. These variables are nil or are ordered collections of *MAComponentMemento*'subclasses if they contain data.
 
-A step in Moltimetravel can correspond to different actions that have taken place in the application. A new step is created as soon as there is an action in the application. These actions are: creations, deletions, activations, passivations, events or services. In addition, sometimes a backup of all components can be made, this also creates a new step.
+A step in *MolTimeTravel* can correspond to different actions that have taken place in the application. A new step is created as soon as there is an action in the application. These actions are: creations, deletions, activations, passivations, events or services. In addition, sometimes a backup of all components can be made, this also creates a new step.
 
-**⚠️** this image needs to be redraw.
-![MomentosOrganization drawio](https://user-images.githubusercontent.com/64481702/177515528-54842cc5-8aac-43e9-bcb5-112513b9003c.png)
+![Mementos_Steps](https://user-images.githubusercontent.com/64481702/184111587-9e70bc42-e89c-4ed8-b6e4-6480ba4e8a80.png)
 
 #### Components recording
 
@@ -87,15 +89,14 @@ When an service is provided by a component, this component notifies the *TimeTra
 
 ### How is the data restored ?
 
-The process to restore data is quite simple. The component *TimeTravel* examine the history that was saved, step-by-step, during the execution and restore the data by updating all the other components directly. The component *TimeTravel* also restore or remove components that appear or disappear during the simulation. With this two feature it's possible to play backward the simulation and to replay it step-by-step.
+The data restoration process is quite simple. The *TimeTravel* component examines the history that was saved at runtime and restores the application state step by step. The *TimeTravel* component restores or deletes the components which appear or disappear during the simulation, activates and passives the components as during the first execution, restores the data of the components by directly changing their variables and finally replays the events and services if they must be replayed. Thanks to these features, it is possible to replay the simulation and replay it step by step.
 
 #### Creation and deletion of components
 
-During undo, components created and deleted during the simulation are also undo. When we go back, the creations (*MAComponentCreationMemento*) are replayed as a deletion, and the deletions (*MAComponentDeletionMemento*) are replayed as a creation. With this behavior, when we go back we have the same components present in the simulation.
+During undo, components created and deleted during the execution are also undo. When we go back, the creations (*MAComponentCreationMemento*) are replayed as a deletion, and the deletions (*MAComponentDeletionMemento*) are replayed as a creation. With this behavior, when we go back we have the same components present in the simulation.
 
-The specificity for creation and deletion during undo is that they are interpreted with a shift step. For example if we undo the step X , we will replay the creation and deletion of the step X+1. This specificity is necessary because if we interpret creation and deletion of the same step, we will create components that were not present during execution and delete components that were present during execution.
+The specificity of creation and deletion on undo is that they are interpreted with an offset step. For example, if step X is canceled, the creation and deletion of step X+1 will be replayed. This specificity is necessary because if we interpret creation and deletion of the same step, we will create components that were not present during execution and delete components that were present during execution. Also, if the creations and deletions were played at their stage when undone and the direction of time travel changes for a replay, the creations and deletions at the stage of the change would not be played.
 <br>*If you want to know more about this specificity click here : [undoProblem](https://github.com/Samuel29590/MolAntsTimeTravel/blob/main/undoProblem.md).*
-
 ![undo](https://user-images.githubusercontent.com/64481702/176385748-186ad58b-ef82-4dfc-a226-33aaefacfe90.png)
 
 <br>
@@ -105,21 +106,66 @@ And in redo on the contrary with undo we interpret the creations and deletions o
 
 ![redo](https://user-images.githubusercontent.com/64481702/176385734-b2bc4b42-5df8-4f17-8deb-1dd444c43bfc.png)
 
+#### Activation and passivation of components
+
+This is exactly the same process as for creations and deletions.
+During the undo, the activations are played in passivation and the passivations in activations, with always a shift step.
+And for the redo, no change just a replay.
+
 #### Values of components
 
 When we time travel on the simulation, the *TimeTravel* component will execute the *undo* or *redo* methods of the mementos at each restored step. These methods will tell the mementos to restore the variables of their associated component, using the *restorFrom: aMemento* method present in the components. The components receive the mementos and restore their variables using the values saved on the mementos.
 
-#### Example of an undo and a restoration from a memento (example non exhaustive)(example on MolAntsTimeTravel)
+##### Example of an undo and a restoration from a memento (example non exhaustive)(example on MolAntsTimeTravel)
 
 ![RestoreDataSchema](https://user-images.githubusercontent.com/64481702/177521067-61e1f0ad-5454-4f1e-a0cc-2d5e12de7874.png)
+
+#### Replay of events and services
+
+When saving events and services, it is indicated whether they should be replayed or not during the time travel.
+If they are not replayed then during the undo and redo nothing is done.
+But if they must be replayed then we first restore the state of the component before the event or the service and then we execute it using the method *perform: withArguments:*. And if it's an undo, we restore another time the state of the component before the event/service. If it is a redo, the next step contains the state after the event so that it is restored.
 
 <br><br><br>
 
 ### How is the Time Travel implemented ?
 
-If you want to know how time travel is implemented in the simulation and what are the steps to follow to make it go, see this document: [Steps to implement TimeTravel in MolAnts](https://github.com/Samuel29590/MolAntsTimeTravel/blob/master/ImplementationOfTimeTravel.md)
+### Creation of components
 
-<br><br><br>
+To record creation of components, the following code as been added directly to Molecule in MolHomeServices, where component are created.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182857469-ed42d144-001b-4935-b142-a87834e28def.png" width="75%">
+
+### Deletion of components
+
+To record deletion of components, the following code as been added directly to Molecule in MolHomeServices, where component are removed.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182857487-6f622c0a-dd79-4b73-9646-18e5eeac6863.png" width="75%">
+
+### Activation of components
+
+To record activation of components, the following code as been added directly to Molecule in MolHomeServices, where component are activate.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182858848-fe3755db-e9bf-49da-bff4-e910626054f1.png" width="75%">
+
+### Passivation of components
+
+To record passivation of components, the following code as been added directly to Molecule in MolHomeServices, where component are passivate.
+
+###### Code in Molecule:
+<img src="https://user-images.githubusercontent.com/64481702/182858833-c374bfde-a605-4a7b-8e43-317c5720bded.png" width="75%">
+
+### Events and Services recording
+
+Currently, events and services must be backed up manually. There is not yet a mechanism that allows as for creations or other to have the code generalized and written in Molecule and not in each event or service.
+
+ ###### Example:
+<img src="https://user-images.githubusercontent.com/64481702/183880154-08abebb5-e5b7-4ed3-9f8d-3e731694ca19.png" width="50%"><img src="https://user-images.githubusercontent.com/64481702/183880158-58ffc387-71f2-4f7c-9804-cc52e76aee97.png" width="50%">
+
+<br><br>
 
 ## Illustrations
 

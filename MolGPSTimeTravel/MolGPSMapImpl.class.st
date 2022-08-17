@@ -108,9 +108,8 @@ MolGPSMapImpl >> restoreFrom: aMemento [
 { #category : #events }
 MolGPSMapImpl >> saveForTimeTravel [
 
-	| memento |
-	memento := MolMapMemento new.
-	self getTimeTravelServicesProvider save: (memento save: self)
+	self getTimeTravelServicesProvider save:
+		(MolMapMemento new save: self)
 ]
 
 { #category : #'map updating' }

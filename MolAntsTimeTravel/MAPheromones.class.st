@@ -223,11 +223,7 @@ MAPheromones >> restoreFrom: aMemento [
 { #category : #events }
 MAPheromones >> saveForTimeTravel [
 
-		| memento |
-	memento := MolPheromonesMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolPheromonesMemento new save: self)
 ]
 
 { #category : #'events - lifecycle' }

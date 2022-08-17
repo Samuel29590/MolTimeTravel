@@ -229,11 +229,7 @@ MAAnt >> restoreFrom: aMemento [
 { #category : #events }
 MAAnt >> saveForTimeTravel [
 
-		| memento |
-	memento := MolAntMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolAntMemento new save: self)
 ]
 
 { #category : #'events - lifecycle' }

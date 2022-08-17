@@ -50,9 +50,5 @@ MAQueen >> restoreFrom: aMemento [
 { #category : #role }
 MAQueen >> saveForTimeTravel [
 
-	| memento |
-	memento := MolQueenMemento new.
-
-	self getTimeTravelServicesProvider
-		save: (memento save: self)
+	self getTimeTravelServicesProvider save: (MolQueenMemento new save: self)
 ]
