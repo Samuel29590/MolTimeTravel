@@ -19,7 +19,7 @@ TimeTravelEvents >> restoreFrom: aMemento [
 TimeTravelEvents >> saveForTimeTravel [
 
 	| memento |
-	memento := MolUnspecifiedMemento new.
+	memento := MolGeneralMemento new.
 
 	self getTimeTravelServicesProvider
 		save: (memento save: self)

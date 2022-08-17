@@ -506,7 +506,7 @@ MASimulationManager >> queenLaid [
 ]
 
 { #category : #events }
-MASimulationManager >> restoreFrom: aMemento [
+MASimulationManager >> restoreFromOld: aMemento [
 
 	| dict orderedCollection |
 	componentName := aMemento componentReference componentName.
@@ -551,7 +551,7 @@ MASimulationManager >> restoreFrom: aMemento [
 ]
 
 { #category : #events }
-MASimulationManager >> saveForTimeTravel [
+MASimulationManager >> saveForTimeTravelOld [
 
 	| memento |
 	memento := MolSimulationMemento new.

@@ -1,5 +1,5 @@
 Class {
-	#name : #MolUnspecifiedMemento,
+	#name : #MolGeneralMemento,
 	#superclass : #MolComponentMemento,
 	#instVars : [
 		'variables',
@@ -9,19 +9,19 @@ Class {
 }
 
 { #category : #accessing }
-MolUnspecifiedMemento >> getReproducedVariables [
+MolGeneralMemento >> getReproducedVariables [
 
 	^ reproducedVariables
 ]
 
 { #category : #accessing }
-MolUnspecifiedMemento >> getVariables [
+MolGeneralMemento >> getVariables [
 
 	^ variables
 ]
 
 { #category : #'undo - undo' }
-MolUnspecifiedMemento >> redo [
+MolGeneralMemento >> redo [
 
 	reproducedVariables := OrderedCollection new.
 
@@ -34,7 +34,7 @@ MolUnspecifiedMemento >> redo [
 ]
 
 { #category : #actions }
-MolUnspecifiedMemento >> reproduceInDepth: aVariable [
+MolGeneralMemento >> reproduceInDepth: aVariable [
 
 		self flag:'This method will probably have to be replaced in the future.'.
 	
@@ -57,7 +57,7 @@ MolUnspecifiedMemento >> reproduceInDepth: aVariable [
 ]
 
 { #category : #actions }
-MolUnspecifiedMemento >> save: aComponent [
+MolGeneralMemento >> save: aComponent [
 	
 	| componentVariableNames |
 	componentReference := MolComponentReference newFrom: aComponent.
@@ -79,7 +79,7 @@ MolUnspecifiedMemento >> save: aComponent [
 ]
 
 { #category : #actions }
-MolUnspecifiedMemento >> saveInDepth: aVariable [
+MolGeneralMemento >> saveInDepth: aVariable [
 
 	self flag:
 		'This method will probably have to be replaced in the future.'.
@@ -107,7 +107,7 @@ MolUnspecifiedMemento >> saveInDepth: aVariable [
 ]
 
 { #category : #'undo - undo' }
-MolUnspecifiedMemento >> undo [
+MolGeneralMemento >> undo [
 
 	reproducedVariables := OrderedCollection new.
 
