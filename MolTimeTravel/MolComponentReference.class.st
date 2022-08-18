@@ -48,3 +48,13 @@ MolComponentReference >> componentName: anObject [
 MolComponentReference >> isComponentReference [
 	^ true
 ]
+
+{ #category : #decoding }
+MolComponentReference >> timeTravelDecoder [
+
+	"Decode MolComponentReference in order to get a component reference instead of a MolComponentReference."
+
+^ MolUtils
+			  instanceOf: componentClass
+			  named: componentName 
+]

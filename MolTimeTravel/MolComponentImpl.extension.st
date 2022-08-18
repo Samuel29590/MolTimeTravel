@@ -29,3 +29,11 @@ MolComponentImpl classSide >> passivate: aComponentName [
 
 	^ MolComponentManager default homeServices passivateComponentWithTimeTravelSave: self named: aComponentName
 ]
+
+{ #category : #'*MolTimeTravel' }
+MolComponentImpl >> timeTravelEncoder [
+
+	"Encode Component in order to get MolComponentReference instead of a component reference."
+
+	^ MolComponentReference newFrom: self
+]
