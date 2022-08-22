@@ -186,7 +186,8 @@ MASimulationManager >> createAnt [
 	nbAnts := nbAnts+1.
 	name := ('Ant' , nbAnts printString) asSymbol.
 	ant := MAAnt start: name.
-
+	
+	ant ifNotNil:[
 	"Adding event producer into SimulationManager"
 	self
 		forEvents: TMAStageEvents
@@ -195,7 +196,7 @@ MASimulationManager >> createAnt [
 
 	"Adding the ant to the OrderedCollection of ants"
 
-	ants add: ant
+	ants add: ant ]
 ]
 
 { #category : #private }
@@ -491,7 +492,7 @@ MASimulationManager >> queenLaid [
 				saveEvent: #queenLaid
 				performBy: self
 				withParameters: { }
-				needToReplay: false ] ].
+				needToReplay: true ] ].
 	"---------------------------------------------------------------"
 	
 	"Creation of a new ant."

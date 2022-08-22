@@ -8,7 +8,7 @@ Class {
 MolComponentDeletionMemento >> redo [
 	
 	(MolUtils instanceOf: componentReference componentClass named: componentReference componentName) 
-		ifNotNil: [ componentReference componentClass stop: componentReference componentName ]
+		ifNotNil: [ componentReference componentClass stopFromTimeTravel: componentReference componentName ]
 ]
 
 { #category : #actions }
@@ -20,5 +20,5 @@ MolComponentDeletionMemento >> save: aComponent [
 { #category : #'undo - undo' }
 MolComponentDeletionMemento >> undo [
 	(MolUtils instanceOf: componentReference componentClass named: componentReference componentName) 
-		ifNil: [ componentReference componentClass start: componentReference componentName ]
+		ifNil: [ componentReference componentClass startFromTimeTravel: componentReference componentName ]
 ]
