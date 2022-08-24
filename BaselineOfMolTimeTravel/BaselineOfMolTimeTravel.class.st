@@ -8,11 +8,13 @@ Class {
 BaselineOfMolTimeTravel >> baseline: spec [
 
 	<baseline>
-	spec for: #common do: [ "Load Molecule"
+	spec for: #common do: [ 
+		
+		"Load Molecule"
 		spec
 			baseline: 'Molecule'
-			with: [ spec repository: 'github://OpenSmock/Molecule' ].
-
+			with: [ spec repository: 'github://Samuel29590/Molecule' ].
+			
 		"Load Bloc"
 		spec
 			baseline: 'NewBloc'

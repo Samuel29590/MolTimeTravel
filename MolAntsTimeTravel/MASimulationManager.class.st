@@ -110,17 +110,6 @@ MASimulationManager class >> stopSimulation [
 MASimulationManager >> ant: anAnt killAt: aPoint [
 
 	| insect |
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #ant:killAt:
-				performBy: self
-				withParameters: { 
-						anAnt.
-						aPoint }
-				needToReplay: true ] ].
-	"---------------------------------------------------------------"
 
 	Transcript
 		show: anAnt componentName;
@@ -133,12 +122,6 @@ MASimulationManager >> ant: anAnt killAt: aPoint [
 		"Stoping the insect's component instance."
 		MAInsect stop: insect componentName.
 		(insects at: aPoint) isEmpty ifTrue: [ insects removeKey: aPoint ] ].
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #'component life cycle' }
@@ -398,23 +381,7 @@ MASimulationManager >> getTimeTravelServicesProvider [
 { #category : #events }
 MASimulationManager >> insectDelivered [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #insectDelivered
-				performBy: self
-				withParameters: { }
-				needToReplay: false ] ].
-	"---------------------------------------------------------------"
-
 	storage := storage + 1.
-	
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #services }
@@ -446,19 +413,6 @@ MASimulationManager >> playSimulation [
 { #category : #events }
 MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anotherPoint [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #positionChangedFor:oldPos:newPos:
-				performBy: self
-				withParameters: { 
-						anInsect.
-						aPoint.
-						anotherPoint }
-				needToReplay: false ] ].
-	"---------------------------------------------------------------"
-
 	"Add or update the insect position in the dictionary."
 
 	"remove the old position."
@@ -474,36 +428,14 @@ MASimulationManager >> positionChangedFor: anInsect oldPos: aPoint newPos: anoth
 			collection add: anInsect.
 			insects add: anotherPoint -> collection ]
 		ifTrue: [ (insects at: anotherPoint) addLast: anInsect ].
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #events }
 MASimulationManager >> queenLaid [
 
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #queenLaid
-				performBy: self
-				withParameters: { }
-				needToReplay: true ] ].
-	"---------------------------------------------------------------"
-	
 	"Creation of a new ant."
 
 	self createAnt.
-	
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #events }
@@ -562,29 +494,11 @@ MASimulationManager >> saveForTimeTravelOld [
 { #category : #events }
 MASimulationManager >> stageChanged: aSymbol for: anAnt [
 	
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #stageChanged:for:
-				performBy: self
-				withParameters: { 
-						aSymbol.
-						anAnt }
-				needToReplay: false ] ].
-	"---------------------------------------------------------------"
-	
 	"Removing an ant"
 
 	aSymbol = #dead ifTrue: [ 
 		ants remove: anAnt.
 		MAAnt stop: anAnt componentName ].
-	
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #services }
@@ -695,18 +609,6 @@ MASimulationManager >> stopTimeTravel [
 
 { #category : #events }
 MASimulationManager >> worker: anAnt eatAt: aPoint [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #worker:eatAt:
-				performBy: self
-				withParameters: { 
-						anAnt.
-						aPoint }
-				needToReplay: false ] ].
-	"---------------------------------------------------------------"
 	
 	"Deacreasing the capacity of the feedingPoint."
 
@@ -717,66 +619,24 @@ MASimulationManager >> worker: anAnt eatAt: aPoint [
 			(feedingPoints at: aPoint) isEmpty ifTrue: [ 
 				feedingPoints removeKey: aPoint ].
 			MAFeedingPoint stop: feedingPoint componentName ] ].
-	
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #events }
 MASimulationManager >> workerExploringPositionChanged: aPoint for: anAnt [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #workerExploringPositionChanged:for:
-				performBy: self
-				withParameters: { 
-						aPoint.
-						anAnt }
-				needToReplay: false ] ].
-	"---------------------------------------------------------------"
 
 	"Creation or update of a new pheromone of exploration."
 
 	self getTMASimulationToGlobalEventsNotifier
 		pheromoneNew: aPoint
 		for: anAnt.
-		
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]
 
 { #category : #events }
 MASimulationManager >> workerReturningPositionChanged: aPoint for: anAnt [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #workerReturningPositionChanged:for:
-				performBy: self
-				withParameters: { 
-						aPoint.
-						anAnt }
-				needToReplay: false ] ].
-	"---------------------------------------------------------------"
 	
 	"Creation or update of a new pheromone of return."
 
 	self getTMASimulationToGlobalEventsNotifier
 		pheromoneReturnNew: aPoint
 		for: anAnt.
-		
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ].
-	"---------------------------------------------------------------"
 ]

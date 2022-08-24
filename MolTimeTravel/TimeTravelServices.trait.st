@@ -42,7 +42,7 @@ TimeTravelServices >> save: aComponentMemento [
 ]
 
 { #category : #services }
-TimeTravelServices >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean [
+TimeTravelServices >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 ]
 
 { #category : #services }

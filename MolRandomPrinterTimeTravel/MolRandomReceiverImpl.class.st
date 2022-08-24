@@ -84,26 +84,10 @@ MolRandomReceiverImpl >> getTimeTravelServicesProvider [
 
 { #category : #printing }
 MolRandomReceiverImpl >> printRandomIntegerSmallerThan: anInteger [
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self getTimeTravelServicesProvider
-				saveEvent: #printRandomIntegerSmallerThan:
-				performBy: self
-				withParameters: { anInteger }
-				needToReplay: true ] ].
- 	"---------------------------------------------------------------"
 	
 	self text:
 		(Random new nextIntegerBetween: 1 and: anInteger - 1) asString
 			asRopedText.
-
-	"--------------------------Time Travel--------------------------"
-	self getTimeTravelServicesProvider isNotFoundServices ifFalse: [ 
-		self getTimeTravelServicesProvider isRestoring ifFalse: [ 
-			self saveForTimeTravel ] ]
-	"---------------------------------------------------------------"
 ]
 
 { #category : #events }

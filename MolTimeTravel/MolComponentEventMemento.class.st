@@ -3,8 +3,7 @@ Class {
 	#superclass : #MolComponentMemento,
 	#instVars : [
 		'eventName',
-		'parameters',
-		'needToReplay'
+		'parameters'
 	],
 	#category : #MolTimeTravel
 }
@@ -14,14 +13,13 @@ MolComponentEventMemento >> redo [
 
 	| realParameters |
 	
-	needToReplay ifTrue:[
 	realParameters := OrderedCollection new.
 
 	parameters do: [ :parameter | 
-		parameter isAssociation
+		parameter isComponentReference
 			ifTrue: [ 
 				realParameters add:
-					(MolUtils instanceOf: parameter key named: parameter value) ]
+					(MolUtils instanceOf: parameter componentClass named: parameter componentName) ]
 			ifFalse: [ realParameters add: parameter ] ].
 	realParameters := realParameters asArray.
 
@@ -29,19 +27,17 @@ MolComponentEventMemento >> redo [
 		 instanceOf: componentReference componentClass
 		 named: componentReference componentName)
 		perform: eventName
-		withArguments: realParameters]
+		withArguments: realParameters
 ]
 
 { #category : #'undo - undo' }
-MolComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters needToReplay: aBoolean [
+MolComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withParameters: someParameters [
 
 	componentReference := MolComponentReference newFrom: aComponent.
 
 	eventName := aMethodName.
 
 	parameters := OrderedCollection new.
-	
-	needToReplay := aBoolean.
 	
 	someParameters do: [ :parameter | 
 		parameter isComponent
@@ -54,14 +50,14 @@ MolComponentEventMemento >> saveEvent: aMethodName performBy: aComponent withPar
 MolComponentEventMemento >> undo [
 
 	| realParameters |
-	needToReplay ifTrue:[
+	
 	realParameters := OrderedCollection new.
 
 	parameters do: [ :parameter | 
-		parameter isAssociation
+		parameter isComponentReference 
 			ifTrue: [ 
 				realParameters add:
-					(MolUtils instanceOf: parameter key named: parameter value) ]
+					(MolUtils instanceOf: parameter componentClass named: parameter componentName) ]
 			ifFalse: [ realParameters add: parameter ] ].
 	realParameters := realParameters asArray.
 
@@ -69,5 +65,5 @@ MolComponentEventMemento >> undo [
 		 instanceOf: componentReference componentClass
 		 named: componentReference componentName)
 		perform: eventName
-		withArguments: realParameters]
+		withArguments: realParameters
 ]
