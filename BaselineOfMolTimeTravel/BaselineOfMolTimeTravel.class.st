@@ -19,6 +19,9 @@ BaselineOfMolTimeTravel >> baseline: spec [
 		"spec
 			baseline: 'NewBloc'
 			with: [ spec repository: 'github://pharo-graphics/Bloc/src' ]."
+		spec
+			baseline: 'Bloc'
+			with: [ spec repository: 'github://feenkcom/Bloc/src' ].
 
 		spec package: 'MolTimeTravel'.
 		spec package: 'MolAntsTimeTravel'.
