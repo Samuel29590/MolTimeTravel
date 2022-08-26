@@ -5,7 +5,7 @@ Class {
 		'oldPositions',
 		'phase'
 	],
-	#category : #MolTimeTravel
+	#category : #MolAntsTimeTravel
 }
 
 { #category : #accessing }

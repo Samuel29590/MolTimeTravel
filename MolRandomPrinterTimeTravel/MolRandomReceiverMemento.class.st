@@ -1,23 +1,23 @@
 Class {
-	#name : #MolRandomSenderMemento,
+	#name : #MolRandomReceiverMemento,
 	#superclass : #MolComponentMemento,
-	#category : #MolTimeTravel
+	#category : #MolRandomPrinterTimeTravel
 }
 
 { #category : #'undo - undo' }
-MolRandomSenderMemento >> redo [
+MolRandomReceiverMemento >> redo [
 
 	self restoreValues.
 ]
 
 { #category : #'undo - undo' }
-MolRandomSenderMemento >> save: aGround [
+MolRandomReceiverMemento >> save: aGround [
 
 	componentReference := MolComponentReference newFrom: aGround.
 ]
 
 { #category : #'undo - undo' }
-MolRandomSenderMemento >> undo [
+MolRandomReceiverMemento >> undo [
 
 	self restoreValues
 ]

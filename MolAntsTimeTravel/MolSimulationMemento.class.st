@@ -9,7 +9,7 @@ Class {
 		'storage',
 		'step'
 	],
-	#category : #MolTimeTravel
+	#category : #MolAntsTimeTravel
 }
 
 { #category : #accessing }

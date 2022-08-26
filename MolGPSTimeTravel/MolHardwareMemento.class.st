@@ -1,7 +1,7 @@
 Class {
 	#name : #MolHardwareMemento,
 	#superclass : #MolComponentMemento,
-	#category : #MolTimeTravel
+	#category : #MolGPSTimeTravel
 }
 
 { #category : #'undo - undo' }

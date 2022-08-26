@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'accuracy'
 	],
-	#category : #MolTimeTravel
+	#category : #MolGPSTimeTravel
 }
 
 { #category : #accessing }

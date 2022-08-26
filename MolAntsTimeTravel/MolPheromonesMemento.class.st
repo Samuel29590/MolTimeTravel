@@ -6,7 +6,7 @@ Class {
 		'pheromonesDict',
 		'pheromonesReturnDict'
 	],
-	#category : #MolTimeTravel
+	#category : #MolAntsTimeTravel
 }
 
 { #category : #accessing }

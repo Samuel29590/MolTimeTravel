@@ -5,7 +5,7 @@ Class {
 		'ageInMs',
 		'position'
 	],
-	#category : #MolTimeTravel
+	#category : #MolAntsTimeTravel
 }
 
 { #category : #accessing }
