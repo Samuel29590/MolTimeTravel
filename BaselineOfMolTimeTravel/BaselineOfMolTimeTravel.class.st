@@ -16,12 +16,9 @@ BaselineOfMolTimeTravel >> baseline: spec [
 			with: [ spec repository: 'github://Samuel29590/Molecule' ].
 			
 		"Load Bloc"
-		"spec
-			baseline: 'NewBloc'
-			with: [ spec repository: 'github://pharo-graphics/Bloc/src' ]."
-		"spec
+		spec
 			baseline: 'Bloc'
-			with: [ spec repository: 'github://feenkcom/Bloc/src' ]."
+			with: [ spec repository: 'github://pharo-graphics/Bloc/src' ].
 
 		spec package: 'MolTimeTravel'.
 		spec package: 'MolAntsTimeTravel'.

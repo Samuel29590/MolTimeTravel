@@ -104,7 +104,7 @@ MolTimeTravelView >> createTimeTravelPanel [
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"--------------------------------------------------------------------------------------------------------------------------"
 	"Adding the Start time trave button"
-	"buttonStartTimeTravel := BlElement new
+	buttonStartTimeTravel := BlElement new
 		                         background: Color white;
 		                         geometry:
 			                         (BlRoundedRectangleGeometry cornerRadius:
@@ -127,7 +127,7 @@ MolTimeTravelView >> createTimeTravelPanel [
 				                          do: [ :anEvent | 
 					                          buttonStartTimeTravel isVisible 
 						                          ifTrue: [ timeTravel startTimeTravel ].
-					                          anEvent consumed: true ])."
+					                          anEvent consumed: true ]).
 	labelText := 'Start time travel' asRopedText.
 	label := BlTextElement new.
 	label text: labelText.
