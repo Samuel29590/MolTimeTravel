@@ -21,6 +21,7 @@ BaselineOfMolTimeTravel >> baseline: spec [
 			with: [ spec repository: 'github://pharo-graphics/Bloc/src' ].
 
 		
+		spec package: 'MolTimeTravel'. 
 		spec package: 'MolAntsTimeTravel'.
 		spec package: 'MolGPSTimeTravel'.
 		spec package: 'MolRandomPrinterTimeTravel'.
